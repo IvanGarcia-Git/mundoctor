@@ -1,0 +1,98 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+ 
+@layer base {
+  :root {
+    --background: 0 0% 100%; /* Blanco para modo claro */
+    --foreground: 222.2 84% 4.9%; /* Texto oscuro para modo claro */
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%; /* Azul principal (ej. hsl(221, 83%, 53%)) */
+    --primary-foreground: 210 40% 98%; /* Texto para primario */
+    --secondary: 210 40% 96.1%; /* Gris claro para modo claro */
+    --secondary-foreground: 222.2 47.4% 11.2%; /* Texto para secundario claro */
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%; /* Borde claro */
+    --input: 214.3 31.8% 91.4%; /* Input claro */
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.5rem;
+    --custom-dark-background: 15 23 42; /* Definido como H S L (aproximado de rgb(15 23 42)) o directamente el RGB si es más fácil de usar */
+  }
+ 
+  .dark {
+    --background: 222.2 84% 4.9%; /* Azul oscuro casi negro (ej. #0B1120 o hsl(222, 84%, 5%)) */
+    --foreground: 210 40% 98%; /* Texto claro para modo oscuro */
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%; /* Azul primario más brillante para modo oscuro (hsl(217, 91%, 60%)) */
+    --primary-foreground: 210 40% 98%; /* Texto para primario oscuro */
+    --secondary: 217.2 32.6% 17.5%; /* Gris oscuro azulado para modo oscuro (hsl(217, 33%, 18%)) */
+    --secondary-foreground: 210 40% 98%; /* Texto para secundario oscuro */
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 27.5%; /* Borde oscuro azulado (hsl(217, 33%, 28%)) */
+    --input: 217.2 32.6% 22.5%; /* Input oscuro azulado (hsl(217, 33%, 23%)) */
+    --ring: 224.3 76.3% 48%; /* Azul para anillo de foco */
+    --custom-dark-background: 15 23 42; /* Mismo valor para modo oscuro si quieres que sea ese color específico */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+@layer utilities {
+  .bg-grid-pattern {
+    background-image: linear-gradient(to right, hsl(var(--foreground) / 0.03) 1px, transparent 1px),
+                      linear-gradient(to bottom, hsl(var(--foreground) / 0.03) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px; 
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent; 
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary)); 
+    border-radius: 10px;
+    border: 2px solid hsl(var(--background)); 
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary) / 0.8); 
+  }
+  .custom-scrollbar {
+    scrollbar-width: thin; 
+    scrollbar-color: hsl(var(--primary)) transparent; 
+  }
+
+  .bg-custom-dark {
+    background-color: rgb(var(--custom-dark-background) / var(--tw-bg-opacity, 1));
+  }
+}
+
+.leaflet-marker-icon.hue-rotate-180.saturate-200 {
+  filter: hue-rotate(180deg) saturate(200%); 
+}
