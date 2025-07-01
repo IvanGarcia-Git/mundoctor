@@ -83,6 +83,7 @@ const AppRoutes = () => {
           } replace />
         ) : <LoginPage />
       } />
+      <Route path="/login/*" element={<LoginPage />} />
       <Route path="/registro" element={
         user ? (
           <Navigate to={
@@ -91,6 +92,7 @@ const AppRoutes = () => {
           } replace />
         ) : <RegisterPage />
       } />
+      <Route path="/registro/*" element={<RegisterPage />} />
       <Route path="/registro/verify-email-address" element={<VerifyEmailPage />} />
       <Route path="/verify-email" element={<VerifyEmailPage />} />
       

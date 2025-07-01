@@ -38,6 +38,11 @@ const LoginPage = () => {
               otpCodeFieldInput: "bg-white dark:bg-slate-700/50 border-gray-300 dark:border-border/30 text-foreground",
               formResendCodeLink: "text-primary hover:text-primary/80",
               formFieldInputShowPasswordButton: "text-muted-foreground hover:text-foreground",
+              footer: "bg-transparent",
+              footerPages: "bg-transparent",
+              footerAction: "bg-transparent",
+              footerActionText: "text-foreground",
+              footerActionLink: "text-primary hover:text-primary/80",
             },
             layout: {
               socialButtonsPlacement: "top",
@@ -55,19 +60,7 @@ const LoginPage = () => {
           path="/login"
           signUpUrl="/registro"
           redirectUrl="/"
-          afterSignInUrl={(user) => {
-            // Redirección basada en el rol del usuario
-            const role = user.publicMetadata?.role || 'patient';
-            switch (role) {
-              case 'admin':
-                return '/admin/dashboard';
-              case 'professional':
-                return '/profesionales/dashboard';
-              case 'patient':
-              default:
-                return '/';
-            }
-          }}
+          afterSignInUrl="/"
         />
       </motion.div>
 
