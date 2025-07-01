@@ -107,10 +107,10 @@
   - ✅ Funciones de migración y limpieza de datos
   - Archivo: `src/hooks/useHybridAuth.js`, `src/components/MigrationHelper.jsx`
 
-- [ ] **3.5** Actualizar navegación y layouts
-  - Reemplazar botones logout con `<UserButton />`
-  - Actualizar verificación de roles
-  - Archivos: `src/components/layout/`
+- [x] **3.5** Actualizar navegación y layouts
+  - ✅ Reemplazar botones logout con `<UserButton />`
+  - ✅ Actualizar verificación de roles
+  - ✅ Archivos: `src/components/layout/Header.jsx`, `src/components/layout/SidebarNav.jsx`
 
 ---
 
@@ -118,21 +118,21 @@
 **Objetivo:** Conectar frontend con backend PostgreSQL
 
 ### Tareas API
-- [ ] **4.1** Crear cliente API con autenticación Clerk
-  - Implementar interceptor con tokens Clerk
-  - Reemplazar `localStorage` por API calls
-  - Archivo: `src/lib/clerkApi.js`
+- [x] **4.1** Crear cliente API con autenticación Clerk
+  - ✅ Implementar interceptor con tokens Clerk
+  - ✅ Reemplazar `localStorage` por API calls
+  - ✅ Archivo: `src/lib/clerkApi.js`
 
-- [ ] **4.2** Implementar endpoints de datos
-  - GET `/api/users/profile` - obtener perfil usuario
-  - PUT `/api/users/profile` - actualizar perfil
-  - GET `/api/users/preferences` - preferencias usuario
-  - Archivos: `backend/src/routes/users.js`
+- [x] **4.2** Implementar endpoints de datos
+  - ✅ GET `/api/users/profile` - obtener perfil usuario
+  - ✅ PUT `/api/users/profile` - actualizar perfil
+  - ✅ GET `/api/users/preferences` - preferencias usuario
+  - ✅ Archivos: `backend/src/routes/users.js`
 
-- [ ] **4.3** Migrar datos de usuario
-  - Crear funciones para sincronizar datos existentes
-  - Implementar script de migración de localStorage
-  - Archivo: `src/utils/migrateUserData.js`
+- [x] **4.3** Migrar datos de usuario
+  - ✅ Crear funciones para sincronizar datos existentes
+  - ✅ Implementar script de migración de localStorage
+  - ✅ Archivo: `src/utils/migrateUserData.js`
 
 ### Tareas de Roles y Permisos
 - [ ] **4.4** Implementar gestión de roles

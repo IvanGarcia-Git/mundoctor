@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useAuth as useClerkAuthHook, useUser as useClerkUser } from '@clerk/clerk-react';
+// Note: API calls will be handled directly with fetch + window.Clerk.session.getToken()
+import { isMigrationNeeded, performMigration } from '@/utils/migrateUserData';
 
 const ClerkAuthContext = createContext(null);
 
@@ -14,16 +16,56 @@ export const ClerkAuthProvider = ({ children }) => {
   // Fetch user data from our backend when Clerk user is available
   const fetchBackendUser = async (clerkUserId) => {
     try {
-      // TODO: Replace with actual API call to our backend
-      // const response = await fetch(`/api/users/profile`, {
-      //   headers: {
-      //     'Authorization': `Bearer ${await getToken()}`
-      //   }
-      // });
-      // const userData = await response.json();
+      // Try to fetch user from backend API first
+      const token = await window.Clerk?.session?.getToken();
+      if (token) {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/users/profile`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        const userData = await response.json();
+        
+        if (response.ok && userData && userData.data) {
+          setBackendUser(userData.data);
+          setUser(userData.data);
+          return userData.data;
+        }
+      }
       
-      // For now, create user object from Clerk data
-      const userData = {
+      if (userData && userData.data) {
+        setBackendUser(userData.data);
+        setUser(userData.data);
+        return userData.data;
+      }
+      
+      // If no backend data, check for migration
+      if (isMigrationNeeded()) {
+        console.log('Migration needed, performing automatic migration...');
+        const migrationResult = await performMigration();
+        if (migrationResult.success) {
+          console.log('Migration completed, fetching updated user data...');
+          const token = await window.Clerk?.session?.getToken();
+          if (token) {
+            const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/users/profile`, {
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              }
+            });
+            const updatedUser = await response.json();
+            if (response.ok && updatedUser && updatedUser.data) {
+              setBackendUser(updatedUser.data);
+              setUser(updatedUser.data);
+              return updatedUser.data;
+            }
+          }
+        }
+      }
+      
+      // Fallback: create user object from Clerk data
+      const fallbackUser = {
         id: clerkUser?.id,
         clerk_id: clerkUserId,
         name: `${clerkUser?.firstName || ''} ${clerkUser?.lastName || ''}`.trim() || 
@@ -31,16 +73,32 @@ export const ClerkAuthProvider = ({ children }) => {
         email: clerkUser?.emailAddresses?.[0]?.emailAddress,
         phone: clerkUser?.phoneNumbers?.[0]?.phoneNumber,
         avatar_url: clerkUser?.imageUrl,
-        role: clerkUser?.publicMetadata?.role || 'patient', // Default role
+        role: clerkUser?.publicMetadata?.role || 'patient',
         verified: clerkUser?.emailAddresses?.[0]?.verification?.status === 'verified'
       };
       
-      setBackendUser(userData);
-      setUser(userData);
-      return userData;
+      setBackendUser(fallbackUser);
+      setUser(fallbackUser);
+      return fallbackUser;
     } catch (error) {
       console.error('Error fetching backend user:', error);
-      return null;
+      
+      // On API error, still provide Clerk user data
+      const fallbackUser = {
+        id: clerkUser?.id,
+        clerk_id: clerkUserId,
+        name: `${clerkUser?.firstName || ''} ${clerkUser?.lastName || ''}`.trim() || 
+               clerkUser?.emailAddresses?.[0]?.emailAddress?.split('@')[0],
+        email: clerkUser?.emailAddresses?.[0]?.emailAddress,
+        phone: clerkUser?.phoneNumbers?.[0]?.phoneNumber,
+        avatar_url: clerkUser?.imageUrl,
+        role: clerkUser?.publicMetadata?.role || 'patient',
+        verified: clerkUser?.emailAddresses?.[0]?.verification?.status === 'verified'
+      };
+      
+      setBackendUser(fallbackUser);
+      setUser(fallbackUser);
+      return fallbackUser;
     }
   };
 
@@ -107,20 +165,35 @@ export const ClerkAuthProvider = ({ children }) => {
         });
       }
 
-      // Update local state
-      const updatedUser = { ...user, ...userData };
-      setUser(updatedUser);
-      setBackendUser(updatedUser);
-
-      // TODO: Also update in backend database
-      // await fetch('/api/users/profile', {
-      //   method: 'PUT',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization': `Bearer ${await getToken()}`
-      //   },
-      //   body: JSON.stringify(userData)
-      // });
+      // Update in backend database first
+      const token = await window.Clerk?.session?.getToken();
+      let updatedBackendUser = null;
+      
+      if (token) {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/users/profile`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(userData)
+        });
+        
+        if (response.ok) {
+          updatedBackendUser = await response.json();
+        }
+      }
+      
+      if (updatedBackendUser && updatedBackendUser.data) {
+        // Update local state with backend response
+        setUser(updatedBackendUser.data);
+        setBackendUser(updatedBackendUser.data);
+      } else {
+        // Fallback: update local state only
+        const updatedUser = { ...user, ...userData };
+        setUser(updatedUser);
+        setBackendUser(updatedUser);
+      }
 
     } catch (error) {
       console.error('Error updating user:', error);
