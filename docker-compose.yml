@@ -1,0 +1,63 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - VITE_CLERK_PUBLISHABLE_KEY=pk_test_c2FjcmVkLXBhcnJvdC03Mi5jbGVyay5hY2NvdW50cy5kZXYk
+    command: npm run dev
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/mundoctor
+      - CLERK_SECRET_KEY=sk_test_NxM4E97lcL0aSnq0ffLQ7zZjf36215bFhvPYN7OkHG
+    networks:
+      - app-network
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mundoctor
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge

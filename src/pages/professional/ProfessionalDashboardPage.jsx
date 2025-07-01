@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useUser } from '@clerk/clerk-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -18,12 +18,12 @@ import {
 import { Link } from 'react-router-dom';
 import MonthlyIncomeChart from '@/components/professional/dashboard/MonthlyIncomeChart';
 import AppointmentsCalendarView from '@/components/professional/appointments/AppointmentsCalendarView';
-import { getAppointments, getProfessionalRatings } from '@/lib/api';
-import { supabase } from '@/lib/supabase';
+// TODO: Replace with new API calls when backend is ready
+// import { getAppointments, getProfessionalRatings } from '@/lib/api';
 import { useToast } from "@/components/ui/use-toast";
 
 const ProfessionalDashboardPage = () => {
-  const { user } = useAuth();
+  const { user } = useUser();
   const { toast } = useToast();
   const [stats, setStats] = useState({
     totalPatients: 0,
@@ -46,89 +46,78 @@ const ProfessionalDashboardPage = () => {
       try {
         setIsLoading(true);
 
-        // Fetch appointments
-        const appointments = await getAppointments(user.id, 'professional');
-        const now = new Date();
-        const thisMonth = now.getMonth();
-        const lastMonth = thisMonth === 0 ? 11 : thisMonth - 1;
-
-        // Calculate stats
-        const monthlyAppointments = appointments.filter(apt => 
-          new Date(apt.date).getMonth() === thisMonth
-        ).length;
-
-        const lastMonthAppointments = appointments.filter(apt => 
-          new Date(apt.date).getMonth() === lastMonth
-        ).length;
-
-        // Get unique patients
-        const uniquePatients = new Set(appointments.map(apt => apt.patient.id));
-        const totalPatients = uniquePatients.size;
-
-        // Get ratings
-        const ratings = await getProfessionalRatings(user.id);
-        const averageRating = ratings.length > 0
-          ? ratings.reduce((acc, curr) => acc + curr.rating, 0) / ratings.length
-          : 0;
-
-        // Calculate monthly income
-        const monthlyIncome = appointments
-          .filter(apt => new Date(apt.date).getMonth() === thisMonth)
-          .reduce((acc, apt) => acc + (apt.price || 0), 0);
-
-        const lastMonthIncome = appointments
-          .filter(apt => new Date(apt.date).getMonth() === lastMonth)
-          .reduce((acc, apt) => acc + (apt.price || 0), 0);
-
-        // Calculate trends
-        const calculateTrend = (current, previous) => {
-          if (previous === 0) return '0%';
-          return `${(((current - previous) / previous) * 100).toFixed(1)}%`;
+        // TODO: Replace with actual API calls when backend is ready
+        // Mock data for now
+        const mockStats = {
+          totalPatients: 45,
+          monthlyAppointments: 28,
+          averageRating: 4.8,
+          monthlyIncome: 3500,
+          trends: {
+            patients: '+12.5%',
+            appointments: '+8.3%',
+            rating: '+0.2',
+            income: '+15.7%'
+          }
         };
 
-        setStats({
-          totalPatients,
-          monthlyAppointments,
-          averageRating: averageRating.toFixed(1),
-          monthlyIncome,
-          trends: {
-            appointments: calculateTrend(monthlyAppointments, lastMonthAppointments),
-            income: calculateTrend(monthlyIncome, lastMonthIncome),
-            rating: '+0.0', // Would need historical data for this
-            patients: '+0.0%' // Would need historical data for this
+        const mockUpcomingAppointments = [
+          {
+            id: '1',
+            patientName: 'María González',
+            patientImage: null,
+            type: 'Consulta General',
+            time: '10:00',
+            status: 'confirmed'
+          },
+          {
+            id: '2',
+            patientName: 'Carlos Rodriguez',
+            patientImage: null,
+            type: 'Seguimiento',
+            time: '11:30',
+            status: 'confirmed'
+          },
+          {
+            id: '3',
+            patientName: 'Ana López',
+            patientImage: null,
+            type: 'Primera Consulta',
+            time: '14:00',
+            status: 'pending'
           }
-        });
+        ];
 
-        // Set upcoming appointments
-        const upcoming = appointments
-          .filter(apt => new Date(apt.date) >= now)
-          .sort((a, b) => new Date(a.date) - new Date(b.date))
-          .slice(0, 5)
-          .map(apt => ({
-            id: apt.id,
-            patientName: `${apt.patient.first_name} ${apt.patient.last_name}`,
-            patientImage: apt.patient.avatar_url,
-            type: apt.reason || 'Consulta',
-            time: new Date(apt.date).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
-            status: apt.status
-          }));
+        const mockRecentReviews = [
+          {
+            id: '1',
+            patientName: 'Laura Martín',
+            patientImage: null,
+            rating: 5,
+            comment: 'Excelente profesional, muy atento y cuidadoso.',
+            date: new Date().toLocaleDateString('es-ES')
+          },
+          {
+            id: '2',
+            patientName: 'Pedro Sánchez',
+            patientImage: null,
+            rating: 4,
+            comment: 'Muy buen trato y explicaciones claras.',
+            date: new Date(Date.now() - 86400000).toLocaleDateString('es-ES')
+          },
+          {
+            id: '3',
+            patientName: 'Elena García',
+            patientImage: null,
+            rating: 5,
+            comment: 'Recomiendo totalmente, profesional de confianza.',
+            date: new Date(Date.now() - 172800000).toLocaleDateString('es-ES')
+          }
+        ];
 
-        setUpcomingAppointments(upcoming);
-
-        // Set recent reviews
-        const recent = ratings
-          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-          .slice(0, 3)
-          .map(review => ({
-            id: review.id,
-            patientName: `${review.patient.first_name} ${review.patient.last_name}`,
-            patientImage: review.patient.avatar_url,
-            rating: review.rating,
-            comment: review.comment,
-            date: new Date(review.created_at).toLocaleDateString('es-ES')
-          }));
-
-        setRecentReviews(recent);
+        setStats(mockStats);
+        setUpcomingAppointments(mockUpcomingAppointments);
+        setRecentReviews(mockRecentReviews);
 
       } catch (error) {
         console.error('Error loading dashboard data:', error);
@@ -142,10 +131,10 @@ const ProfessionalDashboardPage = () => {
       }
     };
 
-    if (user?.id) {
+    if (user) {
       loadDashboardData();
     }
-  }, [user?.id]);
+  }, [user]);
 
   if (isLoading) {
     return (
@@ -193,7 +182,7 @@ const ProfessionalDashboardPage = () => {
         <div>
           <h1 className="text-2xl font-bold text-foreground dark:text-white">Panel de Control</h1>
           <p className="mt-1 text-muted-foreground dark:text-gray-400">
-            Bienvenido de nuevo, {user?.name || 'Dr. Usuario'}
+            Bienvenido de nuevo, {user?.firstName} {user?.lastName || 'Dr. Usuario'}
           </p>
         </div>
         <Button asChild>

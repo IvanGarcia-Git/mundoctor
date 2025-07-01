@@ -30,33 +30,41 @@ import PatientProfilePage from '@/pages/patient/PatientProfilePage';
 import PatientReviewsPage from '@/pages/patient/PatientReviewsPage';
 import ComingSoonPage from '@/pages/ComingSoonPage.jsx';
 import CompletarPerfilPage from '@/pages/CompletarPerfilPage';
-import { useAuth } from '@/contexts/AuthContext';
+import { useUser } from '@clerk/clerk-react';
+import { SignedIn, SignedOut, RedirectToSignIn } from '@clerk/clerk-react';
 import AuthenticatedLayout from '@/components/layout/AuthenticatedLayout';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
-  const { user, loading } = useAuth();
+  const { user, isLoaded } = useUser();
   const location = useLocation();
 
-  if (loading) {
+  if (!isLoaded) {
     return <div className="flex justify-center items-center h-screen"><p>Cargando...</p></div>;
   }
 
-  if (!user) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
-  }
+  // Get user role from metadata
+  const userRole = user?.publicMetadata?.role || 'patient';
   
-  if (allowedRoles && !allowedRoles.includes(user.role)) {
+  if (allowedRoles && !allowedRoles.includes(userRole)) {
     return <Navigate to="/" state={{ from: location }} replace />; 
   }
 
-  return <AuthenticatedLayout>{children}</AuthenticatedLayout>;
+  return (
+    <>
+      <SignedIn>
+        <AuthenticatedLayout>{children}</AuthenticatedLayout>
+      </SignedIn>
+      <SignedOut>
+        <RedirectToSignIn />
+      </SignedOut>
+    </>
+  );
 };
 
-
 const AppRoutes = () => {
-  const { user, loading } = useAuth();
+  const { user, isLoaded } = useUser();
 
-  if (loading) {
+  if (!isLoaded) {
     return <div className="flex justify-center items-center h-screen"><p>Inicializando aplicación...</p></div>;
   }
   
@@ -66,8 +74,22 @@ const AppRoutes = () => {
       <Route path="/profesionales" element={<ProfessionalsPage />} />
       <Route path="/profesional/:id" element={<ProfessionalProfilePage />} />
       
-      <Route path="/login" element={user ? <Navigate to={user.role === 'professional' ? "/profesionales/dashboard" : (user.role === 'admin' ? "/admin/dashboard" : "/")} replace /> : <LoginPage />} />
-      <Route path="/registro" element={user ? <Navigate to={user.role === 'professional' ? "/profesionales/dashboard" : (user.role === 'admin' ? "/admin/dashboard" : "/")} replace /> : <RegisterPage />} />
+      <Route path="/login" element={
+        user ? (
+          <Navigate to={
+            user.publicMetadata?.role === 'professional' ? "/profesionales/dashboard" : 
+            (user.publicMetadata?.role === 'admin' ? "/admin/dashboard" : "/")
+          } replace />
+        ) : <LoginPage />
+      } />
+      <Route path="/registro" element={
+        user ? (
+          <Navigate to={
+            user.publicMetadata?.role === 'professional' ? "/profesionales/dashboard" : 
+            (user.publicMetadata?.role === 'admin' ? "/admin/dashboard" : "/")
+          } replace />
+        ) : <RegisterPage />
+      } />
       
       <Route path="/contacto" element={<ContactPage />} />
       <Route path="/buscar" element={<SearchResultsPage />} />
