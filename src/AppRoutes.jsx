@@ -30,6 +30,7 @@ import PatientProfilePage from '@/pages/patient/PatientProfilePage';
 import PatientReviewsPage from '@/pages/patient/PatientReviewsPage';
 import ComingSoonPage from '@/pages/ComingSoonPage.jsx';
 import CompletarPerfilPage from '@/pages/CompletarPerfilPage';
+import VerifyEmailPage from '@/pages/VerifyEmailPage';
 import { useUser } from '@clerk/clerk-react';
 import { SignedIn, SignedOut, RedirectToSignIn } from '@clerk/clerk-react';
 import AuthenticatedLayout from '@/components/layout/AuthenticatedLayout';
@@ -90,6 +91,8 @@ const AppRoutes = () => {
           } replace />
         ) : <RegisterPage />
       } />
+      <Route path="/registro/verify-email-address" element={<VerifyEmailPage />} />
+      <Route path="/verify-email" element={<VerifyEmailPage />} />
       
       <Route path="/contacto" element={<ContactPage />} />
       <Route path="/buscar" element={<SearchResultsPage />} />

@@ -58,19 +58,8 @@ const RegisterPage = () => {
           path="/registro"
           signInUrl="/login"
           redirectUrl="/"
-          afterSignUpUrl={(user) => {
-            // Redirección basada en el rol del usuario después del registro
-            const role = user.publicMetadata?.role || 'patient';
-            switch (role) {
-              case 'admin':
-                return '/admin/dashboard';
-              case 'professional':
-                return '/profesionales/dashboard';
-              case 'patient':
-              default:
-                return '/completar-perfil';
-            }
-          }}
+          afterSignUpUrl="/completar-perfil"
+          verifyEmailAddressUrl="/registro/verify-email-address"
           unsafeMetadata={{
             role: 'patient' // Rol por defecto para nuevos usuarios
           }}
