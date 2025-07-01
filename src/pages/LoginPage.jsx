@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/ClerkAuthContext';
 import { useToast } from "@/components/ui/use-toast";
 import { Eye, EyeOff, LogIn as LogInIcon, Mail, FacebookIcon } from 'lucide-react';
 import Logo from '@/components/Logo';

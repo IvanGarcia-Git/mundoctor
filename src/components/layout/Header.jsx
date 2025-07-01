@@ -5,7 +5,7 @@ import Logo from '@/components/Logo';
 import { Button } from '@/components/ui/button';
 import ThemeToggle from '@/components/ThemeToggle';
 import { LogIn, UserPlus, LogOut } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/ClerkAuthContext';
 import NotificationsDropdown from '@/components/layout/NotificationsDropdown';
 
 

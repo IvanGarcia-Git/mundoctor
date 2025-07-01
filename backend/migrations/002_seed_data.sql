@@ -237,12 +237,10 @@ SELECT
     pr.name as professional_name,
     pr.email as professional_email,
     pr.phone as professional_phone,
-    s.name as specialty_name,
-    prof.consultation_fee as professional_fee,
+    pr.specialty_name,
+    pr.consultation_fee as professional_fee,
     a.created_at,
     a.updated_at
 FROM appointments a
 JOIN patient_profiles pt ON a.patient_id = pt.id
-JOIN professional_profiles pr ON a.professional_id = pr.id
-LEFT JOIN specialties s ON pr.specialty_id = s.id
-LEFT JOIN professionals prof ON a.professional_id = prof.id;
+JOIN professional_profiles pr ON a.professional_id = pr.id;

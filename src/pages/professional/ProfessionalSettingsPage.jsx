@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
 import { Lock, Bell, CreditCard, ShieldCheck, Trash2, Save, Clock } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/ClerkAuthContext';
 import { useToast } from "@/components/ui/use-toast";
 import InsuranceManager from '@/components/professional/settings/InsuranceManager';
 import WorkScheduleManager from '@/components/professional/schedule/WorkScheduleManager';

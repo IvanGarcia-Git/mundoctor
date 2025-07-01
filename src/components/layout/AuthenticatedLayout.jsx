@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/ClerkAuthContext';
 import ProfessionalSidebar from '@/components/professional/ProfessionalSidebar';
 import PatientSidebar from '@/components/patient/PatientSidebar';
 import AdminSidebar from '@/components/admin/AdminSidebar';

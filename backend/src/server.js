@@ -9,6 +9,7 @@ import { testConnection } from './config/database.js';
 
 // Import routes
 import authRoutes from './routes/auth.js';
+import webhookRoutes from './routes/webhooks.js';
 // import userRoutes from './routes/users.js';
 // import professionalRoutes from './routes/professionals.js';
 // import appointmentRoutes from './routes/appointments.js';
@@ -76,6 +77,7 @@ app.get('/api', (req, res) => {
     version: '1.0.0',
     endpoints: {
       auth: '/api/auth',
+      webhooks: '/api/webhooks',
       users: '/api/users',
       professionals: '/api/professionals',
       appointments: '/api/appointments',
@@ -87,6 +89,7 @@ app.get('/api', (req, res) => {
 
 // API routes
 app.use('/api/auth', authRoutes);
+app.use('/api/webhooks', webhookRoutes);
 // app.use('/api/users', userRoutes);
 // app.use('/api/professionals', professionalRoutes);
 // app.use('/api/appointments', appointmentRoutes);
