@@ -1,6 +1,14 @@
 import express from 'express';
 import { Webhook } from 'svix';
-import { createUserInDB, updateUserInDB, deleteUserFromDB } from '../controllers/userController.js';
+import { 
+  createUserInDB, 
+  updateUserInDB, 
+  deleteUserFromDB,
+  handleEmailUpdate,
+  handleSMSUpdate,
+  syncUserFromClerk,
+  validateUserSync
+} from '../controllers/userController.js';
 
 const router = express.Router();
 
@@ -97,12 +105,12 @@ router.post('/clerk', verifyWebhook, async (req, res) => {
 
       case 'email.created':
         console.log(`📧 Email created for user: ${data.object.id}`);
-        // Update user email if needed
+        await handleEmailUpdate(data);
         break;
 
       case 'sms.created':
         console.log(`📱 SMS created for user: ${data.object.id}`);
-        // Update user phone if needed
+        await handleSMSUpdate(data);
         break;
 
       default:
@@ -140,6 +148,61 @@ router.get('/health', (req, res) => {
     service: 'webhooks',
     timestamp: new Date().toISOString()
   });
+});
+
+// Manual user sync endpoint (admin only)
+router.post('/sync-user/:clerkId', async (req, res) => {
+  try {
+    const { clerkId } = req.params;
+    
+    if (!clerkId) {
+      return res.status(400).json({ error: 'Clerk ID is required' });
+    }
+
+    console.log(`🔄 Manual sync requested for user: ${clerkId}`);
+    
+    const result = await syncUserFromClerk(clerkId);
+    
+    res.status(200).json({
+      success: true,
+      message: 'User synced successfully',
+      user: result
+    });
+
+  } catch (error) {
+    console.error('Manual sync error:', error);
+    res.status(500).json({
+      error: 'User sync failed',
+      details: error.message
+    });
+  }
+});
+
+// Validate user sync status endpoint (admin/debug)
+router.get('/validate-user/:clerkId', async (req, res) => {
+  try {
+    const { clerkId } = req.params;
+    
+    if (!clerkId) {
+      return res.status(400).json({ error: 'Clerk ID is required' });
+    }
+
+    console.log(`🔍 Validating sync for user: ${clerkId}`);
+    
+    const validation = await validateUserSync(clerkId);
+    
+    res.status(200).json({
+      success: true,
+      validation
+    });
+
+  } catch (error) {
+    console.error('Validation error:', error);
+    res.status(500).json({
+      error: 'Validation failed',
+      details: error.message
+    });
+  }
 });
 
 // Test webhook endpoint (development only)

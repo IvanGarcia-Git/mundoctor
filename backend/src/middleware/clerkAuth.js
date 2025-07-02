@@ -1,28 +1,18 @@
-import { ClerkExpressRequireAuth, ClerkExpressWithAuth } from '@clerk/express';
+import { requireAuth as clerkRequireAuth, clerkClient, getAuth } from '@clerk/express';
 import { query } from '../config/database.js';
+import { createUserInDB } from '../controllers/userController.js';
 
 // Enhanced Clerk authentication middleware with database integration
-export const requireAuth = ClerkExpressRequireAuth({
-  secretKey: process.env.CLERK_SECRET_KEY,
-  onError: (error) => {
-    console.error('Clerk authentication error:', error);
-    return {
-      status: 401,
-      message: 'Authentication failed',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Invalid or expired token'
-    };
-  }
-});
+export const requireAuth = clerkRequireAuth();
 
 // Optional authentication - doesn't fail if user not authenticated
-export const withAuth = ClerkExpressWithAuth({
-  secretKey: process.env.CLERK_SECRET_KEY,
-  onError: (error) => {
-    console.error('Clerk optional auth error:', error);
-  }
-});
+export const withAuth = (req, res, next) => {
+  const auth = getAuth(req);
+  req.auth = auth;
+  next();
+};
 
-// Middleware to attach user data from database
+// Middleware to attach user data from database with auto-sync fallback
 export const attachUser = async (req, res, next) => {
   try {
     if (!req.auth?.userId) {
@@ -46,10 +36,46 @@ export const attachUser = async (req, res, next) => {
       WHERE u.clerk_id = $1
     `, [req.auth.userId]);
 
+    // If user not found in database, attempt auto-sync from Clerk
     if (userResult.rows.length === 0) {
+      console.log(`🔄 User ${req.auth.userId} not found in DB, attempting auto-sync...`);
+      
+      try {
+        // Get user data from Clerk
+        const clerkUser = await clerkClient.users.getUser(req.auth.userId);
+        
+        if (clerkUser) {
+          // Create user in database
+          const newUser = await createUserInDB(clerkUser);
+          console.log(`✅ Auto-sync successful for user: ${clerkUser.emailAddresses?.[0]?.emailAddress}`);
+          
+          // Re-query to get user with preferences
+          const syncedUserResult = await query(`
+            SELECT 
+              u.*,
+              up.theme,
+              up.notifications_enabled,
+              up.email_notifications,
+              up.sms_notifications,
+              up.language,
+              up.timezone
+            FROM users u
+            LEFT JOIN user_preferences up ON u.id = up.user_id
+            WHERE u.clerk_id = $1
+          `, [req.auth.userId]);
+          
+          if (syncedUserResult.rows.length > 0) {
+            req.user = syncedUserResult.rows[0];
+            return next();
+          }
+        }
+      } catch (syncError) {
+        console.error('Auto-sync failed:', syncError);
+      }
+      
       return res.status(404).json({ 
         error: 'User not found',
-        message: 'User not found in database. Please complete registration.',
+        message: 'User not found in database and auto-sync failed. Please try logging out and back in.',
         action: 'complete_registration'
       });
     }

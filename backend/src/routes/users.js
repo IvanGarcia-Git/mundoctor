@@ -1,5 +1,6 @@
 import express from 'express';
-import { requireAuth, withTransaction } from '../middleware/auth.js';
+import { requireAuth } from '../middleware/auth.js';
+import { withTransaction } from '../config/database.js';
 
 const router = express.Router();
 

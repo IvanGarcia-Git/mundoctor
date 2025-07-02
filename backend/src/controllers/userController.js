@@ -1,4 +1,5 @@
 import { query, withTransaction } from '../config/database.js';
+import { clerkClient } from '@clerk/express';
 
 // Create user in database from Clerk webhook
 export const createUserInDB = async (clerkUser) => {
@@ -268,5 +269,167 @@ export const updateUserPreferences = async (userId, preferences) => {
   } catch (error) {
     console.error('Error updating user preferences:', error);
     throw error;
+  }
+};
+
+// Handle email update from Clerk webhook
+export const handleEmailUpdate = async (webhookData) => {
+  try {
+    const { object } = webhookData;
+    const userId = object.id; // This is the Clerk user ID
+    const email = object.email_address;
+
+    if (!userId || !email) {
+      console.log('Incomplete email update data received');
+      return;
+    }
+
+    // Update user email in our database
+    const result = await query(`
+      UPDATE users 
+      SET email = $2, updated_at = NOW()
+      WHERE clerk_id = $1
+      RETURNING *
+    `, [userId, email]);
+
+    if (result.rows.length > 0) {
+      console.log(`✅ Email updated for user: ${userId} -> ${email}`);
+    } else {
+      console.log(`ℹ️  User ${userId} not found for email update`);
+    }
+
+    return result.rows[0];
+
+  } catch (error) {
+    console.error('Error handling email update:', error);
+    throw error;
+  }
+};
+
+// Handle SMS/phone update from Clerk webhook
+export const handleSMSUpdate = async (webhookData) => {
+  try {
+    const { object } = webhookData;
+    const userId = object.id; // This is the Clerk user ID
+    const phone = object.phone_number;
+
+    if (!userId || !phone) {
+      console.log('Incomplete SMS update data received');
+      return;
+    }
+
+    // Update user phone in our database
+    const result = await query(`
+      UPDATE users 
+      SET phone = $2, updated_at = NOW()
+      WHERE clerk_id = $1
+      RETURNING *
+    `, [userId, phone]);
+
+    if (result.rows.length > 0) {
+      console.log(`✅ Phone updated for user: ${userId} -> ${phone}`);
+    } else {
+      console.log(`ℹ️  User ${userId} not found for phone update`);
+    }
+
+    return result.rows[0];
+
+  } catch (error) {
+    console.error('Error handling SMS update:', error);
+    throw error;
+  }
+};
+
+// Manually sync user from Clerk (useful for fixing sync issues)
+export const syncUserFromClerk = async (clerkId) => {
+  try {
+    console.log(`🔄 Syncing user from Clerk: ${clerkId}`);
+
+    // Get user data from Clerk
+    const clerkUser = await clerkClient.users.getUser(clerkId);
+    
+    if (!clerkUser) {
+      throw new Error(`User ${clerkId} not found in Clerk`);
+    }
+
+    // Check if user exists in our database
+    const existingUser = await getUserByClerkId(clerkId);
+
+    let result;
+    if (existingUser) {
+      // Update existing user
+      result = await updateUserInDB(clerkUser);
+      console.log(`✅ Existing user synced: ${clerkUser.emailAddresses?.[0]?.emailAddress}`);
+    } else {
+      // Create new user
+      result = await createUserInDB(clerkUser);
+      console.log(`✅ New user synced: ${clerkUser.emailAddresses?.[0]?.emailAddress}`);
+    }
+
+    return result;
+
+  } catch (error) {
+    console.error('Error syncing user from Clerk:', error);
+    throw error;
+  }
+};
+
+// Validate user sync status (useful for debugging)
+export const validateUserSync = async (clerkId) => {
+  try {
+    const dbUser = await getUserByClerkId(clerkId);
+    
+    if (!dbUser) {
+      return {
+        synchronized: false,
+        issue: 'User not found in database',
+        clerkId
+      };
+    }
+
+    // Get user from Clerk for comparison
+    const clerkUser = await clerkClient.users.getUser(clerkId);
+    
+    if (!clerkUser) {
+      return {
+        synchronized: false,
+        issue: 'User not found in Clerk',
+        clerkId
+      };
+    }
+
+    // Compare key fields
+    const clerkEmail = clerkUser.emailAddresses?.[0]?.emailAddress;
+    const clerkName = `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim();
+    const clerkPhone = clerkUser.phoneNumbers?.[0]?.phoneNumber;
+
+    const issues = [];
+    
+    if (dbUser.email !== clerkEmail) {
+      issues.push(`Email mismatch: DB(${dbUser.email}) vs Clerk(${clerkEmail})`);
+    }
+
+    if (dbUser.name !== clerkName && clerkName) {
+      issues.push(`Name mismatch: DB(${dbUser.name}) vs Clerk(${clerkName})`);
+    }
+
+    if (dbUser.phone !== clerkPhone && clerkPhone) {
+      issues.push(`Phone mismatch: DB(${dbUser.phone}) vs Clerk(${clerkPhone})`);
+    }
+
+    return {
+      synchronized: issues.length === 0,
+      issues: issues.length > 0 ? issues : null,
+      clerkId,
+      lastUpdated: dbUser.updated_at
+    };
+
+  } catch (error) {
+    console.error('Error validating user sync:', error);
+    return {
+      synchronized: false,
+      issue: `Validation error: ${error.message}`,
+      clerkId
+    };
   }
 };

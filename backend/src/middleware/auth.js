@@ -1,10 +1,8 @@
-import { ClerkExpressRequireAuth } from '@clerk/express';
+import { requireAuth as clerkRequireAuth, clerkClient } from '@clerk/express';
 import { query } from '../config/database.js';
 
 // Clerk authentication middleware
-export const requireAuth = ClerkExpressRequireAuth({
-  secretKey: process.env.CLERK_SECRET_KEY,
-});
+export const requireAuth = clerkRequireAuth();
 
 // Middleware to attach user data from database
 export const attachUser = async (req, res, next) => {

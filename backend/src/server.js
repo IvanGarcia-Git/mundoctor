@@ -5,6 +5,7 @@ import compression from 'compression';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
+import { clerkMiddleware } from '@clerk/express';
 import { testConnection } from './config/database.js';
 
 // Import routes
@@ -59,6 +60,12 @@ if (process.env.NODE_ENV === 'development') {
 } else {
   app.use(morgan('combined'));
 }
+
+// Clerk middleware
+app.use(clerkMiddleware({
+  secretKey: process.env.CLERK_SECRET_KEY,
+  publishableKey: process.env.CLERK_PUBLISHABLE_KEY
+}));
 
 // Health check endpoint
 app.get('/health', (req, res) => {
