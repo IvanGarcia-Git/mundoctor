@@ -136,7 +136,7 @@ export default function ProfessionalDataPage() {
         }
       });
 
-      navigate('/profesionales/dashboard');
+      navigate('/profesional/verificacion-pendiente');
     } catch (error) {
       console.error('Error submitting professional data:', error);
       setErrors({ 

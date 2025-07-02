@@ -208,7 +208,16 @@
   - ✅ Flujo de registro completamente funcional
   - Archivos: `src/pages/SelectUserTypePage.jsx`, `src/pages/ProfessionalDataPage.jsx`, `src/AppRoutes.jsx`
 
-- [ ] **5.9** Implementar estados de usuario
+- [x] **5.9** Sistema de verificación de profesionales
+  - ✅ Página de verificación pendiente para profesionales no verificados
+  - ✅ Protección de rutas profesionales hasta verificación
+  - ✅ Estados de verificación: 'pending', 'approved', 'rejected'
+  - ✅ Redirección automática después de envío de documentos
+  - ✅ Control de administración para pruebas (simulador)
+  - ✅ Soporte para modo oscuro completo
+  - Archivos: `src/pages/ProfessionalVerificationPendingPage.jsx`, `src/components/admin/ProfessionalVerificationControl.jsx`
+
+- [ ] **5.10** Implementar estados de usuario en backend
   - Estado: 'incomplete' - Necesita completar registro
   - Estado: 'pending_validation' - Profesional pendiente aprobación
   - Estado: 'active' - Usuario completamente registrado
@@ -217,11 +226,15 @@
 
 ### ✅ **Estado de la Fase 5: COMPLETADA**
 **Frontend completamente funcional con:**
-- ✅ Flujo completo de registro: Registro → Verificación Email → Selección Tipo → Datos Profesionales → Dashboard
+- ✅ Flujo completo de registro: Registro → Verificación Email → Selección Tipo → Datos Profesionales → Verificación Pendiente → Dashboard
 - ✅ Selección de tipo de usuario (Paciente/Profesional) funcionando
 - ✅ Formulario de validación profesional con subida de archivos
+- ✅ Sistema de verificación de profesionales con estados (pending/approved/rejected)
+- ✅ Protección de rutas hasta verificación administrativa
+- ✅ Página de verificación pendiente con control de pruebas
 - ✅ Navegación y redirecciones correctas
 - ✅ Errores de Clerk API corregidos (metadata handling)
+- ✅ Soporte completo para modo oscuro
 - ✅ Servidor ejecutándose en `http://localhost:5174/`
 
 **Pendiente (Backend):**

@@ -33,6 +33,7 @@ import CompletarPerfilPage from '@/pages/CompletarPerfilPage';
 import VerifyEmailPage from '@/pages/VerifyEmailPage';
 import SelectUserTypePage from '@/pages/SelectUserTypePage';
 import ProfessionalDataPage from '@/pages/ProfessionalDataPage';
+import ProfessionalVerificationPendingPage from '@/pages/ProfessionalVerificationPendingPage';
 import { useUser } from '@clerk/clerk-react';
 import { SignedIn, SignedOut, RedirectToSignIn } from '@clerk/clerk-react';
 import AuthenticatedLayout from '@/components/layout/AuthenticatedLayout';
@@ -50,6 +51,16 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   
   if (allowedRoles && !allowedRoles.includes(userRole)) {
     return <Navigate to="/" state={{ from: location }} replace />; 
+  }
+
+  // Check if professional is verified for professional routes
+  if (userRole === 'professional' && allowedRoles?.includes('professional')) {
+    const verificationStatus = user?.unsafeMetadata?.professionalData?.verificationStatus;
+    
+    // If professional is not verified, redirect to verification pending page
+    if (verificationStatus !== 'approved') {
+      return <Navigate to="/profesional/verificacion-pendiente" replace />;
+    }
   }
 
   return (
@@ -99,6 +110,7 @@ const AppRoutes = () => {
       <Route path="/verify-email" element={<VerifyEmailPage />} />
       <Route path="/seleccionar-tipo-usuario" element={<SelectUserTypePage />} />
       <Route path="/registro/profesional-datos" element={<ProfessionalDataPage />} />
+      <Route path="/profesional/verificacion-pendiente" element={<ProfessionalVerificationPendingPage />} />
       
       <Route path="/contacto" element={<ContactPage />} />
       <Route path="/buscar" element={<SearchResultsPage />} />
