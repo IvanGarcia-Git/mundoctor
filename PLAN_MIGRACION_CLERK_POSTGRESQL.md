@@ -135,98 +135,167 @@
   - ✅ Archivo: `src/utils/migrateUserData.js`
 
 ### Tareas de Roles y Permisos
-- [ ] **4.4** Implementar gestión de roles
-  - Configurar roles en Clerk (`patient`, `professional`, `admin`)
-  - Implementar middleware de autorización
-  - Archivo: `backend/src/middleware/roleAuth.js`
+- [x] **4.4** Implementar gestión de roles
+  - ✅ Configurar roles en Clerk (`patient`, `professional`, `admin`)
+  - ✅ Implementar middleware de autorización
+  - ✅ Archivo: `backend/src/middleware/roleAuth.js`
 
-- [ ] **4.5** Migrar dashboards por rol
-  - Actualizar `ProfessionalDashboardPage.jsx` para usar API
-  - Actualizar rutas protegidas por rol
-  - Archivos: `src/pages/professional/`, `src/pages/admin/`, `src/pages/patient/`
-
----
-
-## FASE 5: OAuth Social y Configuración Avanzada
-**Objetivo:** Implementar OAuth providers y características avanzadas
-
-### Tareas OAuth
-- [ ] **5.1** Configurar OAuth providers
-  - Habilitar Google OAuth en Clerk Dashboard
-  - Habilitar Facebook OAuth en Clerk Dashboard
-  - Configurar scopes adicionales si necesario
-
-- [ ] **5.2** Personalizar flujo de OAuth
-  - Configurar redirecciones post-login por rol
-  - Implementar `afterSignInUrl` dinámico
-  - Archivo: `src/components/ClerkProviderWrapper.jsx`
-
-### Tareas de Personalización
-- [ ] **5.3** Personalizar UI de Clerk
-  - Crear tema personalizado para componentes Clerk
-  - Mantener diseño consistente con TailwindCSS
-  - Archivo: `src/styles/clerkTheme.js`
-
-- [ ] **5.4** Implementar preferencias avanzadas
-  - Sincronizar preferencias de tema con BD
-  - Implementar notificaciones personalizadas
-  - Archivo: `src/hooks/useUserPreferences.js`
+- [x] **4.5** Migrar dashboards por rol
+  - ⚠️ Actualizar `ProfessionalDashboardPage.jsx` para usar API (80% completo)
+  - ✅ Actualizar rutas protegidas por rol
+  - ✅ Archivos: `src/pages/professional/`, `src/pages/admin/`, `src/pages/patient/`
+  - 📝 **Nota:** Infraestructura API lista, falta migrar datos mock a API real
 
 ---
 
-## FASE 6: Testing y Limpieza
+## FASE 5: Registro Completo y Validación de Profesionales
+**Objetivo:** Implementar flujo completo de registro con selección de rol y validación de profesionales
+
+### Flujo de Registro Completo
+1. **Página Registro** → 2. **Verificación de Email** → 3. **Selección Paciente/Profesional** → 4. **Datos Adicionales (si Profesional)** → 5. **Redirección Home**
+
+### Tareas de Selección de Rol
+- [ ] **5.1** Crear página de selección de tipo de usuario
+  - Componente para elegir entre Paciente o Profesional
+  - Diseño atractivo con iconos y descripciones
+  - Archivo: `src/pages/UserTypeSelectionPage.jsx`
+
+- [ ] **5.2** Actualizar flujo de registro
+  - Modificar `afterSignUpUrl` para redirigir a selección de tipo
+  - Configurar ruta `/completar-registro` 
+  - Archivo: `src/pages/RegisterPage.jsx`
+
+### Tareas de Validación de Profesionales
+- [ ] **5.3** Crear formulario de datos profesionales
+  - Campo: Número de colegiado (texto, requerido)
+  - Campo: DNI (texto, requerido)
+  - Upload: Imagen del DNI (archivo, requerido)
+  - Upload: Imagen de Titulación Universitaria (archivo, requerido)
+  - Upload: Imagen del Certificado de Colegiación (archivo, requerido)
+  - Archivo: `src/pages/ProfessionalValidationPage.jsx`
+
+- [ ] **5.4** Implementar subida de archivos
+  - Configurar storage para documentos (Cloudinary/AWS S3)
+  - Validación de tipos de archivo (imagen: jpg, png, pdf)
+  - Preview de archivos antes de envío
+  - Archivo: `src/components/FileUpload.jsx`
+
+### Tareas de Backend
+- [ ] **5.5** Crear endpoints para validación
+  - `POST /api/users/select-role` - Asignar rol de usuario
+  - `POST /api/users/professional-validation` - Enviar documentos
+  - `GET /api/users/validation-status` - Estado de validación
+  - Archivo: `backend/src/routes/userValidation.js`
+
+- [ ] **5.6** Extender base de datos
+  - Tabla `professional_validations` para documentos
+  - Campos: user_id, college_number, dni, document_urls, status
+  - Estados: 'pending', 'approved', 'rejected'
+  - Archivo: `backend/migrations/005_professional_validations.sql`
+
+### Tareas de Integración
+- [ ] **5.7** Configurar rutas y navegación
+  - Ruta `/completar-registro` - Selección de tipo
+  - Ruta `/validacion-profesional` - Formulario documentos
+  - Proteger rutas según estado de registro
+  - Archivo: `src/AppRoutes.jsx`
+
+- [ ] **5.8** Implementar estados de usuario
+  - Estado: 'incomplete' - Necesita completar registro
+  - Estado: 'pending_validation' - Profesional pendiente aprobación
+  - Estado: 'active' - Usuario completamente registrado
+  - Middleware para verificar estados
+  - Archivo: `backend/src/middleware/userStatus.js`
+
+---
+
+## FASE 6: Finalización de Dashboards y Optimización
+**Objetivo:** Completar migración de dashboards y optimizar funcionalidades
+
+### Tareas de Finalización
+- [ ] **6.1** Completar migración de dashboards a API
+  - Migrar `ProfessionalDashboardPage.jsx` de datos mock a API real
+  - Migrar `AdminDashboardPage.jsx` de datos simulados a API real
+  - Migrar `PatientDashboardPage.jsx` de datos estáticos a API real
+  - Archivos: `src/pages/*/Dashboard*.jsx`
+
+- [x] **6.2** OAuth Social ya implementado
+  - ✅ Google OAuth funcional en login/registro
+  - ✅ Redirecciones post-login por rol implementadas
+  - ✅ UI de Clerk personalizada con TailwindCSS
+  - ✅ Footer transparente y diseño consistente
+
+### Tareas de Optimización
+- [ ] **6.3** Mejorar gestión de errores
+  - Implementar boundary de errores en componentes Clerk
+  - Mejorar manejo de errores en API calls
+  - Archivo: `src/components/ErrorBoundary.jsx`
+
+- [ ] **6.4** Optimizar carga y rendimiento
+  - Implementar lazy loading en dashboards
+  - Optimizar queries de base de datos
+  - Cachear datos frecuentemente accedidos
+
+---
+
+## FASE 7: Testing y Limpieza
 **Objetivo:** Probar sistema completo y limpiar código legacy
 
 ### Tareas de Testing
-- [ ] **6.1** Testing de autenticación
+- [ ] **7.1** Testing de autenticación
   - Probar login/logout con Clerk
   - Probar OAuth con Google/Facebook
   - Probar navegación entre roles
 
-- [ ] **6.2** Testing de sincronización
+- [ ] **7.2** Testing de sincronización
   - Probar webhooks Clerk → PostgreSQL
   - Probar actualización de perfiles
   - Probar gestión de roles
 
-- [ ] **6.3** Testing de migración
+- [ ] **7.3** Testing de registro completo
+  - Probar flujo completo paciente
+  - Probar flujo completo profesional con validación
+  - Probar upload de documentos
+
+- [ ] **7.4** Testing de migración
   - Probar flujo de migración desde localStorage
   - Verificar integridad de datos
   - Probar fallback scenarios
 
 ### Tareas de Limpieza
-- [ ] **6.4** Eliminar código legacy
+- [ ] **7.5** Eliminar código legacy
   - Eliminar `AuthContext.jsx` original
   - Eliminar funciones de localStorage
   - Limpiar imports y dependencias obsoletas
 
-- [ ] **6.5** Actualizar documentación
+- [ ] **7.6** Actualizar documentación
   - Actualizar `README.md` con nueva arquitectura
   - Documentar variables de entorno necesarias
   - Actualizar `CLAUDE.md` con nueva estructura
 
 ---
 
-## FASE 7: Deploy y Monitoreo
+## FASE 8: Deploy y Monitoreo
 **Objetivo:** Desplegar sistema y configurar monitoreo
 
 ### Tareas de Deploy
-- [ ] **7.1** Configurar variables de entorno producción
+- [ ] **8.1** Configurar variables de entorno producción
   - Configurar Clerk keys para producción
   - Configurar PostgreSQL conexión
   - Configurar webhooks URLs
 
-- [ ] **7.2** Deploy y verificación
+- [ ] **8.2** Deploy y verificación
   - Desplegar backend con nuevas rutas
   - Desplegar frontend con Clerk
   - Verificar funcionamiento end-to-end
 
 ### Tareas de Monitoreo
-- [ ] **7.3** Implementar logging
+- [ ] **8.3** Implementar logging
   - Configurar logs de autenticación
   - Configurar logs de webhooks
   - Configurar alertas de errores
 
-- [ ] **7.4** Métricas y monitoreo
+- [ ] **8.4** Métricas y monitoreo
   - Configurar métricas de uso
   - Configurar monitoreo de performance
   - Configurar backup de PostgreSQL
