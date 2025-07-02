@@ -34,9 +34,11 @@ import VerifyEmailPage from '@/pages/VerifyEmailPage';
 import SelectUserTypePage from '@/pages/SelectUserTypePage';
 import ProfessionalDataPage from '@/pages/ProfessionalDataPage';
 import ProfessionalVerificationPendingPage from '@/pages/ProfessionalVerificationPendingPage';
+import DevControlsPage from '@/pages/DevControlsPage';
 import { useUser } from '@clerk/clerk-react';
 import { SignedIn, SignedOut, RedirectToSignIn } from '@clerk/clerk-react';
 import AuthenticatedLayout from '@/components/layout/AuthenticatedLayout';
+import AdminProtectedRoute from '@/components/auth/AdminProtectedRoute';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, isLoaded } = useUser();
@@ -111,6 +113,7 @@ const AppRoutes = () => {
       <Route path="/seleccionar-tipo-usuario" element={<SelectUserTypePage />} />
       <Route path="/registro/profesional-datos" element={<ProfessionalDataPage />} />
       <Route path="/profesional/verificacion-pendiente" element={<ProfessionalVerificationPendingPage />} />
+      <Route path="/dev-controls" element={<DevControlsPage />} />
       
       <Route path="/contacto" element={<ContactPage />} />
       <Route path="/buscar" element={<SearchResultsPage />} />
@@ -180,34 +183,34 @@ const AppRoutes = () => {
 
 
       {/* Admin Area Routes */}
-      <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']}><Navigate to="/admin/dashboard" replace /></ProtectedRoute>} />
+      <Route path="/admin" element={<AdminProtectedRoute><Navigate to="/admin/dashboard" replace /></AdminProtectedRoute>} />
       <Route 
         path="/admin/dashboard" 
-        element={<ProtectedRoute allowedRoles={['admin']}><AdminDashboardPage /></ProtectedRoute>} 
+        element={<AdminProtectedRoute><AdminDashboardPage /></AdminProtectedRoute>} 
       />
       <Route 
         path="/admin/usuarios" 
-        element={<ProtectedRoute allowedRoles={['admin']}><AdminUserManagementPage /></ProtectedRoute>} 
+        element={<AdminProtectedRoute><AdminUserManagementPage /></AdminProtectedRoute>} 
       />
       <Route 
         path="/admin/suscripciones" 
-        element={<ProtectedRoute allowedRoles={['admin']}><AdminSubscriptionManagementPage /></ProtectedRoute>} 
+        element={<AdminProtectedRoute><AdminSubscriptionManagementPage /></AdminProtectedRoute>} 
       />
       <Route 
         path="/admin/validaciones" 
-        element={<ProtectedRoute allowedRoles={['admin']}><AdminValidationPage /></ProtectedRoute>} 
+        element={<AdminProtectedRoute><AdminValidationPage /></AdminProtectedRoute>} 
       />
       <Route 
         path="/admin/tickets" 
-        element={<ProtectedRoute allowedRoles={['admin']}><SupportTicketsPage /></ProtectedRoute>} 
+        element={<AdminProtectedRoute><SupportTicketsPage /></AdminProtectedRoute>} 
       />
       <Route 
         path="/admin/descuentos" 
-        element={<ProtectedRoute allowedRoles={['admin']}><AdminDiscountCodesPage /></ProtectedRoute>} 
+        element={<AdminProtectedRoute><AdminDiscountCodesPage /></AdminProtectedRoute>} 
       />
       <Route 
         path="/admin/configuracion" 
-        element={<ProtectedRoute allowedRoles={['admin']}><ComingSoonPage title="Configuración General del Sitio" /></ProtectedRoute>} 
+        element={<AdminProtectedRoute><ComingSoonPage title="Configuración General del Sitio" /></AdminProtectedRoute>} 
       />
 
 

@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Upload, FileText, Image, Check, AlertCircle, ArrowRight } from 'lucide-react';
+import { registerProfessional } from '@/hooks/useProfessionalValidations';
 
 export default function ProfessionalDataPage() {
   const [formData, setFormData] = useState({
@@ -114,7 +115,10 @@ export default function ProfessionalDataPage() {
       // In a real implementation, you would upload files to storage (Supabase, S3, etc.)
       // and save the URLs along with the professional data
       
-      // For now, we'll just update the user metadata with the form data
+      // Register professional in the validation system
+      registerProfessional(user, formData);
+      
+      // Update user metadata with the form data
       await user.update({
         unsafeMetadata: {
           ...user.unsafeMetadata,
