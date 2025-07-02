@@ -38,13 +38,13 @@ export default function SelectUserTypePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white dark:from-slate-900 dark:to-slate-800 flex items-center justify-center p-4">
       <div className="w-full max-w-4xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
             ¿Qué tipo de cuenta necesitas?
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-300">
             Selecciona el tipo de cuenta que mejor se adapte a tus necesidades
           </p>
         </div>
@@ -53,14 +53,14 @@ export default function SelectUserTypePage() {
           <Card 
             className={`cursor-pointer transition-all duration-200 hover:shadow-lg ${
               selectedType === 'patient' 
-                ? 'ring-2 ring-blue-500 bg-blue-50' 
-                : 'hover:bg-gray-50'
+                ? 'ring-2 ring-blue-500 bg-blue-50 dark:bg-blue-900/20' 
+                : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
             }`}
             onClick={() => setSelectedType('patient')}
           >
             <CardHeader className="text-center pb-4">
-              <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                <User className="w-8 h-8 text-blue-600" />
+              <div className="mx-auto w-16 h-16 bg-blue-100 dark:bg-blue-800/50 rounded-full flex items-center justify-center mb-4">
+                <User className="w-8 h-8 text-blue-600 dark:text-blue-400" />
               </div>
               <CardTitle className="text-xl">Paciente</CardTitle>
               <CardDescription className="text-sm">
@@ -68,7 +68,7 @@ export default function SelectUserTypePage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="pt-0">
-              <ul className="space-y-2 text-sm text-gray-600">
+              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
                 <li className="flex items-center">
                   <UserCheck className="w-4 h-4 mr-2 text-green-500" />
                   Buscar profesionales de la salud
@@ -92,14 +92,14 @@ export default function SelectUserTypePage() {
           <Card 
             className={`cursor-pointer transition-all duration-200 hover:shadow-lg ${
               selectedType === 'professional' 
-                ? 'ring-2 ring-green-500 bg-green-50' 
-                : 'hover:bg-gray-50'
+                ? 'ring-2 ring-green-500 bg-green-50 dark:bg-green-900/20' 
+                : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
             }`}
             onClick={() => setSelectedType('professional')}
           >
             <CardHeader className="text-center pb-4">
-              <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-                <Stethoscope className="w-8 h-8 text-green-600" />
+              <div className="mx-auto w-16 h-16 bg-green-100 dark:bg-green-800/50 rounded-full flex items-center justify-center mb-4">
+                <Stethoscope className="w-8 h-8 text-green-600 dark:text-green-400" />
               </div>
               <CardTitle className="text-xl">Profesional de la Salud</CardTitle>
               <CardDescription className="text-sm">
@@ -107,7 +107,7 @@ export default function SelectUserTypePage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="pt-0">
-              <ul className="space-y-2 text-sm text-gray-600">
+              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
                 <li className="flex items-center">
                   <UserCheck className="w-4 h-4 mr-2 text-green-500" />
                   Gestionar agenda y citas
@@ -125,8 +125,8 @@ export default function SelectUserTypePage() {
                   Análisis y reportes
                 </li>
               </ul>
-              <div className="mt-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                <p className="text-xs text-yellow-700">
+              <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-700/50">
+                <p className="text-xs text-yellow-700 dark:text-yellow-300">
                   <strong>Nota:</strong> Se requiere verificación profesional
                 </p>
               </div>

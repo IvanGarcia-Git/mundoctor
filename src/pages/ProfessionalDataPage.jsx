@@ -166,10 +166,10 @@ export default function ProfessionalDataPage() {
             flex items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer
             transition-colors duration-200
             ${formData[name] 
-              ? 'border-green-300 bg-green-50' 
+              ? 'border-green-300 bg-green-50 dark:border-green-600 dark:bg-green-900/20' 
               : errors[name] 
-                ? 'border-red-300 bg-red-50' 
-                : 'border-gray-300 bg-gray-50 hover:bg-gray-100'
+                ? 'border-red-300 bg-red-50 dark:border-red-600 dark:bg-red-900/20' 
+                : 'border-gray-300 bg-gray-50 hover:bg-gray-100 dark:border-gray-600 dark:bg-slate-700/50 dark:hover:bg-slate-600/50'
             }
           `}
         >
@@ -177,20 +177,20 @@ export default function ProfessionalDataPage() {
             {formData[name] ? (
               <>
                 <Check className="w-8 h-8 text-green-500 mx-auto mb-2" />
-                <p className="text-sm text-green-700 font-medium">
+                <p className="text-sm text-green-700 dark:text-green-300 font-medium">
                   {formData[name].name}
                 </p>
-                <p className="text-xs text-green-600">
+                <p className="text-xs text-green-600 dark:text-green-400">
                   Archivo cargado correctamente
                 </p>
               </>
             ) : (
               <>
-                <Icon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                <p className="text-sm text-gray-600 font-medium">
+                <Icon className="w-8 h-8 text-gray-400 dark:text-gray-300 mx-auto mb-2" />
+                <p className="text-sm text-gray-600 dark:text-gray-300 font-medium">
                   Hacer clic para subir archivo
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   {description}
                 </p>
               </>
@@ -199,7 +199,7 @@ export default function ProfessionalDataPage() {
         </label>
       </div>
       {errors[name] && (
-        <p className="text-sm text-red-600 flex items-center">
+        <p className="text-sm text-red-600 dark:text-red-400 flex items-center">
           <AlertCircle className="w-4 h-4 mr-1" />
           {errors[name]}
         </p>
@@ -208,7 +208,7 @@ export default function ProfessionalDataPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-white flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-white dark:from-slate-900 dark:to-slate-800 flex items-center justify-center p-4">
       <Card className="w-full max-w-2xl mx-auto">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Datos Profesionales</CardTitle>
@@ -232,7 +232,7 @@ export default function ProfessionalDataPage() {
                   className={errors.collegiateNumber ? 'border-red-300' : ''}
                 />
                 {errors.collegiateNumber && (
-                  <p className="text-sm text-red-600">{errors.collegiateNumber}</p>
+                  <p className="text-sm text-red-600 dark:text-red-400">{errors.collegiateNumber}</p>
                 )}
               </div>
 
@@ -247,14 +247,14 @@ export default function ProfessionalDataPage() {
                   className={errors.dni ? 'border-red-300' : ''}
                 />
                 {errors.dni && (
-                  <p className="text-sm text-red-600">{errors.dni}</p>
+                  <p className="text-sm text-red-600 dark:text-red-400">{errors.dni}</p>
                 )}
               </div>
             </div>
 
             {/* Document Uploads */}
             <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                 Documentos Requeridos
               </h3>
 
