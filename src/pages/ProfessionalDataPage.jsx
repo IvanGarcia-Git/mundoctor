@@ -130,8 +130,8 @@ export default function ProfessionalDataPage() {
 
       // Set role to professional
       await user.update({
-        publicMetadata: {
-          ...user.publicMetadata,
+        unsafeMetadata: {
+          ...user.unsafeMetadata,
           role: 'professional'
         }
       });

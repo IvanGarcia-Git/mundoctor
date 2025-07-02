@@ -37,8 +37,8 @@ const VerifyEmailPage = () => {
         
         try {
           await handleEmailLinkVerification({
-            redirectUrl: '/dashboard',
-            redirectUrlComplete: '/'
+            redirectUrl: '/seleccionar-tipo-usuario',
+            redirectUrlComplete: '/seleccionar-tipo-usuario'
           });
           
           setSuccess(true);
@@ -46,7 +46,7 @@ const VerifyEmailPage = () => {
           
           // Redirect after successful verification
           setTimeout(() => {
-            navigate('/');
+            navigate('/seleccionar-tipo-usuario');
           }, 2000);
         } catch (err) {
           console.error('Email link verification error:', err);
@@ -82,16 +82,9 @@ const VerifyEmailPage = () => {
         await setActive({ session: signUpAttempt.createdSessionId });
         setSuccess(true);
         
-        // Redirect based on user role
-        const userRole = signUpAttempt.createdUserId ? 'patient' : 'patient'; // Default to patient
+        // Redirect to user type selection after successful verification
         setTimeout(() => {
-          if (userRole === 'professional') {
-            navigate('/profesionales/dashboard');
-          } else if (userRole === 'admin') {
-            navigate('/admin/dashboard');
-          } else {
-            navigate('/');
-          }
+          navigate('/seleccionar-tipo-usuario');
         }, 2000);
       } else {
         setError('Verificación incompleta. Por favor intenta nuevamente.');

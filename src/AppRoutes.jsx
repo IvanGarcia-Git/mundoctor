@@ -31,6 +31,8 @@ import PatientReviewsPage from '@/pages/patient/PatientReviewsPage';
 import ComingSoonPage from '@/pages/ComingSoonPage.jsx';
 import CompletarPerfilPage from '@/pages/CompletarPerfilPage';
 import VerifyEmailPage from '@/pages/VerifyEmailPage';
+import SelectUserTypePage from '@/pages/SelectUserTypePage';
+import ProfessionalDataPage from '@/pages/ProfessionalDataPage';
 import { useUser } from '@clerk/clerk-react';
 import { SignedIn, SignedOut, RedirectToSignIn } from '@clerk/clerk-react';
 import AuthenticatedLayout from '@/components/layout/AuthenticatedLayout';
@@ -44,7 +46,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   }
 
   // Get user role from metadata
-  const userRole = user?.publicMetadata?.role || 'patient';
+  const userRole = user?.unsafeMetadata?.role || 'patient';
   
   if (allowedRoles && !allowedRoles.includes(userRole)) {
     return <Navigate to="/" state={{ from: location }} replace />; 
@@ -78,8 +80,8 @@ const AppRoutes = () => {
       <Route path="/login" element={
         user ? (
           <Navigate to={
-            user.publicMetadata?.role === 'professional' ? "/profesionales/dashboard" : 
-            (user.publicMetadata?.role === 'admin' ? "/admin/dashboard" : "/")
+            user.unsafeMetadata?.role === 'professional' ? "/profesionales/dashboard" : 
+            (user.unsafeMetadata?.role === 'admin' ? "/admin/dashboard" : "/")
           } replace />
         ) : <LoginPage />
       } />
@@ -87,14 +89,16 @@ const AppRoutes = () => {
       <Route path="/registro" element={
         user ? (
           <Navigate to={
-            user.publicMetadata?.role === 'professional' ? "/profesionales/dashboard" : 
-            (user.publicMetadata?.role === 'admin' ? "/admin/dashboard" : "/")
+            user.unsafeMetadata?.role === 'professional' ? "/profesionales/dashboard" : 
+            (user.unsafeMetadata?.role === 'admin' ? "/admin/dashboard" : "/")
           } replace />
         ) : <RegisterPage />
       } />
       <Route path="/registro/*" element={<RegisterPage />} />
       <Route path="/registro/verify-email-address" element={<VerifyEmailPage />} />
       <Route path="/verify-email" element={<VerifyEmailPage />} />
+      <Route path="/seleccionar-tipo-usuario" element={<SelectUserTypePage />} />
+      <Route path="/registro/profesional-datos" element={<ProfessionalDataPage />} />
       
       <Route path="/contacto" element={<ContactPage />} />
       <Route path="/buscar" element={<SearchResultsPage />} />

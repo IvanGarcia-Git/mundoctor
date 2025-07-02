@@ -63,7 +63,7 @@ const RegisterPage = () => {
           path="/registro"
           signInUrl="/login"
           redirectUrl="/"
-          afterSignUpUrl="/completar-perfil"
+          afterSignUpUrl="/seleccionar-tipo-usuario"
           verifyEmailAddressUrl="/registro/verify-email-address"
           unsafeMetadata={{
             role: 'patient' // Rol por defecto para nuevos usuarios

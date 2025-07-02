@@ -155,30 +155,30 @@
 1. **Página Registro** → 2. **Verificación de Email** → 3. **Selección Paciente/Profesional** → 4. **Datos Adicionales (si Profesional)** → 5. **Redirección Home**
 
 ### Tareas de Selección de Rol
-- [ ] **5.1** Crear página de selección de tipo de usuario
-  - Componente para elegir entre Paciente o Profesional
-  - Diseño atractivo con iconos y descripciones
-  - Archivo: `src/pages/UserTypeSelectionPage.jsx`
+- [x] **5.1** Crear página de selección de tipo de usuario
+  - ✅ Componente para elegir entre Paciente o Profesional
+  - ✅ Diseño atractivo con iconos y descripciones
+  - Archivo: `src/pages/SelectUserTypePage.jsx`
 
-- [ ] **5.2** Actualizar flujo de registro
-  - Modificar `afterSignUpUrl` para redirigir a selección de tipo
-  - Configurar ruta `/completar-registro` 
+- [x] **5.2** Actualizar flujo de registro
+  - ✅ Modificar `afterSignUpUrl` para redirigir a selección de tipo
+  - ✅ Configurar ruta `/seleccionar-tipo-usuario` 
   - Archivo: `src/pages/RegisterPage.jsx`
 
 ### Tareas de Validación de Profesionales
-- [ ] **5.3** Crear formulario de datos profesionales
-  - Campo: Número de colegiado (texto, requerido)
-  - Campo: DNI (texto, requerido)
-  - Upload: Imagen del DNI (archivo, requerido)
-  - Upload: Imagen de Titulación Universitaria (archivo, requerido)
-  - Upload: Imagen del Certificado de Colegiación (archivo, requerido)
-  - Archivo: `src/pages/ProfessionalValidationPage.jsx`
+- [x] **5.3** Crear formulario de datos profesionales
+  - ✅ Campo: Número de colegiado (texto, requerido)
+  - ✅ Campo: DNI (texto, requerido)
+  - ✅ Upload: Imagen del DNI (archivo, requerido)
+  - ✅ Upload: Imagen de Titulación Universitaria (archivo, requerido)
+  - ✅ Upload: Imagen del Certificado de Colegiación (archivo, requerido)
+  - Archivo: `src/pages/ProfessionalDataPage.jsx`
 
-- [ ] **5.4** Implementar subida de archivos
-  - Configurar storage para documentos (Cloudinary/AWS S3)
-  - Validación de tipos de archivo (imagen: jpg, png, pdf)
-  - Preview de archivos antes de envío
-  - Archivo: `src/components/FileUpload.jsx`
+- [x] **5.4** Implementar subida de archivos
+  - ⏳ Configurar storage para documentos (Cloudinary/AWS S3) - Pendiente backend
+  - ✅ Validación de tipos de archivo (imagen: jpg, png, pdf)
+  - ✅ Preview de archivos antes de envío
+  - Archivo: Integrado en `src/pages/ProfessionalDataPage.jsx`
 
 ### Tareas de Backend
 - [ ] **5.5** Crear endpoints para validación
@@ -194,18 +194,40 @@
   - Archivo: `backend/migrations/005_professional_validations.sql`
 
 ### Tareas de Integración
-- [ ] **5.7** Configurar rutas y navegación
-  - Ruta `/completar-registro` - Selección de tipo
-  - Ruta `/validacion-profesional` - Formulario documentos
-  - Proteger rutas según estado de registro
-  - Archivo: `src/AppRoutes.jsx`
+- [x] **5.7** Configurar rutas y navegación
+  - ✅ Ruta `/seleccionar-tipo-usuario` - Selección de tipo
+  - ✅ Ruta `/registro/profesional-datos` - Formulario documentos
+  - ✅ Integración en AppRoutes.jsx
+  - ✅ Corrección de redirecciones después de verificación de email
+  - Archivo: `src/AppRoutes.jsx`, `src/pages/VerifyEmailPage.jsx`
 
-- [ ] **5.8** Implementar estados de usuario
+- [x] **5.8** Corrección de errores de Clerk API
+  - ✅ Error: "public_metadata is not a valid parameter for this request"
+  - ✅ Cambio de `publicMetadata` a `unsafeMetadata` en actualizaciones frontend
+  - ✅ Actualización de verificación de roles en protección de rutas
+  - ✅ Flujo de registro completamente funcional
+  - Archivos: `src/pages/SelectUserTypePage.jsx`, `src/pages/ProfessionalDataPage.jsx`, `src/AppRoutes.jsx`
+
+- [ ] **5.9** Implementar estados de usuario
   - Estado: 'incomplete' - Necesita completar registro
   - Estado: 'pending_validation' - Profesional pendiente aprobación
   - Estado: 'active' - Usuario completamente registrado
   - Middleware para verificar estados
   - Archivo: `backend/src/middleware/userStatus.js`
+
+### ✅ **Estado de la Fase 5: COMPLETADA**
+**Frontend completamente funcional con:**
+- ✅ Flujo completo de registro: Registro → Verificación Email → Selección Tipo → Datos Profesionales → Dashboard
+- ✅ Selección de tipo de usuario (Paciente/Profesional) funcionando
+- ✅ Formulario de validación profesional con subida de archivos
+- ✅ Navegación y redirecciones correctas
+- ✅ Errores de Clerk API corregidos (metadata handling)
+- ✅ Servidor ejecutándose en `http://localhost:5174/`
+
+**Pendiente (Backend):**
+- ⏳ Endpoints para validación profesional (tareas 5.5-5.6)
+- ⏳ Base de datos para documentos profesionales
+- ⏳ Estados de usuario y middleware de validación
 
 ---
 

@@ -19,13 +19,15 @@ export default function SelectUserTypePage() {
       await user.update({
         unsafeMetadata: {
           ...user.unsafeMetadata,
-          userType: selectedType
+          role: selectedType
         }
       });
 
       if (selectedType === 'patient') {
+        // For patients, redirect to home page (they're already logged in)
         navigate('/');
       } else if (selectedType === 'professional') {
+        // For professionals, redirect to professional data form
         navigate('/registro/profesional-datos');
       }
     } catch (error) {
