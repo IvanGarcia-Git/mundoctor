@@ -41,10 +41,13 @@ app.use('/api', limiter);
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
     ? process.env.FRONTEND_URL 
-    : ['http://localhost:5173', 'http://localhost:3000'],
+    : ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'x-clerk-auth-token'],
+  exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar'],
+  preflightContinue: false,
+  optionsSuccessStatus: 200
 }));
 
 // Body parsing middleware
@@ -61,14 +64,9 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('combined'));
 }
 
-// Clerk middleware
-app.use(clerkMiddleware({
-  secretKey: process.env.CLERK_SECRET_KEY,
-  publishableKey: process.env.CLERK_PUBLISHABLE_KEY
-}));
-
-// Health check endpoint
+// Health check endpoint (before Clerk middleware to avoid auth requirements)
 app.get('/health', (req, res) => {
+  console.log('Health check requested');
   res.json({
     status: 'OK',
     timestamp: new Date().toISOString(),
@@ -76,6 +74,18 @@ app.get('/health', (req, res) => {
     version: process.env.npm_package_version || '1.0.0'
   });
 });
+
+// Simple test endpoint
+app.get('/test', (req, res) => {
+  console.log('Test endpoint requested');
+  res.json({ message: 'Test endpoint working' });
+});
+
+// Clerk middleware (after health check)
+app.use(clerkMiddleware({
+  secretKey: process.env.CLERK_SECRET_KEY,
+  publishableKey: process.env.CLERK_PUBLISHABLE_KEY
+}));
 
 // API routes
 app.get('/api', (req, res) => {
@@ -157,7 +167,7 @@ const startServer = async () => {
       process.exit(1);
     }
 
-    app.listen(PORT, () => {
+    app.listen(PORT, '0.0.0.0', () => {
       console.log(`
 🚀 Mundoctor API Server running on port ${PORT}
 📊 Environment: ${process.env.NODE_ENV || 'development'}

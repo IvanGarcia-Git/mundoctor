@@ -1,7 +1,7 @@
 // No imports needed - we'll access Clerk instance from window
 
 // Base API configuration
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
 /**
  * Clerk API Client - Handles authenticated requests to our backend

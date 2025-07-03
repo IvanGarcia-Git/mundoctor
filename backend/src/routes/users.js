@@ -1,6 +1,7 @@
 import express from 'express';
 import { requireAuth } from '../middleware/auth.js';
 import { withTransaction } from '../config/database.js';
+import { syncUserFromClerk } from '../controllers/userController.js';
 
 const router = express.Router();
 
@@ -15,21 +16,26 @@ router.get('/profile', async (req, res) => {
   try {
     const { userId } = req.auth;
     
-    const result = await withTransaction(async (client) => {
+    // First check if user exists, if not sync from Clerk
+    let user = await withTransaction(async (client) => {
       const userQuery = `
         SELECT 
           id, clerk_id, email, name, phone, avatar_url, role, 
-          email_verified, phone_verified, created_at, updated_at
+          verified, created_at, updated_at
         FROM users 
         WHERE clerk_id = $1
       `;
       const userResult = await client.query(userQuery, [userId]);
-      
-      if (userResult.rows.length === 0) {
-        throw new Error('User not found');
-      }
-      
-      const user = userResult.rows[0];
+      return userResult.rows[0] || null;
+    });
+    
+    if (!user) {
+      // User doesn't exist in database, sync from Clerk
+      console.log(`User ${userId} not found in database, syncing from Clerk...`);
+      user = await syncUserFromClerk(userId);
+    }
+    
+    const result = await withTransaction(async (client) => {
       
       // Get role-specific data based on user role
       let roleData = {};

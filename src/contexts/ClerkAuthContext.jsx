@@ -19,7 +19,7 @@ export const ClerkAuthProvider = ({ children }) => {
       // Try to fetch user from backend API first
       const token = await window.Clerk?.session?.getToken();
       if (token) {
-        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/users/profile`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000/api'}/users/profile`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
@@ -34,12 +34,6 @@ export const ClerkAuthProvider = ({ children }) => {
         }
       }
       
-      if (userData && userData.data) {
-        setBackendUser(userData.data);
-        setUser(userData.data);
-        return userData.data;
-      }
-      
       // If no backend data, check for migration
       if (isMigrationNeeded()) {
         console.log('Migration needed, performing automatic migration...');
@@ -48,7 +42,7 @@ export const ClerkAuthProvider = ({ children }) => {
           console.log('Migration completed, fetching updated user data...');
           const token = await window.Clerk?.session?.getToken();
           if (token) {
-            const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/users/profile`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000/api'}/users/profile`, {
               headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -170,7 +164,7 @@ export const ClerkAuthProvider = ({ children }) => {
       let updatedBackendUser = null;
       
       if (token) {
-        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/users/profile`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000/api'}/users/profile`, {
           method: 'PUT',
           headers: {
             'Authorization': `Bearer ${token}`,
