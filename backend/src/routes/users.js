@@ -2,6 +2,14 @@ import express from 'express';
 import { requireAuth } from '../middleware/auth.js';
 import { withTransaction } from '../config/database.js';
 import { syncUserFromClerk } from '../controllers/userController.js';
+import { 
+  getUserStatusInfo, 
+  attachUserStatus, 
+  requireActiveStatus,
+  requireCompletedRegistration,
+  updateUserStatus,
+  refreshUserStatus
+} from '../middleware/userStatus.js';
 
 const router = express.Router();
 
@@ -20,10 +28,10 @@ router.get('/profile', async (req, res) => {
     let user = await withTransaction(async (client) => {
       const userQuery = `
         SELECT 
-          id, clerk_id, email, name, phone, avatar_url, role, 
+          id, email, name, phone, avatar_url, role, 
           verified, created_at, updated_at
         FROM users 
-        WHERE clerk_id = $1
+        WHERE id = $1
       `;
       const userResult = await client.query(userQuery, [userId]);
       return userResult.rows[0] || null;
@@ -44,7 +52,7 @@ router.get('/profile', async (req, res) => {
         const profQuery = `
           SELECT 
             p.*, ps.name as subscription_name, ps.price, ps.features
-          FROM professional_profiles p
+          FROM professionals p
           LEFT JOIN professional_subscriptions ps ON p.subscription_plan_id = ps.id
           WHERE p.user_id = $1
         `;
@@ -56,7 +64,7 @@ router.get('/profile', async (req, res) => {
       
       if (user.role === 'patient') {
         const patientQuery = `
-          SELECT * FROM patient_profiles WHERE user_id = $1
+          SELECT * FROM patients WHERE user_id = $1
         `;
         const patientResult = await client.query(patientQuery, [user.id]);
         if (patientResult.rows.length > 0) {
@@ -100,7 +108,7 @@ router.put('/profile', async (req, res) => {
             phone = COALESCE($2, phone),
             avatar_url = COALESCE($3, avatar_url),
             updated_at = CURRENT_TIMESTAMP
-        WHERE clerk_id = $4
+        WHERE id = $4
         RETURNING *
       `;
       const userResult = await client.query(updateUserQuery, [name, phone, avatar_url, userId]);
@@ -115,7 +123,7 @@ router.put('/profile', async (req, res) => {
       if (user.role === 'professional' && otherData.professional) {
         const profData = otherData.professional;
         const updateProfQuery = `
-          UPDATE professional_profiles 
+          UPDATE professionals 
           SET 
             specialty = COALESCE($1, specialty),
             bio = COALESCE($2, bio),
@@ -143,7 +151,7 @@ router.put('/profile', async (req, res) => {
       if (user.role === 'patient' && otherData.patient) {
         const patientData = otherData.patient;
         const updatePatientQuery = `
-          UPDATE patient_profiles 
+          UPDATE patients 
           SET 
             date_of_birth = COALESCE($1, date_of_birth),
             gender = COALESCE($2, gender),
@@ -195,7 +203,7 @@ router.get('/preferences', async (req, res) => {
       const query = `
         SELECT preferences 
         FROM users 
-        WHERE clerk_id = $1
+        WHERE id = $1
       `;
       const queryResult = await client.query(query, [userId]);
       
@@ -232,7 +240,7 @@ router.put('/preferences', async (req, res) => {
       const query = `
         UPDATE users 
         SET preferences = $1, updated_at = CURRENT_TIMESTAMP
-        WHERE clerk_id = $2
+        WHERE id = $2
         RETURNING preferences
       `;
       const queryResult = await client.query(query, [JSON.stringify(preferences), userId]);
@@ -268,7 +276,7 @@ router.get('/dashboard-stats', async (req, res) => {
     
     const result = await withTransaction(async (client) => {
       // Get user role first
-      const userQuery = `SELECT id, role FROM users WHERE clerk_id = $1`;
+      const userQuery = `SELECT id, role FROM users WHERE id = $1`;
       const userResult = await client.query(userQuery, [userId]);
       
       if (userResult.rows.length === 0) {
@@ -351,6 +359,68 @@ router.get('/dashboard-stats', async (req, res) => {
     res.status(500).json({
       success: false,
       message: error.message || 'Error fetching dashboard stats'
+    });
+  }
+});
+
+/**
+ * GET /api/users/status
+ * Get current user's status information
+ */
+router.get('/status', getUserStatusInfo);
+
+/**
+ * PUT /api/users/status
+ * Update current user's status (admin only for now)
+ */
+router.put('/status', async (req, res) => {
+  try {
+    const { userId } = req.auth;
+    const { status } = req.body;
+    
+    if (!status) {
+      return res.status(400).json({
+        success: false,
+        message: 'Status is required'
+      });
+    }
+
+    const result = await updateUserStatus(userId, status);
+    
+    res.json({
+      success: true,
+      data: result,
+      message: 'User status updated successfully'
+    });
+  } catch (error) {
+    console.error('Error updating user status:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Error updating user status'
+    });
+  }
+});
+
+/**
+ * POST /api/users/refresh-status
+ * Refresh user status based on current profile completion
+ */
+router.post('/refresh-status', async (req, res) => {
+  try {
+    const { userId } = req.auth;
+    
+    const result = await refreshUserStatus(userId);
+    
+    res.json({
+      success: true,
+      data: result,
+      message: 'User status refreshed successfully'
+    });
+  } catch (error) {
+    console.error('Error refreshing user status:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Error refreshing user status'
     });
   }
 });

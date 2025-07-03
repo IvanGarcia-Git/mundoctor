@@ -33,7 +33,7 @@ export const attachUser = async (req, res, next) => {
         up.timezone
       FROM users u
       LEFT JOIN user_preferences up ON u.id = up.user_id
-      WHERE u.clerk_id = $1
+      WHERE u.id = $1
     `, [req.auth.userId]);
 
     // If user not found in database, attempt auto-sync from Clerk
@@ -61,7 +61,7 @@ export const attachUser = async (req, res, next) => {
               up.timezone
             FROM users u
             LEFT JOIN user_preferences up ON u.id = up.user_id
-            WHERE u.clerk_id = $1
+            WHERE u.id = $1
           `, [req.auth.userId]);
           
           if (syncedUserResult.rows.length > 0) {

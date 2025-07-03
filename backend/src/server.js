@@ -12,6 +12,7 @@ import { testConnection } from './config/database.js';
 import authRoutes from './routes/auth.js';
 import webhookRoutes from './routes/webhooks.js';
 import userRoutes from './routes/users.js';
+import userValidationRoutes from './routes/userValidation.js';
 // import professionalRoutes from './routes/professionals.js';
 // import appointmentRoutes from './routes/appointments.js';
 // import ratingRoutes from './routes/ratings.js';
@@ -108,6 +109,7 @@ app.get('/api', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/webhooks', webhookRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/users', userValidationRoutes);
 // app.use('/api/professionals', professionalRoutes);
 // app.use('/api/appointments', appointmentRoutes);
 // app.use('/api/ratings', ratingRoutes);

@@ -16,7 +16,7 @@ export const createUserInDB = async (clerkUser) => {
 
     // Check if user already exists
     const existingUser = await query(
-      'SELECT id FROM users WHERE clerk_id = $1 OR email = $2',
+      'SELECT id FROM users WHERE id = $1 OR email = $2',
       [clerkId, email]
     );
 
@@ -26,23 +26,25 @@ export const createUserInDB = async (clerkUser) => {
     }
 
     return await withTransaction(async (client) => {
-      // Create user record
+      // Create user record with clerk_id as primary key
       const userResult = await client.query(`
-        INSERT INTO users (clerk_id, email, name, phone, avatar_url, role)
-        VALUES ($1, $2, $3, $4, $5, $6)
+        INSERT INTO users (id, email, name, phone, avatar_url, role, status)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
         RETURNING *
-      `, [clerkId, email, name, phone, image_url, 'patient']); // Default to patient role
+      `, [clerkId, email, name, phone, image_url, 'patient', 'incomplete']); // Use clerk_id as primary key
 
       const user = userResult.rows[0];
 
       // Create default user preferences
       await client.query(`
-        SELECT create_default_user_preferences($1)
+        INSERT INTO user_preferences (user_id) VALUES ($1)
+        ON CONFLICT (user_id) DO NOTHING
       `, [user.id]);
 
       // Create patient profile by default
       await client.query(`
-        SELECT create_patient_profile($1)
+        INSERT INTO patients (user_id) VALUES ($1)
+        ON CONFLICT (user_id) DO NOTHING
       `, [user.id]);
 
       console.log(`✅ User created: ${email} (${clerkId})`);
@@ -72,7 +74,7 @@ export const updateUserInDB = async (clerkUser) => {
         phone = $4,
         avatar_url = $5,
         updated_at = NOW()
-      WHERE clerk_id = $1
+      WHERE id = $1
       RETURNING *
     `, [clerkId, email, name, phone, image_url]);
 
@@ -95,7 +97,7 @@ export const deleteUserFromDB = async (clerkId) => {
   try {
     const result = await query(`
       DELETE FROM users 
-      WHERE clerk_id = $1
+      WHERE id = $1
       RETURNING email
     `, [clerkId]);
 
@@ -125,7 +127,7 @@ export const getUserByClerkId = async (clerkId) => {
         up.timezone
       FROM users u
       LEFT JOIN user_preferences up ON u.id = up.user_id
-      WHERE u.clerk_id = $1
+      WHERE u.id = $1
     `, [clerkId]);
 
     return result.rows[0] || null;
@@ -151,12 +153,13 @@ export const createProfessionalProfile = async (userId, profileData) => {
 
       // Create professional profile
       await client.query(`
-        SELECT create_professional_profile($1, $2, $3, $4)
-      `, [userId, licenseNumber, dni, specialtyName || 'Medicina General']);
+        INSERT INTO professionals (user_id) VALUES ($1)
+        ON CONFLICT (user_id) DO NOTHING
+      `, [userId]);
 
       // Get the created professional profile
       const profResult = await client.query(`
-        SELECT * FROM professional_profiles WHERE user_id = $1
+        SELECT * FROM professionals WHERE user_id = $1
       `, [userId]);
 
       console.log(`✅ Professional profile created for user: ${userId}`);
@@ -212,7 +215,7 @@ export const getUserProfile = async (clerkId) => {
     // Add role-specific data
     if (user.role === 'professional') {
       const profResult = await query(`
-        SELECT * FROM professional_profiles WHERE clerk_id = $1
+        SELECT * FROM professionals WHERE user_id = $1
       `, [clerkId]);
       
       if (profResult.rows.length > 0) {
@@ -220,7 +223,7 @@ export const getUserProfile = async (clerkId) => {
       }
     } else if (user.role === 'patient') {
       const patientResult = await query(`
-        SELECT * FROM patient_profiles WHERE clerk_id = $1
+        SELECT * FROM patients WHERE user_id = $1
       `, [clerkId]);
       
       if (patientResult.rows.length > 0) {
@@ -257,7 +260,10 @@ export const updateUserPreferences = async (userId, preferences) => {
 
     if (result.rows.length === 0) {
       // Create preferences if they don't exist
-      await query(`SELECT create_default_user_preferences($1)`, [userId]);
+      await query(`
+        INSERT INTO user_preferences (user_id) VALUES ($1)
+        ON CONFLICT (user_id) DO NOTHING
+      `, [userId]);
       
       // Try update again
       return await updateUserPreferences(userId, preferences);
@@ -288,7 +294,7 @@ export const handleEmailUpdate = async (webhookData) => {
     const result = await query(`
       UPDATE users 
       SET email = $2, updated_at = NOW()
-      WHERE clerk_id = $1
+      WHERE id = $1
       RETURNING *
     `, [userId, email]);
 
@@ -322,7 +328,7 @@ export const handleSMSUpdate = async (webhookData) => {
     const result = await query(`
       UPDATE users 
       SET phone = $2, updated_at = NOW()
-      WHERE clerk_id = $1
+      WHERE id = $1
       RETURNING *
     `, [userId, phone]);
 

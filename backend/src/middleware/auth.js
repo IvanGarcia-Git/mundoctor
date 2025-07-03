@@ -20,7 +20,7 @@ export const attachUser = async (req, res, next) => {
         up.timezone
       FROM users u
       LEFT JOIN user_preferences up ON u.id = up.user_id
-      WHERE u.clerk_id = $1
+      WHERE u.id = $1
     `, [req.auth.userId]);
 
     if (userResult.rows.length === 0) {

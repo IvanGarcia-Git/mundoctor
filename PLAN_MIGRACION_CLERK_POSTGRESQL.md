@@ -181,17 +181,21 @@
   - Archivo: Integrado en `src/pages/ProfessionalDataPage.jsx`
 
 ### Tareas de Backend
-- [ ] **5.5** Crear endpoints para validación
-  - `POST /api/users/select-role` - Asignar rol de usuario
-  - `POST /api/users/professional-validation` - Enviar documentos
-  - `GET /api/users/validation-status` - Estado de validación
-  - Archivo: `backend/src/routes/userValidation.js`
+- [x] **5.5** Crear endpoints para validación
+  - ✅ `POST /api/users/select-role` - Asignar rol de usuario
+  - ✅ `POST /api/users/professional-validation` - Enviar documentos
+  - ✅ `GET /api/users/validation-status` - Estado de validación
+  - ✅ `POST /api/users/approve-professional` - Aprobar profesional (admin)
+  - ✅ `GET /api/users/pending-validations` - Obtener validaciones pendientes (admin)
+  - ✅ Archivo: `backend/src/routes/userValidation.js`
 
-- [ ] **5.6** Extender base de datos
-  - Tabla `professional_validations` para documentos
-  - Campos: user_id, college_number, dni, document_urls, status
-  - Estados: 'pending', 'approved', 'rejected'
-  - Archivo: `backend/migrations/005_professional_validations.sql`
+- [x] **5.6** Extender base de datos
+  - ✅ Tabla `professional_validations` para documentos
+  - ✅ Campos: user_id, college_number, dni, document_urls, validation_status
+  - ✅ Estados: 'pending', 'approved', 'rejected'
+  - ✅ Tabla `professional_subscriptions` para planes de suscripción
+  - ✅ Relaciones correctas entre users, patient_profiles y professional_profiles
+  - ✅ Archivo: `backend/migrations/004_add_professional_validations.sql`
 
 ### Tareas de Integración
 - [x] **5.7** Configurar rutas y navegación
@@ -228,12 +232,12 @@
   - ✅ Integración completa: registro profesional → admin aprueba → acceso dashboard
   - Archivos: `src/pages/admin/AdminValidationPage.jsx`, `src/hooks/useProfessionalValidations.js`, `src/components/auth/AdminProtectedRoute.jsx`, `src/pages/DevControlsPage.jsx`
 
-- [ ] **5.11** Implementar estados de usuario en backend
-  - Estado: 'incomplete' - Necesita completar registro
-  - Estado: 'pending_validation' - Profesional pendiente aprobación
-  - Estado: 'active' - Usuario completamente registrado
-  - Middleware para verificar estados
-  - Archivo: `backend/src/middleware/userStatus.js`
+- [x] **5.11** Implementar estados de usuario en backend
+  - ✅ Estado: 'incomplete' - Necesita completar registro
+  - ✅ Estado: 'pending_validation' - Profesional pendiente aprobación
+  - ✅ Estado: 'active' - Usuario completamente registrado
+  - ✅ Middleware para verificar estados
+  - ✅ Archivo: `backend/src/middleware/userStatus.js`
 
 ### ✅ **Estado de la Fase 5: COMPLETADA**
 **Frontend completamente funcional con:**
@@ -250,10 +254,12 @@
 - ✅ Soporte completo para modo oscuro
 - ✅ Servidor ejecutándose en `http://localhost:5174/`
 
-**Pendiente (Backend):**
-- ⏳ Endpoints para validación profesional (tareas 5.5-5.6)
-- ⏳ Base de datos para documentos profesionales
-- ⏳ Estados de usuario y middleware de validación
+**Backend completado:**
+- ✅ Endpoints para validación profesional (tareas 5.5-5.6)
+- ✅ Base de datos para documentos profesionales
+- ✅ Estados de usuario y middleware de validación
+- ✅ Sincronización automática de usuarios Clerk → PostgreSQL
+- ✅ Relaciones correctas entre tablas (users.id → profiles.user_id)
 
 ---
 

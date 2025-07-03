@@ -19,7 +19,7 @@ export const requireRole = (requiredRoles) => {
       
       // Get user role from database
       const userRole = await withTransaction(async (client) => {
-        const query = 'SELECT role FROM users WHERE clerk_id = $1';
+        const query = 'SELECT role FROM users WHERE id = $1';
         const result = await client.query(query, [userId]);
         
         if (result.rows.length === 0) {
@@ -88,7 +88,7 @@ export const getUserInfo = async (req, res, next) => {
     }
     
     const userInfo = await withTransaction(async (client) => {
-      const query = 'SELECT id, role FROM users WHERE clerk_id = $1';
+      const query = 'SELECT id, role FROM users WHERE id = $1';
       const result = await client.query(query, [userId]);
       
       if (result.rows.length === 0) {
@@ -130,7 +130,7 @@ export const requireOwnershipOrAdmin = (userIdField = 'user_id') => {
       
       const hasAccess = await withTransaction(async (client) => {
         // Get user role and ID
-        const userQuery = 'SELECT id, role FROM users WHERE clerk_id = $1';
+        const userQuery = 'SELECT id, role FROM users WHERE id = $1';
         const userResult = await client.query(userQuery, [userId]);
         
         if (userResult.rows.length === 0) {
