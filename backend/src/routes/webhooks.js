@@ -34,7 +34,7 @@ const verifyWebhook = (req, res, next) => {
     const webhook = new Webhook(WEBHOOK_SECRET);
     
     // Verify the webhook signature
-    const payload = webhook.verify(JSON.stringify(req.body), {
+    const payload = webhook.verify(req.body, {
       'svix-id': svix_id,
       'svix-timestamp': svix_timestamp,
       'svix-signature': svix_signature,
@@ -63,8 +63,22 @@ router.get('/clerk', (req, res) => {
   });
 });
 
-// Clerk webhook endpoint
-router.post('/clerk', verifyWebhook, async (req, res) => {
+// Clerk webhook endpoint - use raw body for signature verification
+router.post('/clerk', 
+  // CORS headers for webhook endpoint
+  (req, res, next) => {
+    res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+    res.header('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, svix-id, svix-timestamp, svix-signature');
+    
+    if (req.method === 'OPTIONS') {
+      return res.status(200).end();
+    }
+    next();
+  },
+  express.raw({ type: 'application/json' }), 
+  verifyWebhook, 
+  async (req, res) => {
   try {
     const { type, data } = req.webhookPayload;
     

@@ -25,12 +25,22 @@ export const ClerkAuthProvider = ({ children }) => {
             'Content-Type': 'application/json'
           }
         });
-        const userData = await response.json();
         
-        if (response.ok && userData && userData.data) {
-          setBackendUser(userData.data);
-          setUser(userData.data);
-          return userData.data;
+        if (response.ok) {
+          const userData = await response.json();
+          if (userData && userData.data) {
+            setBackendUser(userData.data);
+            setUser(userData.data);
+            return userData.data;
+          }
+        } else if (response.status === 404) {
+          // User not found in database - this should trigger automatic sync on backend
+          console.log('User not found in database, backend will sync from Clerk...');
+          // Don't throw error here, let it fall through to migration check
+        } else {
+          // Only throw for other errors (500, 403, etc.)
+          const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+          throw new Error(`API Error: ${response.status} - ${errorData.message}`);
         }
       }
       
@@ -48,11 +58,14 @@ export const ClerkAuthProvider = ({ children }) => {
                 'Content-Type': 'application/json'
               }
             });
-            const updatedUser = await response.json();
-            if (response.ok && updatedUser && updatedUser.data) {
-              setBackendUser(updatedUser.data);
-              setUser(updatedUser.data);
-              return updatedUser.data;
+            
+            if (response.ok) {
+              const updatedUser = await response.json();
+              if (updatedUser && updatedUser.data) {
+                setBackendUser(updatedUser.data);
+                setUser(updatedUser.data);
+                return updatedUser.data;
+              }
             }
           }
         }

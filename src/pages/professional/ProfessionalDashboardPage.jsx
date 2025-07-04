@@ -16,10 +16,9 @@ import {
   List
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import MonthlyIncomeChart from '@/components/professional/dashboard/MonthlyIncomeChart';
-import AppointmentsCalendarView from '@/components/professional/appointments/AppointmentsCalendarView';
-// TODO: Replace with new API calls when backend is ready
-// import { getAppointments, getProfessionalRatings } from '@/lib/api';
+const MonthlyIncomeChart = React.lazy(() => import('@/components/professional/dashboard/MonthlyIncomeChart'));
+const AppointmentsCalendarView = React.lazy(() => import('@/components/professional/appointments/AppointmentsCalendarView'));
+import { userApi } from '@/lib/clerkApi';
 import { useToast } from "@/components/ui/use-toast";
 
 const ProfessionalDashboardPage = () => {
@@ -46,84 +45,30 @@ const ProfessionalDashboardPage = () => {
       try {
         setIsLoading(true);
 
-        // TODO: Replace with actual API calls when backend is ready
-        // Mock data for now
-        const mockStats = {
-          totalPatients: 45,
-          monthlyAppointments: 28,
-          averageRating: 4.8,
-          monthlyIncome: 3500,
-          trends: {
-            patients: '+12.5%',
-            appointments: '+8.3%',
-            rating: '+0.2',
-            income: '+15.7%'
-          }
-        };
+        // Load data from API
+        const [statsResponse, appointmentsResponse, reviewsResponse] = await Promise.all([
+          userApi.getDashboardStats(),
+          userApi.getDashboardAppointments(3),
+          userApi.getDashboardReviews(3)
+        ]);
 
-        const mockUpcomingAppointments = [
-          {
-            id: '1',
-            patientName: 'María González',
-            patientImage: null,
-            type: 'Consulta General',
-            time: '10:00',
-            status: 'confirmed'
-          },
-          {
-            id: '2',
-            patientName: 'Carlos Rodriguez',
-            patientImage: null,
-            type: 'Seguimiento',
-            time: '11:30',
-            status: 'confirmed'
-          },
-          {
-            id: '3',
-            patientName: 'Ana López',
-            patientImage: null,
-            type: 'Primera Consulta',
-            time: '14:00',
-            status: 'pending'
-          }
-        ];
+        if (statsResponse.success) {
+          setStats(statsResponse.data);
+        }
 
-        const mockRecentReviews = [
-          {
-            id: '1',
-            patientName: 'Laura Martín',
-            patientImage: null,
-            rating: 5,
-            comment: 'Excelente profesional, muy atento y cuidadoso.',
-            date: new Date().toLocaleDateString('es-ES')
-          },
-          {
-            id: '2',
-            patientName: 'Pedro Sánchez',
-            patientImage: null,
-            rating: 4,
-            comment: 'Muy buen trato y explicaciones claras.',
-            date: new Date(Date.now() - 86400000).toLocaleDateString('es-ES')
-          },
-          {
-            id: '3',
-            patientName: 'Elena García',
-            patientImage: null,
-            rating: 5,
-            comment: 'Recomiendo totalmente, profesional de confianza.',
-            date: new Date(Date.now() - 172800000).toLocaleDateString('es-ES')
-          }
-        ];
+        if (appointmentsResponse.success) {
+          setUpcomingAppointments(appointmentsResponse.data);
+        }
 
-        setStats(mockStats);
-        setUpcomingAppointments(mockUpcomingAppointments);
-        setRecentReviews(mockRecentReviews);
+        if (reviewsResponse.success) {
+          setRecentReviews(reviewsResponse.data);
+        }
 
       } catch (error) {
         console.error('Error loading dashboard data:', error);
         toast({
           title: "Error",
-          description: "No se pudieron cargar los datos del dashboard",
+          description: "No se pudieron cargar los datos del dashboard. Intenta recargar la página.",
           variant: "destructive",
         });
       } finally {
@@ -134,7 +79,7 @@ const ProfessionalDashboardPage = () => {
     if (user) {
       loadDashboardData();
     }
-  }, [user]);
+  }, [user, toast]);
 
   if (isLoading) {
     return (
@@ -221,7 +166,13 @@ const ProfessionalDashboardPage = () => {
 
       {/* Monthly Income Chart */}
       <div className="mb-8">
-        <MonthlyIncomeChart />
+        <React.Suspense fallback={
+          <div className="h-64 flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        }>
+          <MonthlyIncomeChart />
+        </React.Suspense>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -329,16 +280,22 @@ const ProfessionalDashboardPage = () => {
           </TabsList>
 
           <TabsContent value="calendar">
-            <AppointmentsCalendarView
-              appointments={upcomingAppointments}
-              onDaySelect={(date) => {
-                toast({
-                  title: "Citas para " + date.toLocaleDateString(),
-                  description: "Aquí podrás ver los detalles de las citas para este día"
-                });
-                // TODO: Implementar modal o navegación a vista detallada del día
-              }}
-            />
+            <React.Suspense fallback={
+              <div className="h-96 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              </div>
+            }>
+              <AppointmentsCalendarView
+                appointments={upcomingAppointments}
+                onDaySelect={(date) => {
+                  toast({
+                    title: "Citas para " + date.toLocaleDateString(),
+                    description: "Aquí podrás ver los detalles de las citas para este día"
+                  });
+                  // TODO: Implementar modal o navegación a vista detallada del día
+                }}
+              />
+            </React.Suspense>
           </TabsContent>
 
           <TabsContent value="list">

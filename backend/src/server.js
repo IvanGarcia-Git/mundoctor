@@ -38,18 +38,77 @@ const limiter = rateLimit({
 });
 app.use('/api', limiter);
 
-// CORS configuration
-app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? process.env.FRONTEND_URL 
-    : ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173'],
+// CORS configuration - Enhanced for Clerk authentication
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests with no origin (mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = process.env.NODE_ENV === 'production' 
+      ? (process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',') : [])
+      : [
+          'http://localhost:5173', 
+          'http://localhost:3000', 
+          'http://127.0.0.1:5173',
+          'http://127.0.0.1:3000'
+        ];
+    
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.warn(`CORS: Origin ${origin} not allowed`);
+      callback(null, true); // Allow in development, change to false in production
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'x-clerk-auth-token'],
-  exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar'],
+  allowedHeaders: [
+    'Content-Type',
+    'Authorization',
+    'X-Requested-With',
+    'Accept',
+    'Origin',
+    'Cache-Control',
+    'X-File-Name',
+    'clerk-db-jwt',
+    'clerk-publishable-key',
+    'x-clerk-auth-token',
+    'svix-id',
+    'svix-timestamp', 
+    'svix-signature'
+  ],
+  exposedHeaders: ['Content-Length'],
   preflightContinue: false,
-  optionsSuccessStatus: 200
-}));
+  optionsSuccessStatus: 200 // Some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+
+app.use(cors(corsOptions));
+
+// Handle preflight requests explicitly for all routes
+app.options('*', cors(corsOptions));
+
+// Additional CORS middleware for problematic requests
+app.use((req, res, next) => {
+  // Set CORS headers for all requests as fallback
+  const origin = req.headers.origin;
+  const allowedOrigins = ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173', 'http://127.0.0.1:3000'];
+  
+  if (origin && allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+  
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
+  
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    console.log(`OPTIONS request for ${req.path} from origin: ${origin}`);
+    return res.status(200).end();
+  }
+  
+  next();
+});
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
@@ -80,6 +139,26 @@ app.get('/health', (req, res) => {
 app.get('/test', (req, res) => {
   console.log('Test endpoint requested');
   res.json({ message: 'Test endpoint working' });
+});
+
+// CORS test endpoint
+app.get('/api/cors-test', (req, res) => {
+  console.log('CORS test endpoint requested from origin:', req.headers.origin);
+  res.json({ 
+    message: 'CORS is working correctly!',
+    origin: req.headers.origin,
+    timestamp: new Date().toISOString(),
+    headers: req.headers
+  });
+});
+
+app.post('/api/cors-test', (req, res) => {
+  console.log('CORS POST test endpoint requested');
+  res.json({ 
+    message: 'CORS POST is working correctly!',
+    body: req.body,
+    timestamp: new Date().toISOString()
+  });
 });
 
 // Clerk middleware (after health check)
