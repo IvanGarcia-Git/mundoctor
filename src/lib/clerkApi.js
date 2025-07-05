@@ -38,7 +38,17 @@ class ClerkApiClient {
       return token;
     } catch (error) {
       console.error('Error getting auth token:', error);
-      throw new Error('Authentication required');
+      
+      // Provide more specific error messages
+      if (error.message === 'Clerk not loaded') {
+        throw new Error('Sistema de autenticación no disponible');
+      } else if (error.message === 'No active session') {
+        throw new Error('Usuario no autenticado. Por favor, inicia sesión.');
+      } else if (error.message === 'Failed to get token') {
+        throw new Error('Error al obtener el token de autenticación');
+      }
+      
+      throw new Error('Error de autenticación');
     }
   }
 
@@ -47,6 +57,11 @@ class ClerkApiClient {
    */
   async request(endpoint, options = {}, retries = 1) {
     let lastError;
+    
+    // Validate endpoint parameter
+    if (typeof endpoint !== 'string') {
+      throw new Error(`Invalid endpoint parameter: expected string, got ${typeof endpoint}`);
+    }
     
     for (let attempt = 0; attempt <= retries; attempt++) {
       try {

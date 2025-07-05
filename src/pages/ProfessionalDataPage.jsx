@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Upload, FileText, Image, Check, AlertCircle, ArrowRight } from 'lucide-react';
 import { registerProfessional } from '@/hooks/useProfessionalValidations';
+import clerkApi from '@/lib/clerkApi';
 
 export default function ProfessionalDataPage() {
   const [formData, setFormData] = useState({
@@ -103,6 +104,39 @@ export default function ProfessionalDataPage() {
     return Object.keys(newErrors).length === 0;
   };
 
+  const uploadFiles = async () => {
+    const formDataForUpload = new FormData();
+    
+    // Add files to FormData
+    if (formData.dniImage) {
+      formDataForUpload.append('dniImage', formData.dniImage);
+    }
+    if (formData.universityDegree) {
+      formDataForUpload.append('universityDegree', formData.universityDegree);
+    }
+    if (formData.collegiationCertificate) {
+      formDataForUpload.append('collegiationCertificate', formData.collegiationCertificate);
+    }
+    
+    // Upload files using a direct fetch call since clerkApi expects JSON
+    const token = await window.Clerk.session.getToken();
+    
+    const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000/api'}/uploads/professional-documents`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      body: formDataForUpload
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || 'Error uploading files');
+    }
+    
+    return await response.json();
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -112,10 +146,67 @@ export default function ProfessionalDataPage() {
 
     setIsLoading(true);
     try {
-      // In a real implementation, you would upload files to storage (Supabase, S3, etc.)
-      // and save the URLs along with the professional data
+      // Check if user is authenticated with Clerk
+      if (!user || !window.Clerk?.session) {
+        throw new Error('Usuario no autenticado. Por favor, inicia sesión nuevamente.');
+      }
+
+      // Set role to professional first in Clerk
+      await user.update({
+        unsafeMetadata: {
+          ...user.unsafeMetadata,
+          role: 'professional'
+        }
+      });
+
+      // Try to sync user with backend, but don't fail if it doesn't work
+      try {
+        await clerkApi.get('/users/profile');
+      } catch (profileError) {
+        console.warn('User profile not found, this is expected for new users:', profileError.message);
+        // Continue with the process even if profile sync fails
+      }
+
+      // Try to select professional role in backend, but don't fail if it doesn't work
+      try {
+        await clerkApi.post('/users/select-role', {
+          role: 'professional'
+        });
+      } catch (roleError) {
+        console.warn('Could not set role in backend, continuing with local process:', roleError.message);
+        // Continue with the process even if role setting fails
+      }
+
+      // Upload files
+      const uploadResult = await uploadFiles();
+      const uploadedFiles = uploadResult.data;
       
-      // Register professional in the validation system
+      // Prepare document URLs for the backend
+      const dniDocumentUrl = uploadedFiles.dniImage?.url;
+      const degreeDocumentUrl = uploadedFiles.universityDegree?.url;
+      const certificationDocumentUrl = uploadedFiles.collegiationCertificate?.url;
+      
+      // Try to submit professional validation to backend, but don't fail if it doesn't work
+      try {
+        await clerkApi.post('/users/professional-validation', {
+          collegeNumber: formData.collegiateNumber,
+          dni: formData.dni,
+          dniDocumentUrl,
+          degreeDocumentUrl,
+          certificationDocumentUrl,
+          specialty: '', // You might want to add this field to the form
+          bio: '', // You might want to add this field to the form
+          experienceYears: 0, // You might want to add this field to the form
+          education: [], // You might want to add this field to the form
+          certifications: [], // You might want to add this field to the form
+          consultationFee: 0 // You might want to add this field to the form
+        });
+      } catch (validationError) {
+        console.warn('Could not submit validation to backend, continuing with local process:', validationError.message);
+        // Continue with the process even if backend validation fails
+      }
+      
+      // Register professional in the validation system (local)
       registerProfessional(user, formData);
       
       // Update user metadata with the form data
@@ -132,19 +223,11 @@ export default function ProfessionalDataPage() {
         }
       });
 
-      // Set role to professional
-      await user.update({
-        unsafeMetadata: {
-          ...user.unsafeMetadata,
-          role: 'professional'
-        }
-      });
-
       navigate('/profesional/verificacion-pendiente');
     } catch (error) {
       console.error('Error submitting professional data:', error);
       setErrors({ 
-        submit: 'Hubo un error al enviar los datos. Por favor, inténtalo de nuevo.' 
+        submit: error.message || 'Hubo un error al enviar los datos. Por favor, inténtalo de nuevo.' 
       });
     } finally {
       setIsLoading(false);

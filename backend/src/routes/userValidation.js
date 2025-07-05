@@ -53,14 +53,13 @@ router.post('/select-role', async (req, res) => {
       } else if (role === 'professional') {
         // Create professional profile (incomplete initially)
         await client.query(`
-          INSERT INTO professional_profiles (
-            user_id, clerk_id, name, email, phone, avatar_url,
-            profile_completed, verified
+          INSERT INTO professionals (
+            user_id, license_number, dni, profile_completed, verified
           )
-          VALUES ($1, $2, $3, $4, $5, $6, FALSE, FALSE)
+          VALUES ($1, 'PENDING', 'PENDING', FALSE, FALSE)
           ON CONFLICT (user_id) DO UPDATE SET
-            clerk_id = $2, name = $3, email = $4, phone = $5, avatar_url = $6
-        `, [user.id, user.clerk_id, user.name, user.email, user.phone, user.avatar_url]);
+            license_number = 'PENDING', dni = 'PENDING'
+        `, [user.id]);
 
         // Set status to incomplete for professionals
         await updateUserStatus(userId, 'incomplete');
@@ -112,41 +111,32 @@ router.post('/professional-validation', async (req, res) => {
     }
 
     const result = await withTransaction(async (client) => {
-      // Check if user is a professional
+      // Get user by Clerk ID and check if they are a professional
       const userResult = await client.query(`
-        SELECT role FROM users WHERE id = $1
+        SELECT id, role FROM users WHERE clerk_id = $1
       `, [userId]);
 
       if (userResult.rows.length === 0) {
-        throw new Error('User not found');
+        throw new Error('User not found in database. Please ensure the user is properly synced.');
       }
 
-      if (userResult.rows[0].role !== 'professional') {
+      const user = userResult.rows[0];
+      const internalUserId = user.id;
+
+      if (user.role !== 'professional') {
         throw new Error('User must be a professional to submit validation');
       }
 
-      // Get user's internal ID
-      const userIdResult = await client.query(`
-        SELECT id FROM users WHERE clerk_id = $1
-      `, [userId]);
-
-      if (userIdResult.rows.length === 0) {
-        throw new Error('User not found');
-      }
-
-      const internalUserId = userIdResult.rows[0].id;
-
       // Update professional profile
       await client.query(`
-        UPDATE professional_profiles 
+        UPDATE professionals 
         SET 
           license_number = $2,
           dni = $3,
-          specialty_name = $4,
-          about = $5,
-          experience_years = $6,
-          education = $7,
-          consultation_fee = $8,
+          about = $4,
+          experience_years = $5,
+          education = $6,
+          consultation_fee = $7,
           profile_completed = TRUE,
           updated_at = NOW()
         WHERE user_id = $1
@@ -154,7 +144,6 @@ router.post('/professional-validation', async (req, res) => {
         internalUserId,
         collegeNumber,
         dni,
-        specialty,
         bio,
         experienceYears,
         education,
@@ -242,7 +231,7 @@ router.get('/validation-status', async (req, res) => {
             pv.validation_notes,
             pv.submitted_at,
             pv.reviewed_at
-          FROM professional_profiles pp
+          FROM professionals pp
           LEFT JOIN professional_validations pv ON pp.user_id = pv.user_id
           WHERE pp.user_id = $1
         `, [userId]);
@@ -318,7 +307,7 @@ router.post('/approve-professional', async (req, res) => {
       // Update professional profile
       if (approved) {
         await client.query(`
-          UPDATE professional_profiles 
+          UPDATE professionals 
           SET verified = TRUE, updated_at = NOW()
           WHERE user_id = $1
         `, [professionalUserId]);
@@ -376,7 +365,7 @@ router.get('/pending-validations', async (req, res) => {
         pv.*
       FROM professional_validations pv
       JOIN users u ON pv.user_id = u.id
-      JOIN professional_profiles pp ON pv.user_id = pp.user_id
+      JOIN professionals pp ON pv.user_id = pp.user_id
       WHERE pv.validation_status = 'pending'
       ORDER BY pv.submitted_at ASC
     `);

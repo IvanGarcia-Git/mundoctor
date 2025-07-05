@@ -4,11 +4,31 @@ import { clerkClient } from '@clerk/express';
 // Create user in database from Clerk webhook
 export const createUserInDB = async (clerkUser) => {
   try {
-    const { id: clerkId, email_addresses, first_name, last_name, image_url, phone_numbers } = clerkUser;
+    console.log('📧 Creating user from Clerk data:', JSON.stringify({
+      id: clerkUser.id,
+      emailAddresses: clerkUser.emailAddresses,
+      email_addresses: clerkUser.email_addresses,
+      firstName: clerkUser.firstName,
+      first_name: clerkUser.first_name,
+      lastName: clerkUser.lastName,
+      last_name: clerkUser.last_name
+    }, null, 2));
+
+    const { id: clerkId, emailAddresses, email_addresses, firstName, first_name, lastName, last_name, imageUrl, image_url, phoneNumbers, phone_numbers } = clerkUser;
     
-    const email = email_addresses[0]?.email_address;
-    const name = `${first_name || ''} ${last_name || ''}`.trim() || email.split('@')[0];
-    const phone = phone_numbers?.[0]?.phone_number;
+    // Handle multiple possible email formats from Clerk
+    const email = emailAddresses?.[0]?.emailAddress || 
+                  email_addresses?.[0]?.email_address || 
+                  email_addresses?.[0]?.emailAddress ||
+                  clerkUser.email ||
+                  clerkUser.primaryEmailAddress?.emailAddress;
+
+    const name = `${firstName || first_name || ''} ${lastName || last_name || ''}`.trim() || 
+                 (email ? email.split('@')[0] : 'Unknown User');
+    
+    const phone = phoneNumbers?.[0]?.phoneNumber || 
+                  phone_numbers?.[0]?.phone_number || 
+                  phone_numbers?.[0]?.phoneNumber;
     
     if (!email) {
       throw new Error('Email is required');
