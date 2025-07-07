@@ -169,3 +169,12 @@
 {"level":"debug","message":"Client released to pool","processID":411,"timestamp":"2025-07-07T15:06:54.640Z"}
 {"level":"debug","message":"Client released to pool","processID":410,"timestamp":"2025-07-07T15:06:54.650Z"}
 {"idleCount":2,"level":"debug","message":"Database pool status","timestamp":"2025-07-07T15:07:17.030Z","totalCount":2,"waitingCount":0}
+{"level":"debug","message":"New database client connected","processID":422,"timestamp":"2025-07-07T15:11:58.050Z"}
+{"level":"debug","message":"Client acquired from pool","processID":422,"timestamp":"2025-07-07T15:11:58.054Z"}
+{"level":"info","message":"Database connected successfully","poolStatus":{"idleCount":0,"totalCount":1,"waitingCount":0},"timestamp":"2025-07-07T15:11:58.059Z","version":"PostgreSQL 15.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit"}
+{"level":"debug","message":"Client released to pool","processID":422,"timestamp":"2025-07-07T15:11:58.071Z"}
+{"idleCount":1,"level":"debug","message":"Database pool status","timestamp":"2025-07-07T15:12:26.997Z","totalCount":1,"waitingCount":0}
+{"level":"debug","message":"New database client connected","processID":424,"timestamp":"2025-07-07T15:13:01.804Z"}
+{"level":"debug","message":"Client acquired from pool","processID":424,"timestamp":"2025-07-07T15:13:01.806Z"}
+{"level":"info","message":"Database connected successfully","poolStatus":{"idleCount":0,"totalCount":1,"waitingCount":0},"timestamp":"2025-07-07T15:13:01.808Z","version":"PostgreSQL 15.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit"}
+{"level":"debug","message":"Client released to pool","processID":424,"timestamp":"2025-07-07T15:13:01.813Z"}

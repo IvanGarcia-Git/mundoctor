@@ -1,540 +1,542 @@
-import { clerkClient } from '@clerk/express';
 import { query, withTransaction } from '../config/database.js';
 import { logInfo, logError, logWarning } from '../utils/logger.js';
 import { createAuditLog, AuditActions, RiskLevels } from '../utils/auditLog.js';
+import { AppError, ValidationError, NotFoundError, ConflictError } from '../middleware/errorHandler.js';
 
-// Email validation patterns
-const EMAIL_PATTERNS = {
-  PROFESSIONAL_DOMAINS: [
-    // Medical institutions
-    'hospitalsanjuan.es', 'colegiomedicosvalencia.org', 'medicosdemadrid.es',
-    // Common professional domains
-    'colegiocofenfe.es', 'psicologos.es', 'enfermeria.es',
-    // International medical domains
-    'ama-assn.org', 'bma.org.uk', 'cmaj.ca'
-  ],
-  SUSPICIOUS_DOMAINS: [
-    '10minutemail.com', 'tempmail.org', 'guerrillamail.com', 
-    'mailinator.com', 'yopmail.com', 'temp-mail.org'
-  ],
-  VALID_EXTENSIONS: ['.com', '.es', '.org', '.edu', '.gov', '.med']
-};
-
-// Phone validation patterns (Spanish focus)
-const PHONE_PATTERNS = {
-  SPANISH_MOBILE: /^(\+34|0034|34)?[6789]\d{8}$/,
-  SPANISH_LANDLINE: /^(\+34|0034|34)?[89]\d{8}$/,
-  INTERNATIONAL: /^\+[1-9]\d{1,14}$/
-};
-
-// Validate email address format and domain
-export const validateEmail = async (email, userRole = null) => {
-  const validation = {
-    isValid: false,
-    format: false,
-    domain: false,
-    professional: false,
-    suspicious: false,
-    warnings: [],
-    errors: []
-  };
-
+// Create a new validation request
+export const createValidationRequest = async (requestData, createdBy) => {
   try {
-    // Basic format validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    validation.format = emailRegex.test(email);
+    logInfo('Creating validation request', {
+      professionalId: requestData.professionalId,
+      documentsCount: requestData.documents.length,
+      urgency: requestData.urgency,
+      createdBy
+    });
 
-    if (!validation.format) {
-      validation.errors.push('Invalid email format');
-      return validation;
-    }
+    const result = await withTransaction(async (client) => {
+      // Validate professional exists and is not already verified
+      const professionalResult = await client.query(`
+        SELECT u.*, p.verified, p.profile_completed 
+        FROM users u
+        JOIN professionals p ON u.id = p.user_id
+        WHERE u.id = $1 AND u.role = 'professional' AND u.status = 'active'
+      `, [requestData.professionalId]);
 
-    const [localPart, domain] = email.toLowerCase().split('@');
-    
-    // Check for suspicious domains
-    validation.suspicious = EMAIL_PATTERNS.SUSPICIOUS_DOMAINS.some(
-      suspiciousDomain => domain.includes(suspiciousDomain)
-    );
-
-    if (validation.suspicious) {
-      validation.warnings.push('Email uses temporary/disposable domain');
-    }
-
-    // Check for professional domains
-    validation.professional = EMAIL_PATTERNS.PROFESSIONAL_DOMAINS.some(
-      professionalDomain => domain.includes(professionalDomain)
-    );
-
-    // Domain validation
-    validation.domain = EMAIL_PATTERNS.VALID_EXTENSIONS.some(
-      ext => domain.endsWith(ext)
-    );
-
-    // Special validation for professionals
-    if (userRole === 'professional') {
-      if (validation.suspicious) {
-        validation.errors.push('Professional accounts cannot use temporary email addresses');
+      if (professionalResult.rows.length === 0) {
+        throw new NotFoundError('Professional not found or inactive');
       }
+
+      const professional = professionalResult.rows[0];
       
-      if (!validation.professional) {
-        validation.warnings.push('Consider using a professional medical domain');
+      // Check if already verified
+      if (professional.verified) {
+        logWarning('Attempt to create validation request for already verified professional', {
+          professionalId: requestData.professionalId,
+          createdBy
+        });
+        throw new ConflictError('Professional is already verified');
       }
-    }
 
-    // Check if domain exists (basic check)
-    try {
-      // In a real implementation, you might want to do DNS lookup
-      // For now, we'll just check the format
-      validation.domain = true;
-    } catch (error) {
-      validation.warnings.push('Could not verify domain existence');
-    }
+      // Check for existing pending request
+      const existingResult = await client.query(`
+        SELECT id FROM professional_validations 
+        WHERE professional_id = $1 AND status IN ('pending', 'under_review', 'requires_more_info')
+      `, [requestData.professionalId]);
 
-    validation.isValid = validation.format && validation.domain && !validation.suspicious;
-
-    logInfo('Email validation completed', {
-      email: email.replace(/(.{2}).*@/, '$1***@'), // Mask email for privacy
-      role: userRole,
-      isValid: validation.isValid,
-      professional: validation.professional,
-      suspicious: validation.suspicious
-    });
-
-    return validation;
-
-  } catch (error) {
-    logError(error, { 
-      event: 'email_validation_error',
-      email: email.replace(/(.{2}).*@/, '$1***@')
-    });
-    
-    validation.errors.push('Email validation service error');
-    return validation;
-  }
-};
-
-// Validate phone number format and region
-export const validatePhone = async (phone, expectedCountry = 'ES') => {
-  const validation = {
-    isValid: false,
-    format: false,
-    country: null,
-    type: null, // 'mobile', 'landline', 'international'
-    warnings: [],
-    errors: []
-  };
-
-  try {
-    if (!phone) {
-      validation.errors.push('Phone number is required');
-      return validation;
-    }
-
-    // Clean phone number
-    const cleanPhone = phone.replace(/[\s\-\(\)]/g, '');
-
-    // Validate Spanish phone numbers
-    if (expectedCountry === 'ES' || cleanPhone.startsWith('+34') || cleanPhone.startsWith('34')) {
-      if (PHONE_PATTERNS.SPANISH_MOBILE.test(cleanPhone)) {
-        validation.format = true;
-        validation.country = 'ES';
-        validation.type = 'mobile';
-      } else if (PHONE_PATTERNS.SPANISH_LANDLINE.test(cleanPhone)) {
-        validation.format = true;
-        validation.country = 'ES';
-        validation.type = 'landline';
-        validation.warnings.push('Mobile numbers are preferred for notifications');
+      if (existingResult.rows.length > 0) {
+        throw new ConflictError('Professional already has a pending validation request');
       }
-    }
 
-    // Validate international phone numbers
-    if (!validation.format && PHONE_PATTERNS.INTERNATIONAL.test(cleanPhone)) {
-      validation.format = true;
-      validation.country = 'INTERNATIONAL';
-      validation.type = 'international';
-      validation.warnings.push('International numbers may have limited SMS support');
-    }
+      // Create the validation request
+      const insertResult = await client.query(`
+        INSERT INTO professional_validations (
+          professional_id, status, urgency, notes, created_by
+        ) VALUES ($1, $2, $3, $4, $5)
+        RETURNING *
+      `, [
+        requestData.professionalId,
+        'pending',
+        requestData.urgency || 'medium',
+        requestData.notes,
+        createdBy
+      ]);
 
-    if (!validation.format) {
-      validation.errors.push('Invalid phone number format');
-    }
+      const validationRequest = insertResult.rows[0];
 
-    validation.isValid = validation.format;
-
-    logInfo('Phone validation completed', {
-      phone: phone.replace(/\d{4,}/g, '****'), // Mask phone for privacy
-      isValid: validation.isValid,
-      country: validation.country,
-      type: validation.type
-    });
-
-    return validation;
-
-  } catch (error) {
-    logError(error, { 
-      event: 'phone_validation_error',
-      phone: phone.replace(/\d{4,}/g, '****')
-    });
-    
-    validation.errors.push('Phone validation service error');
-    return validation;
-  }
-};
-
-// Verify email through Clerk
-export const verifyEmailWithClerk = async (userId, email) => {
-  try {
-    logInfo('Starting email verification with Clerk', { userId, email: email.replace(/(.{2}).*@/, '$1***@') });
-
-    // Get user from Clerk
-    const clerkUser = await clerkClient.users.getUser(userId);
-    
-    if (!clerkUser) {
-      throw new Error('User not found in Clerk');
-    }
-
-    // Check if email is already verified
-    const emailAddress = clerkUser.emailAddresses.find(
-      ea => ea.emailAddress.toLowerCase() === email.toLowerCase()
-    );
-
-    if (!emailAddress) {
-      throw new Error('Email address not found in Clerk user');
-    }
-
-    if (emailAddress.verification?.status === 'verified') {
-      logInfo('Email already verified', { userId, email: email.replace(/(.{2}).*@/, '$1***@') });
-      
-      // Update database
-      await query(
-        'UPDATE users SET verified = true, updated_at = CURRENT_TIMESTAMP WHERE id = $1',
-        [userId]
-      );
+      // Insert documents
+      for (const doc of requestData.documents) {
+        await client.query(`
+          INSERT INTO validation_documents (
+            validation_id, document_type, filename, description, uploaded_by
+          ) VALUES ($1, $2, $3, $4, $5)
+        `, [
+          validationRequest.id,
+          doc.type,
+          doc.filename,
+          doc.description,
+          createdBy
+        ]);
+      }
 
       // Create audit log
       await createAuditLog({
-        userId,
+        userId: createdBy,
         action: AuditActions.USER_UPDATED,
-        resource: 'email_verification',
-        resourceId: userId,
+        resource: 'validation_request',
+        resourceId: validationRequest.id,
         details: {
-          email: email.replace(/(.{2}).*@/, '$1***@'),
-          status: 'already_verified'
+          professionalId: validationRequest.professional_id,
+          urgency: validationRequest.urgency,
+          documentsCount: requestData.documents.length,
+          documentTypes: requestData.documents.map(d => d.type)
         },
-        riskLevel: RiskLevels.LOW,
+        riskLevel: RiskLevels.MEDIUM,
       });
 
-      return { verified: true, status: 'already_verified' };
-    }
+      logInfo('Validation request created successfully', {
+        validationId: validationRequest.id,
+        professionalId: validationRequest.professional_id,
+        createdBy
+      });
 
-    // Trigger verification email
-    await clerkClient.emailAddresses.createEmailAddressVerification({
-      emailAddressId: emailAddress.id,
+      return validationRequest;
     });
 
-    logInfo('Email verification triggered', { userId, emailAddressId: emailAddress.id });
-
-    // Create audit log
-    await createAuditLog({
-      userId,
-      action: AuditActions.USER_UPDATED,
-      resource: 'email_verification',
-      resourceId: userId,
-      details: {
-        email: email.replace(/(.{2}).*@/, '$1***@'),
-        status: 'verification_sent'
-      },
-      riskLevel: RiskLevels.LOW,
-    });
-
-    return { verified: false, status: 'verification_sent' };
+    return result;
 
   } catch (error) {
-    logError(error, { 
-      event: 'email_verification_failed',
-      userId,
-      email: email.replace(/(.{2}).*@/, '$1***@')
+    logError(error, {
+      event: 'validation_request_creation_failed',
+      professionalId: requestData.professionalId,
+      createdBy
     });
     throw error;
   }
 };
 
-// Verify phone through Clerk (if SMS verification is enabled)
-export const verifyPhoneWithClerk = async (userId, phone) => {
+// Get validation requests with filtering and pagination
+export const getValidationRequests = async (filters = {}, pagination = {}) => {
   try {
-    logInfo('Starting phone verification with Clerk', { 
-      userId, 
-      phone: phone.replace(/\d{4,}/g, '****') 
-    });
+    const {
+      status,
+      professionalId,
+      urgency,
+      dateFrom,
+      dateTo
+    } = filters;
 
-    // Get user from Clerk
-    const clerkUser = await clerkClient.users.getUser(userId);
-    
-    if (!clerkUser) {
-      throw new Error('User not found in Clerk');
+    const {
+      page = 1,
+      limit = 20,
+      sortBy = 'created_at',
+      sortOrder = 'DESC'
+    } = pagination;
+
+    const offset = (page - 1) * limit;
+
+    let whereConditions = [];
+    let params = [];
+    let paramIndex = 1;
+
+    // Build WHERE conditions
+    if (status) {
+      whereConditions.push(`pv.status = $${paramIndex++}`);
+      params.push(status);
     }
 
-    // Check if phone is already verified
-    const phoneNumber = clerkUser.phoneNumbers.find(
-      pn => pn.phoneNumber === phone
-    );
-
-    if (!phoneNumber) {
-      // Add phone number to Clerk user
-      const newPhoneNumber = await clerkClient.phoneNumbers.createPhoneNumber({
-        userId,
-        phoneNumber: phone,
-      });
-
-      logInfo('Phone number added to Clerk user', { 
-        userId, 
-        phoneNumberId: newPhoneNumber.id 
-      });
+    if (professionalId) {
+      whereConditions.push(`pv.professional_id = $${paramIndex++}`);
+      params.push(professionalId);
     }
 
-    if (phoneNumber?.verification?.status === 'verified') {
-      logInfo('Phone already verified', { 
-        userId, 
-        phone: phone.replace(/\d{4,}/g, '****') 
-      });
-
-      // Create audit log
-      await createAuditLog({
-        userId,
-        action: AuditActions.USER_UPDATED,
-        resource: 'phone_verification',
-        resourceId: userId,
-        details: {
-          phone: phone.replace(/\d{4,}/g, '****'),
-          status: 'already_verified'
-        },
-        riskLevel: RiskLevels.LOW,
-      });
-
-      return { verified: true, status: 'already_verified' };
+    if (urgency) {
+      whereConditions.push(`pv.urgency = $${paramIndex++}`);
+      params.push(urgency);
     }
 
-    // Trigger SMS verification (if available)
-    try {
-      await clerkClient.phoneNumbers.createPhoneNumberVerification({
-        phoneNumberId: phoneNumber?.id || newPhoneNumber.id,
-      });
-
-      logInfo('SMS verification triggered', { userId });
-
-      // Create audit log
-      await createAuditLog({
-        userId,
-        action: AuditActions.USER_UPDATED,
-        resource: 'phone_verification',
-        resourceId: userId,
-        details: {
-          phone: phone.replace(/\d{4,}/g, '****'),
-          status: 'verification_sent'
-        },
-        riskLevel: RiskLevels.LOW,
-      });
-
-      return { verified: false, status: 'verification_sent' };
-
-    } catch (smsError) {
-      logWarning('SMS verification not available', { 
-        userId, 
-        error: smsError.message 
-      });
-
-      return { verified: false, status: 'verification_not_available' };
+    if (dateFrom) {
+      whereConditions.push(`pv.created_at >= $${paramIndex++}`);
+      params.push(dateFrom);
     }
 
-  } catch (error) {
-    logError(error, { 
-      event: 'phone_verification_failed',
-      userId,
-      phone: phone.replace(/\d{4,}/g, '****')
-    });
-    throw error;
-  }
-};
-
-// Validate professional credentials (Spanish focus)
-export const validateProfessionalCredentials = async (credentials) => {
-  const validation = {
-    isValid: false,
-    licenseNumber: false,
-    dni: false,
-    specialty: false,
-    warnings: [],
-    errors: []
-  };
-
-  try {
-    const { licenseNumber, dni, specialty } = credentials;
-
-    // Validate license number (Spanish medical license format)
-    if (licenseNumber) {
-      // Spanish medical license: NNNNNN/XX format or similar
-      const licensePattern = /^\d{4,8}(\/[A-Z]{1,3})?$/;
-      validation.licenseNumber = licensePattern.test(licenseNumber);
-      
-      if (!validation.licenseNumber) {
-        validation.errors.push('Invalid medical license number format');
-      }
-    } else {
-      validation.errors.push('Medical license number is required');
+    if (dateTo) {
+      whereConditions.push(`pv.created_at <= $${paramIndex++} + INTERVAL '1 day'`);
+      params.push(dateTo);
     }
 
-    // Validate Spanish DNI
-    if (dni) {
-      const dniPattern = /^[0-9]{8}[A-Z]$/;
-      validation.dni = dniPattern.test(dni);
-      
-      if (validation.dni) {
-        // Validate DNI check letter
-        const dniNumbers = dni.substring(0, 8);
-        const dniLetter = dni.substring(8);
-        const checkLetters = 'TRWAGMYFPDXBNJZSQVHLCKE';
-        const expectedLetter = checkLetters[parseInt(dniNumbers) % 23];
-        
-        if (dniLetter !== expectedLetter) {
-          validation.dni = false;
-          validation.errors.push('Invalid DNI check letter');
-        }
-      } else {
-        validation.errors.push('Invalid DNI format (must be 8 digits + letter)');
-      }
-    } else {
-      validation.errors.push('DNI is required for professional verification');
-    }
+    const whereClause = whereConditions.length > 0 
+      ? `WHERE ${whereConditions.join(' AND ')}`
+      : '';
 
-    // Validate specialty
-    const validSpecialties = [
-      'medicina_general', 'cardiologia', 'dermatologia', 'neurologia',
-      'pediatria', 'psiquiatria', 'traumatologia', 'ginecologia',
-      'oftalmologia', 'otorrinolaringologia', 'urologia', 'endocrinologia'
+    // Valid sort columns
+    const validSortColumns = [
+      'created_at', 'updated_at', 'status', 'urgency'
     ];
+    const sortColumn = validSortColumns.includes(sortBy) ? sortBy : 'created_at';
+    const order = sortOrder.toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
 
-    if (specialty) {
-      validation.specialty = validSpecialties.includes(specialty);
-      if (!validation.specialty) {
-        validation.warnings.push('Specialty not in standard list - manual review required');
-      }
-    } else {
-      validation.errors.push('Medical specialty is required');
-    }
+    // Get total count
+    const countResult = await query(`
+      SELECT COUNT(*) as total
+      FROM professional_validations pv
+      ${whereClause}
+    `, params);
 
-    validation.isValid = validation.licenseNumber && validation.dni && 
-                       (validation.specialty || specialty); // Allow custom specialties
+    const total = parseInt(countResult.rows[0].total);
 
-    logInfo('Professional credentials validation completed', {
-      licenseNumber: licenseNumber ? '****' : null,
-      dni: dni ? dni.substring(0, 2) + '****' + dni.slice(-1) : null,
-      specialty,
-      isValid: validation.isValid
+    // Get validation requests with professional details
+    const requestsResult = await query(`
+      SELECT 
+        pv.*,
+        u.name as professional_name,
+        u.email as professional_email,
+        u.phone as professional_phone,
+        p.specialties,
+        p.location,
+        cb.name as created_by_name,
+        rb.name as reviewed_by_name,
+        COUNT(vd.id) as documents_count
+      FROM professional_validations pv
+      LEFT JOIN users u ON pv.professional_id = u.id
+      LEFT JOIN professionals p ON pv.professional_id = p.user_id
+      LEFT JOIN users cb ON pv.created_by = cb.id
+      LEFT JOIN users rb ON pv.reviewed_by = rb.id
+      LEFT JOIN validation_documents vd ON pv.id = vd.validation_id
+      ${whereClause}
+      GROUP BY pv.id, u.name, u.email, u.phone, p.specialties, p.location, cb.name, rb.name
+      ORDER BY pv.${sortColumn} ${order}
+      LIMIT $${paramIndex++} OFFSET $${paramIndex++}
+    `, [...params, limit, offset]);
+
+    logInfo('Validation requests retrieved', {
+      total,
+      returned: requestsResult.rows.length,
+      page,
+      limit,
+      filters
     });
 
-    return validation;
-
-  } catch (error) {
-    logError(error, { 
-      event: 'professional_credentials_validation_error',
-      credentials: { 
-        hasLicense: !!credentials.licenseNumber,
-        hasDni: !!credentials.dni,
-        specialty: credentials.specialty 
-      }
-    });
-    
-    validation.errors.push('Credentials validation service error');
-    return validation;
-  }
-};
-
-// Comprehensive user validation
-export const validateUserData = async (userData, userRole) => {
-  try {
-    logInfo('Starting comprehensive user validation', { 
-      role: userRole,
-      hasEmail: !!userData.email,
-      hasPhone: !!userData.phone 
-    });
-
-    const validations = {
-      email: null,
-      phone: null,
-      professional: null,
-      overall: {
-        isValid: false,
-        errors: [],
-        warnings: []
+    return {
+      requests: requestsResult.rows,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+        hasNext: page < Math.ceil(total / limit),
+        hasPrev: page > 1
       }
     };
 
-    // Validate email
-    if (userData.email) {
-      validations.email = await validateEmail(userData.email, userRole);
-      if (!validations.email.isValid) {
-        validations.overall.errors.push(...validations.email.errors);
-      }
-      validations.overall.warnings.push(...validations.email.warnings);
+  } catch (error) {
+    logError(error, {
+      event: 'get_validation_requests_failed',
+      filters,
+      pagination
+    });
+    throw error;
+  }
+};
+
+// Get single validation request by ID
+export const getValidationRequestById = async (requestId) => {
+  try {
+    const result = await query(`
+      SELECT 
+        pv.*,
+        u.name as professional_name,
+        u.email as professional_email,
+        u.phone as professional_phone,
+        p.specialties,
+        p.location,
+        p.verified as professional_verified,
+        cb.name as created_by_name,
+        rb.name as reviewed_by_name
+      FROM professional_validations pv
+      LEFT JOIN users u ON pv.professional_id = u.id
+      LEFT JOIN professionals p ON pv.professional_id = p.user_id
+      LEFT JOIN users cb ON pv.created_by = cb.id
+      LEFT JOIN users rb ON pv.reviewed_by = rb.id
+      WHERE pv.id = $1
+    `, [requestId]);
+
+    if (result.rows.length === 0) {
+      throw new NotFoundError('Validation request not found');
     }
 
-    // Validate phone
-    if (userData.phone) {
-      validations.phone = await validatePhone(userData.phone);
-      if (!validations.phone.isValid) {
-        validations.overall.errors.push(...validations.phone.errors);
-      }
-      validations.overall.warnings.push(...validations.phone.warnings);
-    }
+    const validationRequest = result.rows[0];
 
-    // Validate professional credentials
-    if (userRole === 'professional' && userData.professionalData) {
-      validations.professional = await validateProfessionalCredentials(userData.professionalData);
-      if (!validations.professional.isValid) {
-        validations.overall.errors.push(...validations.professional.errors);
-      }
-      validations.overall.warnings.push(...validations.professional.warnings);
-    }
+    // Get associated documents
+    const documentsResult = await query(`
+      SELECT 
+        vd.*,
+        ub.name as uploaded_by_name
+      FROM validation_documents vd
+      LEFT JOIN users ub ON vd.uploaded_by = ub.id
+      WHERE vd.validation_id = $1
+      ORDER BY vd.created_at ASC
+    `, [requestId]);
 
-    // Determine overall validity
-    validations.overall.isValid = validations.overall.errors.length === 0;
+    validationRequest.documents = documentsResult.rows;
 
-    // Create audit log for validation
-    await createAuditLog({
-      userId: userData.userId,
-      action: AuditActions.VALIDATION_SUBMITTED,
-      resource: 'user_validation',
-      resourceId: userData.userId,
-      details: {
-        role: userRole,
-        validationResults: {
-          email: validations.email?.isValid,
-          phone: validations.phone?.isValid,
-          professional: validations.professional?.isValid,
-          overall: validations.overall.isValid
-        },
-        errorCount: validations.overall.errors.length,
-        warningCount: validations.overall.warnings.length
-      },
-      riskLevel: validations.overall.isValid ? RiskLevels.LOW : RiskLevels.MEDIUM,
+    logInfo('Validation request retrieved', {
+      requestId,
+      professionalId: validationRequest.professional_id,
+      status: validationRequest.status,
+      documentsCount: validationRequest.documents.length
     });
 
-    return validations;
+    return validationRequest;
 
   } catch (error) {
-    logError(error, { 
-      event: 'user_validation_error',
-      role: userRole 
+    logError(error, {
+      event: 'get_validation_request_failed',
+      requestId
+    });
+    throw error;
+  }
+};
+
+// Update validation status
+export const updateValidationStatus = async (requestId, statusData, reviewedBy) => {
+  try {
+    logInfo('Updating validation status', {
+      requestId,
+      newStatus: statusData.status,
+      reviewedBy
+    });
+
+    const result = await withTransaction(async (client) => {
+      // Get current request
+      const currentResult = await client.query(
+        'SELECT * FROM professional_validations WHERE id = $1',
+        [requestId]
+      );
+
+      if (currentResult.rows.length === 0) {
+        throw new NotFoundError('Validation request not found');
+      }
+
+      const currentRequest = currentResult.rows[0];
+
+      // Update validation request
+      const updateResult = await client.query(`
+        UPDATE professional_validations 
+        SET 
+          status = $1,
+          review_notes = $2,
+          required_documents = $3,
+          reviewed_by = $4,
+          reviewed_at = CURRENT_TIMESTAMP,
+          expiration_date = $5,
+          updated_at = CURRENT_TIMESTAMP
+        WHERE id = $6
+        RETURNING *
+      `, [
+        statusData.status,
+        statusData.reviewNotes,
+        statusData.requiredDocuments ? JSON.stringify(statusData.requiredDocuments) : null,
+        reviewedBy,
+        statusData.expirationDate,
+        requestId
+      ]);
+
+      const updatedRequest = updateResult.rows[0];
+
+      // If approved, update professional verification status
+      if (statusData.status === 'approved') {
+        await client.query(`
+          UPDATE professionals 
+          SET 
+            verified = true,
+            verification_date = CURRENT_TIMESTAMP,
+            verification_expiry = $1,
+            updated_at = CURRENT_TIMESTAMP
+          WHERE user_id = $2
+        `, [statusData.expirationDate, currentRequest.professional_id]);
+
+        logInfo('Professional verified successfully', {
+          professionalId: currentRequest.professional_id,
+          reviewedBy
+        });
+      }
+
+      // Create audit log
+      await createAuditLog({
+        userId: reviewedBy,
+        action: AuditActions.USER_UPDATED,
+        resource: 'validation_status',
+        resourceId: requestId,
+        details: {
+          requestId,
+          professionalId: currentRequest.professional_id,
+          oldStatus: currentRequest.status,
+          newStatus: statusData.status,
+          reviewNotes: statusData.reviewNotes,
+          approved: statusData.status === 'approved'
+        },
+        riskLevel: statusData.status === 'approved' ? RiskLevels.HIGH : RiskLevels.MEDIUM,
+      });
+
+      logInfo('Validation status updated successfully', {
+        requestId,
+        professionalId: currentRequest.professional_id,
+        oldStatus: currentRequest.status,
+        newStatus: statusData.status,
+        reviewedBy
+      });
+
+      return updatedRequest;
+    });
+
+    return result;
+
+  } catch (error) {
+    logError(error, {
+      event: 'validation_status_update_failed',
+      requestId,
+      statusData,
+      reviewedBy
+    });
+    throw error;
+  }
+};
+
+// Upload additional documents to validation request
+export const uploadValidationDocument = async (requestId, documents, uploadedBy) => {
+  try {
+    logInfo('Uploading validation documents', {
+      requestId,
+      documentsCount: documents.length,
+      uploadedBy
+    });
+
+    const result = await withTransaction(async (client) => {
+      // Verify validation request exists
+      const requestResult = await client.query(
+        'SELECT * FROM professional_validations WHERE id = $1',
+        [requestId]
+      );
+
+      if (requestResult.rows.length === 0) {
+        throw new NotFoundError('Validation request not found');
+      }
+
+      const validationRequest = requestResult.rows[0];
+
+      // Insert new documents
+      for (const doc of documents) {
+        await client.query(`
+          INSERT INTO validation_documents (
+            validation_id, document_type, filename, description, uploaded_by
+          ) VALUES ($1, $2, $3, $4, $5)
+        `, [
+          requestId,
+          doc.type,
+          doc.filename,
+          doc.description,
+          uploadedBy
+        ]);
+      }
+
+      // Update request timestamp and potentially status
+      let newStatus = validationRequest.status;
+      if (validationRequest.status === 'requires_more_info') {
+        newStatus = 'pending'; // Reset to pending when additional docs are provided
+      }
+
+      await client.query(`
+        UPDATE professional_validations 
+        SET 
+          status = $1,
+          updated_at = CURRENT_TIMESTAMP
+        WHERE id = $2
+      `, [newStatus, requestId]);
+
+      // Create audit log
+      await createAuditLog({
+        userId: uploadedBy,
+        action: AuditActions.USER_UPDATED,
+        resource: 'validation_documents',
+        resourceId: requestId,
+        details: {
+          requestId,
+          professionalId: validationRequest.professional_id,
+          documentsCount: documents.length,
+          documentTypes: documents.map(d => d.type),
+          statusChange: validationRequest.status !== newStatus
+        },
+        riskLevel: RiskLevels.MEDIUM,
+      });
+
+      logInfo('Validation documents uploaded successfully', {
+        requestId,
+        professionalId: validationRequest.professional_id,
+        documentsCount: documents.length,
+        uploadedBy
+      });
+
+      // Return updated request
+      const updatedResult = await client.query(
+        'SELECT * FROM professional_validations WHERE id = $1',
+        [requestId]
+      );
+
+      return updatedResult.rows[0];
+    });
+
+    return result;
+
+  } catch (error) {
+    logError(error, {
+      event: 'validation_documents_upload_failed',
+      requestId,
+      documentsCount: documents.length,
+      uploadedBy
+    });
+    throw error;
+  }
+};
+
+// Get validation history for a professional
+export const getValidationHistory = async (professionalId) => {
+  try {
+    const result = await query(`
+      SELECT 
+        pv.*,
+        rb.name as reviewed_by_name,
+        cb.name as created_by_name,
+        COUNT(vd.id) as documents_count
+      FROM professional_validations pv
+      LEFT JOIN users rb ON pv.reviewed_by = rb.id
+      LEFT JOIN users cb ON pv.created_by = cb.id
+      LEFT JOIN validation_documents vd ON pv.id = vd.validation_id
+      WHERE pv.professional_id = $1
+      GROUP BY pv.id, rb.name, cb.name
+      ORDER BY pv.created_at DESC
+    `, [professionalId]);
+
+    logInfo('Validation history retrieved', {
+      professionalId,
+      requestsCount: result.rows.length
+    });
+
+    return result.rows;
+
+  } catch (error) {
+    logError(error, {
+      event: 'get_validation_history_failed',
+      professionalId
     });
     throw error;
   }
 };
 
 export default {
-  validateEmail,
-  validatePhone,
-  verifyEmailWithClerk,
-  verifyPhoneWithClerk,
-  validateProfessionalCredentials,
-  validateUserData,
+  createValidationRequest,
+  getValidationRequests,
+  getValidationRequestById,
+  updateValidationStatus,
+  uploadValidationDocument,
+  getValidationHistory
 };

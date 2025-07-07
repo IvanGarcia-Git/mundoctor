@@ -14,8 +14,11 @@ import webhookRoutes from './routes/webhooks.js';
 import userRoutes from './routes/users.js';
 import userValidationRoutes from './routes/userValidation.js';
 import uploadRoutes from './routes/uploads.js';
+import appointmentRoutes from './routes/appointments.js';
+import scheduleRoutes from './routes/schedules.js';
+import serviceRoutes from './routes/services.js';
+import validationRoutes from './routes/validation.js';
 // import professionalRoutes from './routes/professionals.js';
-// import appointmentRoutes from './routes/appointments.js';
 // import ratingRoutes from './routes/ratings.js';
 // import adminRoutes from './routes/admin.js';
 
@@ -209,8 +212,11 @@ app.use('/api/webhooks', webhookRoutes);
 app.use('/api/users', clerkAuth, userRoutes);
 app.use('/api/users', clerkAuth, userValidationRoutes);
 app.use('/api/uploads', clerkAuth, uploadRoutes);
+app.use('/api/appointments', clerkAuth, appointmentRoutes);
+app.use('/api/schedules', clerkAuth, scheduleRoutes);
+app.use('/api/services', clerkAuth, serviceRoutes);
+app.use('/api/validation', clerkAuth, validationRoutes);
 // app.use('/api/professionals', professionalRoutes);
-// app.use('/api/appointments', appointmentRoutes);
 // app.use('/api/ratings', ratingRoutes);
 // app.use('/api/admin', adminRoutes);
 
