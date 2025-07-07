@@ -2,6 +2,7 @@ import express from 'express';
 import { requireAuth } from '../middleware/auth.js';
 import { withTransaction } from '../config/database.js';
 import { syncUserFromClerk } from '../controllers/userController.js';
+import { clerkClient } from '@clerk/express';
 import { 
   getUserStatusInfo, 
   attachUserStatus, 
@@ -63,7 +64,7 @@ router.get('/profile', async (req, res) => {
           SELECT 
             p.*, ps.name as subscription_name, ps.price, ps.features
           FROM professionals p
-          LEFT JOIN professional_subscriptions ps ON p.subscription_plan_id = ps.id
+          LEFT JOIN professional_subscriptions ps ON p.subscription_plan = ps.name
           WHERE p.user_id = $1
         `;
         const profResult = await client.query(profQuery, [user.id]);
@@ -688,7 +689,6 @@ router.post('/select-role', async (req, res) => {
 
     // Update Clerk metadata from backend (this has permission to update publicMetadata)
     try {
-      const { clerkClient } = await import('@clerk/express');
       await clerkClient.users.updateUser(userId, {
         publicMetadata: {
           role: role,

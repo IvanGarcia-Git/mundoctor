@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Clock, CheckCircle, AlertCircle, Mail, Phone, FileText, LogOut } from 'lucide-react';
 import { motion } from 'framer-motion';
-import ProfessionalVerificationControl from '@/components/admin/ProfessionalVerificationControl';
 
 export default function ProfessionalVerificationPendingPage() {
   const { user } = useUser();
@@ -86,8 +85,6 @@ export default function ProfessionalVerificationPendingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-slate-900 dark:to-slate-800 flex items-center justify-center p-4">
       <div className="w-full max-w-2xl mx-auto space-y-6">
-        {/* Admin Control for Testing */}
-        <ProfessionalVerificationControl />
         
         <motion.div
           initial={{ opacity: 0, y: 20 }}

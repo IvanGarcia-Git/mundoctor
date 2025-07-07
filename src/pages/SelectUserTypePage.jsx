@@ -66,21 +66,7 @@ export default function SelectUserTypePage() {
         }
       }
 
-      // Update role in Clerk metadata (using unsafeMetadata which can be updated from frontend)
-      try {
-        await user.update({
-          unsafeMetadata: {
-            ...user.unsafeMetadata,
-            role: selectedType,
-            onboardingComplete: selectedType === 'patient' ? true : false
-          }
-        });
-        console.log('✅ Clerk metadata updated');
-      } catch (clerkError) {
-        console.error('Error updating Clerk metadata:', clerkError);
-        // If we can't update Clerk metadata, that's a serious problem
-        throw new Error('Error al actualizar datos de usuario. Por favor, inténtalo de nuevo.');
-      }
+      // Note: Clerk metadata will be updated by the backend, which has proper permissions
 
       // Reset retry count on success
       setRetryCount(0);
