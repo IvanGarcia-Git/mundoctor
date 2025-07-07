@@ -96,3 +96,19 @@
 .leaflet-marker-icon.hue-rotate-180.saturate-200 {
   filter: hue-rotate(180deg) saturate(200%); 
 }
+
+/* Clerk UI Customizations */
+.cl-footer {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.cl-footerPages {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.cl-footerAction {
+  background: transparent !important;
+  background-color: transparent !important;
+}

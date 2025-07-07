@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useUser } from '@clerk/clerk-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -16,14 +16,13 @@ import {
   List
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import MonthlyIncomeChart from '@/components/professional/dashboard/MonthlyIncomeChart';
-import AppointmentsCalendarView from '@/components/professional/appointments/AppointmentsCalendarView';
-import { getAppointments, getProfessionalRatings } from '@/lib/api';
-import { supabase } from '@/lib/supabase';
+const MonthlyIncomeChart = React.lazy(() => import('@/components/professional/dashboard/MonthlyIncomeChart'));
+const AppointmentsCalendarView = React.lazy(() => import('@/components/professional/appointments/AppointmentsCalendarView'));
+import { userApi } from '@/lib/clerkApi';
 import { useToast } from "@/components/ui/use-toast";
 
 const ProfessionalDashboardPage = () => {
-  const { user } = useAuth();
+  const { user } = useUser();
   const { toast } = useToast();
   const [stats, setStats] = useState({
     totalPatients: 0,
@@ -46,95 +45,30 @@ const ProfessionalDashboardPage = () => {
       try {
         setIsLoading(true);
 
-        // Fetch appointments
-        const appointments = await getAppointments(user.id, 'professional');
-        const now = new Date();
-        const thisMonth = now.getMonth();
-        const lastMonth = thisMonth === 0 ? 11 : thisMonth - 1;
+        // Load data from API
+        const [statsResponse, appointmentsResponse, reviewsResponse] = await Promise.all([
+          userApi.getDashboardStats(),
+          userApi.getDashboardAppointments(3),
+          userApi.getDashboardReviews(3)
+        ]);
 
-        // Calculate stats
-        const monthlyAppointments = appointments.filter(apt => 
-          new Date(apt.date).getMonth() === thisMonth
-        ).length;
+        if (statsResponse.success) {
+          setStats(statsResponse.data);
+        }
 
-        const lastMonthAppointments = appointments.filter(apt => 
-          new Date(apt.date).getMonth() === lastMonth
-        ).length;
+        if (appointmentsResponse.success) {
+          setUpcomingAppointments(appointmentsResponse.data);
+        }
 
-        // Get unique patients
-        const uniquePatients = new Set(appointments.map(apt => apt.patient.id));
-        const totalPatients = uniquePatients.size;
-
-        // Get ratings
-        const ratings = await getProfessionalRatings(user.id);
-        const averageRating = ratings.length > 0
-          ? ratings.reduce((acc, curr) => acc + curr.rating, 0) / ratings.length
-          : 0;
-
-        // Calculate monthly income
-        const monthlyIncome = appointments
-          .filter(apt => new Date(apt.date).getMonth() === thisMonth)
-          .reduce((acc, apt) => acc + (apt.price || 0), 0);
-
-        const lastMonthIncome = appointments
-          .filter(apt => new Date(apt.date).getMonth() === lastMonth)
-          .reduce((acc, apt) => acc + (apt.price || 0), 0);
-
-        // Calculate trends
-        const calculateTrend = (current, previous) => {
-          if (previous === 0) return '0%';
-          return `${(((current - previous) / previous) * 100).toFixed(1)}%`;
-        };
-
-        setStats({
-          totalPatients,
-          monthlyAppointments,
-          averageRating: averageRating.toFixed(1),
-          monthlyIncome,
-          trends: {
-            appointments: calculateTrend(monthlyAppointments, lastMonthAppointments),
-            income: calculateTrend(monthlyIncome, lastMonthIncome),
-            rating: '+0.0', // Would need historical data for this
-            patients: '+0.0%' // Would need historical data for this
-          }
-        });
-
-        // Set upcoming appointments
-        const upcoming = appointments
-          .filter(apt => new Date(apt.date) >= now)
-          .sort((a, b) => new Date(a.date) - new Date(b.date))
-          .slice(0, 5)
-          .map(apt => ({
-            id: apt.id,
-            patientName: `${apt.patient.first_name} ${apt.patient.last_name}`,
-            patientImage: apt.patient.avatar_url,
-            type: apt.reason || 'Consulta',
-            time: new Date(apt.date).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
-            status: apt.status
-          }));
-
-        setUpcomingAppointments(upcoming);
-
-        // Set recent reviews
-        const recent = ratings
-          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-          .slice(0, 3)
-          .map(review => ({
-            id: review.id,
-            patientName: `${review.patient.first_name} ${review.patient.last_name}`,
-            patientImage: review.patient.avatar_url,
-            rating: review.rating,
-            comment: review.comment,
-            date: new Date(review.created_at).toLocaleDateString('es-ES')
-          }));
-
-        setRecentReviews(recent);
+        if (reviewsResponse.success) {
+          setRecentReviews(reviewsResponse.data);
+        }
 
       } catch (error) {
         console.error('Error loading dashboard data:', error);
         toast({
           title: "Error",
-          description: "No se pudieron cargar los datos del dashboard",
+          description: "No se pudieron cargar los datos del dashboard. Intenta recargar la página.",
           variant: "destructive",
         });
       } finally {
@@ -142,10 +76,10 @@ const ProfessionalDashboardPage = () => {
       }
     };
 
-    if (user?.id) {
+    if (user) {
       loadDashboardData();
     }
-  }, [user?.id]);
+  }, [user, toast]);
 
   if (isLoading) {
     return (
@@ -193,7 +127,7 @@ const ProfessionalDashboardPage = () => {
         <div>
           <h1 className="text-2xl font-bold text-foreground dark:text-white">Panel de Control</h1>
           <p className="mt-1 text-muted-foreground dark:text-gray-400">
-            Bienvenido de nuevo, {user?.name || 'Dr. Usuario'}
+            Bienvenido de nuevo, {user?.firstName} {user?.lastName || 'Dr. Usuario'}
           </p>
         </div>
         <Button asChild>
@@ -232,7 +166,13 @@ const ProfessionalDashboardPage = () => {
 
       {/* Monthly Income Chart */}
       <div className="mb-8">
-        <MonthlyIncomeChart />
+        <React.Suspense fallback={
+          <div className="h-64 flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        }>
+          <MonthlyIncomeChart />
+        </React.Suspense>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -340,16 +280,22 @@ const ProfessionalDashboardPage = () => {
           </TabsList>
 
           <TabsContent value="calendar">
-            <AppointmentsCalendarView
-              appointments={upcomingAppointments}
-              onDaySelect={(date) => {
-                toast({
-                  title: "Citas para " + date.toLocaleDateString(),
-                  description: "Aquí podrás ver los detalles de las citas para este día"
-                });
-                // TODO: Implementar modal o navegación a vista detallada del día
-              }}
-            />
+            <React.Suspense fallback={
+              <div className="h-96 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              </div>
+            }>
+              <AppointmentsCalendarView
+                appointments={upcomingAppointments}
+                onDaySelect={(date) => {
+                  toast({
+                    title: "Citas para " + date.toLocaleDateString(),
+                    description: "Aquí podrás ver los detalles de las citas para este día"
+                  });
+                  // TODO: Implementar modal o navegación a vista detallada del día
+                }}
+              />
+            </React.Suspense>
           </TabsContent>
 
           <TabsContent value="list">

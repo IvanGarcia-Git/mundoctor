@@ -9,7 +9,7 @@ import GoogleStyleCalendar from '@/components/professional/appointments/GoogleSt
 import { sampleAppointmentsData } from '@/data/appointmentsData';
 import { useToast } from '@/components/ui/use-toast';
 import { servicesApi } from '@/lib/servicesApi';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/ClerkAuthContext';
 import { emailService } from '@/lib/emailService';
 
 // Datos de ejemplo de pacientes

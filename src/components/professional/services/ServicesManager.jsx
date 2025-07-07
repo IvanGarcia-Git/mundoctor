@@ -5,7 +5,7 @@ import ServicesList from './ServicesList';
 import ServiceForm from './ServiceForm';
 import { useToast } from '@/components/ui/use-toast';
 import { servicesApi } from '@/lib/servicesApi';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/ClerkAuthContext';
 
 const ServicesManager = () => {
   const [services, setServices] = useState([]);
