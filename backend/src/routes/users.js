@@ -623,4 +623,98 @@ router.post('/refresh-status', async (req, res) => {
   }
 });
 
+/**
+ * POST /api/users/select-role
+ * Select user role during onboarding process
+ */
+router.post('/select-role', async (req, res) => {
+  try {
+    const { userId } = req.auth;
+    const { role, profileData = {} } = req.body;
+
+    console.log('🔄 Role selection request:', { userId, role, profileData });
+
+    if (!role || !['patient', 'professional'].includes(role)) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Valid role is required (patient or professional)' 
+      });
+    }
+
+    const result = await withTransaction(async (client) => {
+      // Update user role in database (cast to user_role enum type)
+      const updateUserQuery = `
+        UPDATE users 
+        SET role = $1::user_role, 
+            status = CASE 
+              WHEN $1::user_role = 'patient' THEN 'active'::user_status
+              WHEN $1::user_role = 'professional' THEN 'pending_validation'::user_status
+              ELSE status
+            END,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = $2
+        RETURNING *
+      `;
+      const userResult = await client.query(updateUserQuery, [role, userId]);
+
+      if (userResult.rows.length === 0) {
+        throw new Error('User not found');
+      }
+
+      const user = userResult.rows[0];
+
+      // Create role-specific profile
+      if (role === 'patient') {
+        await client.query(`
+          INSERT INTO patients (user_id) 
+          VALUES ($1)
+          ON CONFLICT (user_id) DO NOTHING
+        `, [userId]);
+      } else if (role === 'professional') {
+        const { license_number, dni, specialty } = profileData;
+        
+        // Create professional profile (without specialty initially - will be set during profile completion)
+        await client.query(`
+          INSERT INTO professionals (user_id, license_number, dni, profile_completed, verified)
+          VALUES ($1, $2, $3, FALSE, FALSE)
+          ON CONFLICT (user_id) DO UPDATE SET
+            license_number = EXCLUDED.license_number,
+            dni = EXCLUDED.dni
+        `, [userId, license_number || 'PENDING', dni || 'PENDING']);
+      }
+
+      return user;
+    });
+
+    // Update Clerk metadata from backend (this has permission to update publicMetadata)
+    try {
+      const { clerkClient } = await import('@clerk/express');
+      await clerkClient.users.updateUser(userId, {
+        publicMetadata: {
+          role: role,
+          onboardingComplete: role === 'patient' ? true : false
+        }
+      });
+      console.log('✅ Clerk metadata updated from backend');
+    } catch (clerkError) {
+      console.warn('⚠️ Failed to update Clerk metadata:', clerkError.message);
+      // Don't fail the request if Clerk metadata update fails
+    }
+
+    console.log('✅ Role selection completed:', { userId, role });
+
+    res.json({
+      success: true,
+      data: result,
+      message: 'Role selected successfully'
+    });
+  } catch (error) {
+    console.error('Error selecting user role:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Error selecting user role'
+    });
+  }
+});
+
 export default router;

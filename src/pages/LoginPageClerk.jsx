@@ -54,7 +54,7 @@ const LoginPageClerk = () => {
                   fontFamily: "inherit"
                 }
               }}
-              afterSignInUrl="/dashboard"
+              fallbackRedirectUrl="/dashboard"
               redirectUrl="/dashboard"
               signUpUrl="/registro"
             />

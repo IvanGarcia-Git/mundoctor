@@ -117,6 +117,15 @@ app.use((req, res, next) => {
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+// Serve static files from uploads directory (with security)
+app.use('/uploads', express.static('uploads', {
+  // Add security headers for file serving
+  setHeaders: (res, path) => {
+    res.set('X-Content-Type-Options', 'nosniff');
+    res.set('X-Frame-Options', 'DENY');
+  }
+}));
+
 // Compression middleware
 app.use(compression());
 

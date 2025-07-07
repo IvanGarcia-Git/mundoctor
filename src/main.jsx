@@ -20,7 +20,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       afterSignOutUrl="/"
       signInUrl="/login"
       signUpUrl="/registro"
-      afterSignInUrl="/"
+      fallbackRedirectUrl="/"
       afterSignUpUrl="/"
     >
       <App />

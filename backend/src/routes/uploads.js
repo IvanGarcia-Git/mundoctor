@@ -3,7 +3,7 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
-import { requireAuth } from '../middleware/auth.js';
+import { requireAuth, attachUser } from '../middleware/auth.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -123,13 +123,13 @@ router.post('/professional-documents',
  * GET /api/uploads/:filename
  * Serve uploaded files
  */
-router.get('/:filename', requireAuth, (req, res) => {
+router.get('/:filename', requireAuth, attachUser, (req, res) => {
   try {
     const { filename } = req.params;
     const { userId } = req.auth;
     
     // Security check: ensure the file belongs to the user or user is admin
-    if (!filename.startsWith(userId) && req.auth.role !== 'admin') {
+    if (!filename.startsWith(userId) && req.user?.role !== 'admin') {
       return res.status(403).json({
         success: false,
         message: 'Access denied'
@@ -159,13 +159,13 @@ router.get('/:filename', requireAuth, (req, res) => {
  * DELETE /api/uploads/:filename
  * Delete uploaded file
  */
-router.delete('/:filename', requireAuth, (req, res) => {
+router.delete('/:filename', requireAuth, attachUser, (req, res) => {
   try {
     const { filename } = req.params;
     const { userId } = req.auth;
     
     // Security check: ensure the file belongs to the user or user is admin
-    if (!filename.startsWith(userId) && req.auth.role !== 'admin') {
+    if (!filename.startsWith(userId) && req.user?.role !== 'admin') {
       return res.status(403).json({
         success: false,
         message: 'Access denied'

@@ -48,50 +48,66 @@ export const useClerkApi = () => {
 
         // Add timeout to prevent hanging
         const controller = new AbortController();
-        let timeoutId;
+        let timeoutId = null;
+        
+        // Create timeout promise
         const timeoutPromise = new Promise((_, reject) => {
           timeoutId = setTimeout(() => {
             controller.abort();
             reject(new Error('Request timeout - the server took too long to respond'));
-          }, 30000); // 30 second timeout
+          }, 10000); // 10 second timeout
         });
         
         config.signal = controller.signal;
         
-        const fetchPromise = fetch(url, config);
-        const response = await Promise.race([fetchPromise, timeoutPromise]);
-        clearTimeout(timeoutId); // Clear timeout on successful response
-        console.log('🔍 Response received:', response.status, response.statusText);
+        try {
+          const fetchPromise = fetch(url, config);
+          const response = await Promise.race([fetchPromise, timeoutPromise]);
+          
+          // Clear timeout on successful response
+          if (timeoutId) {
+            clearTimeout(timeoutId);
+            timeoutId = null;
+          }
+          
+          console.log('🔍 Response received:', response.status, response.statusText);
+          
+          // Handle different response types
+          if (!response.ok) {
+            console.log('🔍 Response not OK, getting error data...');
+            const errorData = await response.json().catch(() => ({}));
+            console.log('🔍 Error data:', errorData);
+            throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+          }
 
-        // Handle different response types
-        if (!response.ok) {
-          console.log('🔍 Response not OK, getting error data...');
-          const errorData = await response.json().catch(() => ({}));
-          console.log('🔍 Error data:', errorData);
-          throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+          // Return JSON if possible, otherwise return text
+          const contentType = response.headers.get('content-type');
+          console.log('🔍 Content type:', contentType);
+          if (contentType && contentType.includes('application/json')) {
+            const jsonData = await response.json();
+            console.log('🔍 JSON response data:', jsonData);
+            return jsonData;
+          }
+          const textData = await response.text();
+          console.log('🔍 Text response data:', textData);
+          return textData;
+        } catch (error) {
+          // Clear timeout on error
+          if (timeoutId) {
+            clearTimeout(timeoutId);
+            timeoutId = null;
+          }
+          
+          console.error(`API Request failed (${endpoint}):`, error);
+          
+          if (error.name === 'AbortError') {
+            throw new Error('Request timeout - the server took too long to respond');
+          }
+          
+          throw error;
         }
-
-        // Return JSON if possible, otherwise return text
-        const contentType = response.headers.get('content-type');
-        console.log('🔍 Content type:', contentType);
-        if (contentType && contentType.includes('application/json')) {
-          const jsonData = await response.json();
-          console.log('🔍 JSON response data:', jsonData);
-          return jsonData;
-        }
-        const textData = await response.text();
-        console.log('🔍 Text response data:', textData);
-        return textData;
       } catch (error) {
-        if (timeoutId) {
-          clearTimeout(timeoutId); // Clear timeout on error too
-        }
         console.error(`API Request failed (${endpoint}):`, error);
-        
-        if (error.name === 'AbortError') {
-          throw new Error('Request timeout - the server took too long to respond');
-        }
-        
         throw error;
       }
     };
@@ -142,6 +158,7 @@ export const useClerkApi = () => {
       getUserPreferences: () => get('/users/preferences'),
       updateUserPreferences: (preferences) => put('/users/preferences', preferences),
       getDashboardStats: () => get('/users/dashboard-stats'),
+      selectUserRole: (roleData) => post('/users/select-role', roleData),
 
       // Professional API endpoints
       getProfessionalProfile: () => get('/professionals/profile'),

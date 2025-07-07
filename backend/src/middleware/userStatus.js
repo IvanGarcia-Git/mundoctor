@@ -197,7 +197,7 @@ export const updateUserStatus = async (userId, newStatus) => {
 
     const result = await query(`
       UPDATE users 
-      SET status = $2, updated_at = NOW()
+      SET status = $2::user_status, updated_at = NOW()
       WHERE id = $1
       RETURNING *
     `, [userId, newStatus]);

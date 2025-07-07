@@ -2,6 +2,7 @@ import express from 'express';
 import { requireAuth } from '../middleware/auth.js';
 import { withTransaction, query } from '../config/database.js';
 import { updateUserStatus, refreshUserStatus } from '../middleware/userStatus.js';
+import { syncUserFromClerk } from '../controllers/userController.js';
 
 const router = express.Router();
 
@@ -36,19 +37,39 @@ router.post('/select-role', async (req, res) => {
     }
 
     const result = await withTransaction(async (client) => {
+      // First check if user exists
+      let userResult = await client.query(`
+        SELECT * FROM users WHERE id = $1
+      `, [userId]);
+
+      // If user doesn't exist, sync from Clerk
+      if (userResult.rows.length === 0) {
+        console.log(`🔄 User ${userId} not found in database, syncing from Clerk...`);
+        try {
+          await syncUserFromClerk(userId);
+          // Re-query the user after syncing
+          userResult = await client.query(`
+            SELECT * FROM users WHERE id = $1
+          `, [userId]);
+        } catch (syncError) {
+          console.error('Failed to sync user from Clerk:', syncError);
+          throw new Error('User not found and could not be synced from Clerk');
+        }
+      }
+
+      if (userResult.rows.length === 0) {
+        throw new Error('User not found');
+      }
+
       // Update user role
-      const userResult = await client.query(`
+      const updateResult = await client.query(`
         UPDATE users 
         SET role = $2, updated_at = NOW()
         WHERE id = $1
         RETURNING *
       `, [userId, role]);
 
-      if (userResult.rows.length === 0) {
-        throw new Error('User not found');
-      }
-
-      const user = userResult.rows[0];
+      const user = updateResult.rows[0];
 
       // Create appropriate profile based on role
       if (role === 'patient') {
@@ -124,7 +145,7 @@ router.post('/professional-validation', async (req, res) => {
     const result = await withTransaction(async (client) => {
       // Get user by Clerk ID and check if they are a professional
       const userResult = await client.query(`
-        SELECT id, role FROM users WHERE clerk_id = $1
+        SELECT id, role FROM users WHERE id = $1
       `, [userId]);
 
       if (userResult.rows.length === 0) {

@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '@clerk/clerk-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { UserCheck, Stethoscope, ArrowRight, User } from 'lucide-react';
+import { UserCheck, Stethoscope, ArrowRight, User, AlertCircle } from 'lucide-react';
 import { useClerkApi } from '@/hooks/useClerkApi';
 
 export default function SelectUserTypePage() {
   const [selectedType, setSelectedType] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [retryCount, setRetryCount] = useState(0);
   const { user, isLoaded } = useUser();
   const navigate = useNavigate();
   const { api, isAuthenticated } = useClerkApi();
@@ -18,43 +20,77 @@ export default function SelectUserTypePage() {
     return <div className="flex justify-center items-center h-screen"><p>Cargando...</p></div>;
   }
 
-  const handleTypeSelection = async () => {
+  const handleTypeSelection = async (isRetry = false) => {
     if (!selectedType || !user || !isAuthenticated) {
       console.error('Missing requirements:', { selectedType, user: !!user, isAuthenticated });
+      setError('Faltan requisitos para continuar. Por favor, recarga la página.');
       return;
     }
 
     setIsLoading(true);
+    setError(null);
+    
     try {
       console.log('🔄 Starting role selection process for:', selectedType);
       console.log('🔄 User:', user.id);
       console.log('🔄 isAuthenticated:', isAuthenticated);
-      console.log('🔄 API object:', api);
 
-      // Update role in Clerk metadata
-      await user.update({
-        unsafeMetadata: {
-          ...user.unsafeMetadata,
-          role: selectedType
-        }
-      });
-      console.log('✅ Clerk metadata updated');
-
-      // Sync role with backend database
-      console.log('🔄 Calling API to sync role with backend...');
-      console.log('🔄 API methods available:', Object.keys(api));
+      // First, sync role with backend database
+      console.log('🔄 Calling API to update user role in database...');
       
-      // Try the test endpoint first to verify connectivity
-      const response = await api.request('/test-select-role-noauth', {
-        method: 'POST',
-        body: JSON.stringify({ role: selectedType })
-      });
-      console.log('📥 API response:', response);
+      let backendSuccess = false;
+      let backendError = null;
+      
+      try {
+        const response = await api.selectUserRole({ role: selectedType });
+        console.log('📥 API response:', response);
 
-      if (!response.success) {
-        throw new Error(response.message || 'Failed to update user role');
+        if (!response.success) {
+          throw new Error(response.message || 'Failed to update user role');
+        }
+        
+        backendSuccess = true;
+        console.log('✅ Backend role updated successfully');
+      } catch (apiError) {
+        console.warn('Backend API error:', apiError);
+        backendError = apiError;
+        
+        // Don't block the user if it's a network/timeout error
+        if (apiError.message.includes('Request timeout') || 
+            apiError.message.includes('Failed to fetch') ||
+            apiError.message.includes('NetworkError')) {
+          console.log('⚠️ Backend server is not responding, but continuing with flow');
+        } else {
+          // For other errors, we should stop the process
+          throw apiError;
+        }
       }
 
+      // Update role in Clerk metadata (using unsafeMetadata which can be updated from frontend)
+      try {
+        await user.update({
+          unsafeMetadata: {
+            ...user.unsafeMetadata,
+            role: selectedType,
+            onboardingComplete: selectedType === 'patient' ? true : false
+          }
+        });
+        console.log('✅ Clerk metadata updated');
+      } catch (clerkError) {
+        console.error('Error updating Clerk metadata:', clerkError);
+        // If we can't update Clerk metadata, that's a serious problem
+        throw new Error('Error al actualizar datos de usuario. Por favor, inténtalo de nuevo.');
+      }
+
+      // Reset retry count on success
+      setRetryCount(0);
+
+      // Show warning if backend failed but allow user to continue
+      if (!backendSuccess && backendError) {
+        console.log('⚠️ Backend sync failed, but user can continue with Clerk-only authentication');
+      }
+
+      // Navigate based on role
       if (selectedType === 'patient') {
         // For patients, redirect to patient dashboard
         navigate('/paciente/dashboard');
@@ -64,10 +100,27 @@ export default function SelectUserTypePage() {
       }
     } catch (error) {
       console.error('Error updating user type:', error);
-      // TODO: Add user-friendly error handling
+      
+      // Provide user-friendly error messages
+      if (error.message.includes('User not signed in')) {
+        setError('Sesión expirada. Por favor, inicia sesión nuevamente.');
+      } else if (error.message.includes('Request timeout') || error.message.includes('Failed to fetch')) {
+        setError('Servidor no disponible. Por favor, inténtalo más tarde.');
+      } else {
+        setError(`Error al actualizar el tipo de usuario: ${error.message}`);
+      }
+      
+      // Increment retry count
+      if (!isRetry) {
+        setRetryCount(prev => prev + 1);
+      }
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleRetry = () => {
+    handleTypeSelection(true);
   };
 
   return (
@@ -167,9 +220,34 @@ export default function SelectUserTypePage() {
           </Card>
         </div>
 
+        {/* Error message */}
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+            <div className="flex items-start">
+              <AlertCircle className="w-5 h-5 text-red-500 mr-3 mt-0.5 flex-shrink-0" />
+              <div className="flex-1">
+                <p className="text-sm text-red-700 dark:text-red-300 mb-2">
+                  {error}
+                </p>
+                {retryCount > 0 && (
+                  <Button
+                    onClick={handleRetry}
+                    disabled={isLoading}
+                    variant="outline"
+                    size="sm"
+                    className="text-red-600 border-red-300 hover:bg-red-50"
+                  >
+                    Reintentar
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="text-center">
           <Button 
-            onClick={handleTypeSelection}
+            onClick={() => handleTypeSelection(false)}
             disabled={!selectedType || isLoading}
             className="min-w-48 h-12 text-lg"
           >

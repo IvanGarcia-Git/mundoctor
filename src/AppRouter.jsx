@@ -8,7 +8,12 @@ import RedirectAfterSignIn from '@/components/auth/RedirectAfterSignIn';
 
 const AppRouter = () => {
   return (
-    <Router>
+    <Router
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}
+    >
       <RedirectAfterSignIn>
         <Layout>
           <AppRoutes />

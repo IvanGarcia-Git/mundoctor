@@ -60,7 +60,7 @@ const LoginPage = () => {
           path="/login"
           signUpUrl="/registro"
           redirectUrl="/"
-          afterSignInUrl="/"
+          fallbackRedirectUrl="/"
         />
       </motion.div>
 

@@ -14,7 +14,7 @@ export const createUserInDB = async (clerkUser) => {
       last_name: clerkUser.last_name
     }, null, 2));
 
-    const { id: clerkId, emailAddresses, email_addresses, firstName, first_name, lastName, last_name, imageUrl, image_url, phoneNumbers, phone_numbers } = clerkUser;
+    const { id: clerkId, emailAddresses, email_addresses, firstName, first_name, lastName, last_name, imageUrl, image_url, phoneNumbers, phone_numbers, unsafeMetadata } = clerkUser;
     
     // Handle multiple possible email formats from Clerk
     const email = emailAddresses?.[0]?.emailAddress || 
@@ -36,6 +36,9 @@ export const createUserInDB = async (clerkUser) => {
                          clerkUser.primaryEmailAddress?.verification?.status === 'verified' ||
                          false;
     
+    // Get role from user metadata, default to 'patient'
+    const userRole = unsafeMetadata?.role || 'patient';
+    
     if (!email) {
       throw new Error('Email is required');
     }
@@ -52,12 +55,12 @@ export const createUserInDB = async (clerkUser) => {
     }
 
     return await withTransaction(async (client) => {
-      // Create user record with clerk_id as primary key
+      // Create user record with clerk_id as primary key (cast enums properly)
       const userResult = await client.query(`
         INSERT INTO users (id, email, name, phone, avatar_url, role, status, verified)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        VALUES ($1, $2, $3, $4, $5, $6::user_role, $7::user_status, $8)
         RETURNING *
-      `, [clerkId, email, name, phone, image_url, 'patient', 'incomplete', emailVerified]); // Use clerk_id as primary key
+      `, [clerkId, email, name, phone, image_url, userRole, 'incomplete', emailVerified]); // Use clerk_id as primary key
 
       const user = userResult.rows[0];
 
@@ -67,11 +70,19 @@ export const createUserInDB = async (clerkUser) => {
         ON CONFLICT (user_id) DO NOTHING
       `, [user.id]);
 
-      // Create patient profile by default
-      await client.query(`
-        INSERT INTO patients (user_id) VALUES ($1)
-        ON CONFLICT (user_id) DO NOTHING
-      `, [user.id]);
+      // Create role-specific profile
+      if (userRole === 'patient') {
+        await client.query(`
+          INSERT INTO patients (user_id) VALUES ($1)
+          ON CONFLICT (user_id) DO NOTHING
+        `, [user.id]);
+      } else if (userRole === 'professional') {
+        await client.query(`
+          INSERT INTO professionals (user_id, license_number, dni, profile_completed, verified)
+          VALUES ($1, 'PENDING', 'PENDING', FALSE, FALSE)
+          ON CONFLICT (user_id) DO NOTHING
+        `, [user.id]);
+      }
 
       console.log(`✅ User created: ${email} (${clerkId})`);
       return user;
@@ -86,7 +97,7 @@ export const createUserInDB = async (clerkUser) => {
 // Update user in database from Clerk webhook
 export const updateUserInDB = async (clerkUser) => {
   try {
-    const { id: clerkId, email_addresses, emailAddresses, first_name, firstName, last_name, lastName, image_url, imageUrl, phone_numbers, phoneNumbers } = clerkUser;
+    const { id: clerkId, email_addresses, emailAddresses, first_name, firstName, last_name, lastName, image_url, imageUrl, phone_numbers, phoneNumbers, unsafeMetadata } = clerkUser;
     
     const email = email_addresses?.[0]?.email_address || emailAddresses?.[0]?.emailAddress;
     const name = `${first_name || firstName || ''} ${last_name || lastName || ''}`.trim() || email?.split('@')[0];
@@ -98,7 +109,11 @@ export const updateUserInDB = async (clerkUser) => {
                          clerkUser.primaryEmailAddress?.verification?.status === 'verified' ||
                          false;
 
-    const result = await query(`
+    // Get role from user metadata if provided
+    const userRole = unsafeMetadata?.role;
+
+    // Update query includes role if provided
+    let updateQuery = `
       UPDATE users 
       SET 
         email = $2,
@@ -107,9 +122,17 @@ export const updateUserInDB = async (clerkUser) => {
         avatar_url = $5,
         verified = $6,
         updated_at = NOW()
-      WHERE id = $1
-      RETURNING *
-    `, [clerkId, email, name, phone, image_url || imageUrl, emailVerified]);
+    `;
+    let queryParams = [clerkId, email, name, phone, image_url || imageUrl, emailVerified];
+
+    if (userRole) {
+      updateQuery += `, role = $7`;
+      queryParams.push(userRole);
+    }
+
+    updateQuery += ` WHERE id = $1 RETURNING *`;
+
+    const result = await query(updateQuery, queryParams);
 
     if (result.rows.length === 0) {
       console.log(`User ${clerkId} not found for update, creating new user`);
@@ -180,7 +203,7 @@ export const createProfessionalProfile = async (userId, profileData) => {
       // Update user role to professional
       await client.query(`
         UPDATE users 
-        SET role = 'professional', updated_at = NOW()
+        SET role = 'professional'::user_role, updated_at = NOW()
         WHERE id = $1
       `, [userId]);
 
@@ -216,7 +239,7 @@ export const updateUserRole = async (userId, newRole) => {
 
     const result = await query(`
       UPDATE users 
-      SET role = $2, updated_at = NOW()
+      SET role = $2::user_role, updated_at = NOW()
       WHERE id = $1
       RETURNING *
     `, [userId, newRole]);
