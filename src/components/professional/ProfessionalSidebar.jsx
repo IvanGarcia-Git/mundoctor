@@ -16,7 +16,7 @@ import {
   Star,
   Newspaper
 } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/ClerkAuthContext';
 
 const menuItems = [
   { 

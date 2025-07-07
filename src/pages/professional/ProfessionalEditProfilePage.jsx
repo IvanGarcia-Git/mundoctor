@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { User, Briefcase, Link as LinkIcon, Shield, MapPin, Clock, Phone, Mail, Globe, Settings, Save, Image as ImageIcon, Eye } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/ClerkAuthContext';
 import { useToast } from "@/components/ui/use-toast";
 import ProfessionalInfo from '@/components/professional/ProfessionalInfo';
 import { Badge } from '@/components/ui/badge';

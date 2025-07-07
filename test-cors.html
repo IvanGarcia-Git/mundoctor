@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORS Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
+        button { margin: 10px; padding: 10px 20px; cursor: pointer; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        pre { background-color: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>CORS Test for Mundoctor API</h1>
+    
+    <div class="test-section">
+        <h2>1. Simple GET Test</h2>
+        <button onclick="testSimpleGet()">Test GET /api/cors-test</button>
+        <div id="getResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. POST Test with JSON</h2>
+        <button onclick="testPost()">Test POST /api/cors-test</button>
+        <div id="postResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Authenticated Request Test</h2>
+        <button onclick="testAuthRequest()">Test GET /api/users/profile (will fail without auth)</button>
+        <div id="authResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Health Check</h2>
+        <button onclick="testHealth()">Test GET /health</button>
+        <div id="healthResult"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000';
+
+        function displayResult(elementId, success, data) {
+            const element = document.getElementById(elementId);
+            element.className = success ? 'success' : 'error';
+            element.innerHTML = `
+                <h3>${success ? '✅ Success' : '❌ Error'}</h3>
+                <pre>${JSON.stringify(data, null, 2)}</pre>
+            `;
+        }
+
+        async function testSimpleGet() {
+            try {
+                console.log('Testing simple GET request...');
+                const response = await fetch(`${API_BASE}/api/cors-test`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    displayResult('getResult', true, data);
+                } else {
+                    displayResult('getResult', false, { 
+                        status: response.status, 
+                        statusText: response.statusText 
+                    });
+                }
+            } catch (error) {
+                displayResult('getResult', false, { 
+                    error: error.message,
+                    type: error.name
+                });
+            }
+        }
+
+        async function testPost() {
+            try {
+                console.log('Testing POST request...');
+                const response = await fetch(`${API_BASE}/api/cors-test`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        test: 'data',
+                        timestamp: new Date().toISOString()
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    displayResult('postResult', true, data);
+                } else {
+                    displayResult('postResult', false, { 
+                        status: response.status, 
+                        statusText: response.statusText 
+                    });
+                }
+            } catch (error) {
+                displayResult('postResult', false, { 
+                    error: error.message,
+                    type: error.name
+                });
+            }
+        }
+
+        async function testAuthRequest() {
+            try {
+                console.log('Testing authenticated request...');
+                const response = await fetch(`${API_BASE}/api/users/profile`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer fake-token-for-test'
+                    }
+                });
+                
+                // This should fail with 401, but we want to see if CORS allows the request
+                const data = await response.json();
+                displayResult('authResult', false, { 
+                    status: response.status, 
+                    message: 'CORS is working - got response from server',
+                    data: data
+                });
+            } catch (error) {
+                displayResult('authResult', false, { 
+                    error: error.message,
+                    type: error.name,
+                    message: 'CORS might be blocking this request'
+                });
+            }
+        }
+
+        async function testHealth() {
+            try {
+                console.log('Testing health endpoint...');
+                const response = await fetch(`${API_BASE}/health`, {
+                    method: 'GET'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    displayResult('healthResult', true, data);
+                } else {
+                    displayResult('healthResult', false, { 
+                        status: response.status, 
+                        statusText: response.statusText 
+                    });
+                }
+            } catch (error) {
+                displayResult('healthResult', false, { 
+                    error: error.message,
+                    type: error.name
+                });
+            }
+        }
+
+        // Auto-run health check on page load
+        window.addEventListener('load', () => {
+            setTimeout(testHealth, 1000);
+        });
+    </script>
+</body>
+</html>

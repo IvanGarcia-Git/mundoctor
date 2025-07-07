@@ -4,18 +4,14 @@ import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import Logo from '@/components/Logo';
 import { Button } from '@/components/ui/button';
 import ThemeToggle from '@/components/ThemeToggle';
-import { LogIn, UserPlus, LogOut } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+import { LogIn, UserPlus } from 'lucide-react';
+import { useAuth } from '@/contexts/ClerkAuthContext';
+import { UserButton } from '@clerk/clerk-react';
 import NotificationsDropdown from '@/components/layout/NotificationsDropdown';
 
 
 const Header = () => {
-  const navigate = useNavigate();
-  const { user, logout } = useAuth();
-
-  const handleLogout = () => {
-    logout(navigate);
-  };
+  const { user } = useAuth();
   
 
 
@@ -36,9 +32,18 @@ const Header = () => {
             <ThemeToggle />
             {user ? (
               <div className="hidden md:flex items-center space-x-2">
-                 <Button onClick={handleLogout} variant="outline" size="sm">
-                   <LogOut size={16} className="mr-1.5" /> Cerrar Sesión
-                 </Button>
+                <UserButton
+                  appearance={{
+                    elements: {
+                      avatarBox: "h-8 w-8",
+                      userButtonPopoverCard: "bg-background border-border",
+                      userButtonPopoverText: "text-foreground"
+                    }
+                  }}
+                  userProfileMode="navigation"
+                  userProfileUrl="/perfil"
+                  afterSignOutUrl="/"
+                />
               </div>
             ) : (
               <div className="hidden md:flex items-center space-x-2">

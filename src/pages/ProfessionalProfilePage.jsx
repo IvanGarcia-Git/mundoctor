@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useToast } from "@/components/ui/use-toast";
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/ClerkAuthContext';
 import ProfessionalInfo from '@/components/professional/ProfessionalInfo';
 import AppointmentCalendar from '@/components/professional/AppointmentCalendar';
 

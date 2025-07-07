@@ -1,48 +1,104 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { CalendarClock, Star, MessageSquare, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-
-const stats = [
-	{
-		title: 'Próxima Cita',
-		value: '15 Junio',
-		description: 'Dr. Carlos Soler - Cardiología',
-		icon: <CalendarClock className="text-blue-500" />,
-		color: 'blue',
-		link: '/paciente/citas',
-	},
-	{
-		title: 'Reseñas Realizadas',
-		value: '5',
-		description: 'Valoraciones enviadas',
-		icon: <Star className="text-yellow-500" />,
-		color: 'yellow',
-		link: '/paciente/resenas',
-	},
-];
-
-const recentDoctors = [
-	{
-		id: 'doc1',
-		name: 'Dr. Carlos Soler',
-		specialty: 'Cardiología',
-		avatar: 'https://ui.shadcn.com/avatars/01.png',
-		lastVisit: '2025-05-20',
-	},
-	{
-		id: 'doc2',
-		name: 'Dra. Ana García',
-		specialty: 'Dermatología',
-		avatar: 'https://ui.shadcn.com/avatars/02.png',
-		lastVisit: '2025-05-15',
-	},
-];
+import { useAuth } from '@/contexts/ClerkAuthContext';
+import { userApi } from '@/lib/clerkApi';
+import { useToast } from "@/components/ui/use-toast";
 
 const PatientDashboardPage = () => {
 	const { user } = useAuth();
+	const { toast } = useToast();
+	const [stats, setStats] = useState([]);
+	const [recentDoctors, setRecentDoctors] = useState([]);
+	const [upcomingAppointments, setUpcomingAppointments] = useState([]);
+	const [isLoading, setIsLoading] = useState(true);
+
+	useEffect(() => {
+		const loadPatientData = async () => {
+			try {
+				setIsLoading(true);
+
+				// Load data from API
+				const [statsResponse, appointmentsResponse] = await Promise.all([
+					userApi.getDashboardStats(),
+					userApi.getDashboardAppointments(5)
+				]);
+
+				if (statsResponse.success) {
+					const data = statsResponse.data;
+					
+					// Format stats for display
+					const formattedStats = [
+						{
+							title: 'Próxima Cita',
+							value: data.nextAppointment || '15 Junio',
+							description: 'Dr. Carlos Soler - Cardiología',
+							icon: <CalendarClock className="text-blue-500" />,
+							color: 'blue',
+							link: '/paciente/citas',
+						},
+						{
+							title: 'Reseñas Realizadas',
+							value: data.reviewsCount?.toString() || '5',
+							description: 'Valoraciones enviadas',
+							icon: <Star className="text-yellow-500" />,
+							color: 'yellow',
+							link: '/paciente/resenas',
+						},
+					];
+					
+					setStats(formattedStats);
+				}
+
+				if (appointmentsResponse.success) {
+					setUpcomingAppointments(appointmentsResponse.data);
+				}
+
+				// Mock recent doctors data for now - this would be replaced with real API call
+				const mockRecentDoctors = [
+					{
+						id: 'doc1',
+						name: 'Dr. Carlos Soler',
+						specialty: 'Cardiología',
+						avatar: 'https://ui.shadcn.com/avatars/01.png',
+						lastVisit: '2025-05-20',
+					},
+					{
+						id: 'doc2',
+						name: 'Dra. Ana García',
+						specialty: 'Dermatología',
+						avatar: 'https://ui.shadcn.com/avatars/02.png',
+						lastVisit: '2025-05-15',
+					},
+				];
+				setRecentDoctors(mockRecentDoctors);
+
+			} catch (error) {
+				console.error('Error loading patient dashboard data:', error);
+				toast({
+					title: "Error",
+					description: "No se pudieron cargar los datos del dashboard. Intenta recargar la página.",
+					variant: "destructive",
+				});
+			} finally {
+				setIsLoading(false);
+			}
+		};
+
+		if (user) {
+			loadPatientData();
+		}
+	}, [user, toast]);
+
+	if (isLoading) {
+		return (
+			<div className="flex items-center justify-center min-h-screen">
+				<div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+			</div>
+		);
+	}
 
 	return (
 		<>
@@ -134,9 +190,37 @@ const PatientDashboardPage = () => {
 						</CardDescription>
 					</CardHeader>
 					<CardContent>
-						<div className="text-center text-muted-foreground dark:text-gray-400 py-8">
-							Próximamente: Calendario de citas
-						</div>
+						{upcomingAppointments.length > 0 ? (
+							<div className="space-y-4">
+								{upcomingAppointments.map(appointment => (
+									<div
+										key={appointment.id}
+										className="flex items-center justify-between p-4 rounded-lg bg-muted/50 dark:bg-gray-700/30"
+									>
+										<div>
+											<p className="font-medium text-foreground dark:text-white">
+												{appointment.professionalName || 'Dr. García'}
+											</p>
+											<p className="text-sm text-muted-foreground dark:text-gray-400">
+												{appointment.specialty || 'Cardiología'}
+											</p>
+										</div>
+										<div className="text-right">
+											<p className="text-sm font-medium text-foreground dark:text-white">
+												{appointment.time}
+											</p>
+											<p className="text-xs text-muted-foreground dark:text-gray-400">
+												{appointment.date}
+											</p>
+										</div>
+									</div>
+								))}
+							</div>
+						) : (
+							<div className="text-center text-muted-foreground dark:text-gray-400 py-8">
+								No tienes citas programadas
+							</div>
+						)}
 					</CardContent>
 				</Card>
 			</div>

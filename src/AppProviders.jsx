@@ -1,16 +1,21 @@
 import React from 'react';
-import { AuthProvider } from '@/contexts/AuthContext';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { Toaster } from '@/components/ui/toaster';
+import { ClerkAuthProvider } from '@/contexts/ClerkAuthContext';
+import ErrorBoundary, { ClerkErrorBoundary } from '@/components/ErrorBoundary';
 
 const AppProviders = ({ children }) => {
   return (
-    <AuthProvider>
+    <ErrorBoundary>
       <ThemeProvider defaultTheme="light" storageKey="mundoctor-theme">
-        {children}
-        <Toaster />
+        <ClerkErrorBoundary>
+          <ClerkAuthProvider>
+            {children}
+            <Toaster />
+          </ClerkAuthProvider>
+        </ClerkErrorBoundary>
       </ThemeProvider>
-    </AuthProvider>
+    </ErrorBoundary>
   );
 };
 

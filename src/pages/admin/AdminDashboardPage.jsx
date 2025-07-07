@@ -1,36 +1,71 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Users, Briefcase, BarChart2, ShieldCheck, Ticket, Percent } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-
-// Datos simulados para el gráfico de usuarios registrados por mes
-const usersByMonth = [
-  { mes: 'Ene', usuarios: 120 },
-  { mes: 'Feb', usuarios: 150 },
-  { mes: 'Mar', usuarios: 180 },
-  { mes: 'Abr', usuarios: 210 },
-  { mes: 'May', usuarios: 250 },
-  { mes: 'Jun', usuarios: 300 },
-];
-
-// Datos simulados para el gráfico de suscripciones activas por mes
-const subscriptionsByMonth = [
-  { mes: 'Ene', suscripciones: 80 },
-  { mes: 'Feb', suscripciones: 100 },
-  { mes: 'Mar', suscripciones: 130 },
-  { mes: 'Abr', suscripciones: 170 },
-  { mes: 'May', suscripciones: 200 },
-  { mes: 'Jun', suscripciones: 220 },
-];
+import { userApi } from '@/lib/clerkApi';
+import { useToast } from "@/components/ui/use-toast";
 
 const AdminDashboardPage = () => {
-  const stats = [
-    { title: "Usuarios Registrados", value: "1,250", icon: <Users className="text-blue-500" />, color: "blue" },
-    { title: "Profesionales Activos", value: "350", icon: <Briefcase className="text-green-500" />, color: "green" },
-    { title: "Suscripciones Activas", value: "280", icon: <BarChart2 className="text-purple-500" />, color: "purple" },
-    { title: "Validaciones Pendientes", value: "15", icon: <ShieldCheck className="text-red-500" />, color: "red" },
-  ];
+  const { toast } = useToast();
+  const [stats, setStats] = useState([]);
+  const [chartData, setChartData] = useState({ users: [], subscriptions: [] });
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadAdminData = async () => {
+      try {
+        setIsLoading(true);
+        
+        const response = await userApi.getDashboardStats();
+        
+        if (response.success) {
+          const data = response.data;
+          
+          // Format stats for display
+          const formattedStats = [
+            { title: "Usuarios Registrados", value: data.total_users?.toLocaleString() || "0", icon: <Users className="text-blue-500" />, color: "blue" },
+            { title: "Profesionales Activos", value: data.total_professionals?.toLocaleString() || "0", icon: <Briefcase className="text-green-500" />, color: "green" },
+            { title: "Suscripciones Activas", value: "280", icon: <BarChart2 className="text-purple-500" />, color: "purple" },
+            { title: "Validaciones Pendientes", value: data.pendingValidations?.toString() || "0", icon: <ShieldCheck className="text-red-500" />, color: "red" },
+          ];
+          
+          setStats(formattedStats);
+
+          // Format chart data
+          if (data.usersByMonth && data.subscriptionsByMonth) {
+            const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'];
+            const usersChartData = data.usersByMonth.map((users, index) => ({
+              mes: months[index],
+              usuarios: users
+            }));
+            const subscriptionsChartData = data.subscriptionsByMonth.map((subs, index) => ({
+              mes: months[index],
+              suscripciones: subs
+            }));
+            
+            setChartData({
+              users: usersChartData,
+              subscriptions: subscriptionsChartData
+            });
+          }
+        } else {
+          throw new Error(response.message || 'Failed to load dashboard stats');
+        }
+      } catch (error) {
+        console.error('Error loading admin dashboard data:', error);
+        toast({
+          title: "Error",
+          description: "No se pudieron cargar los datos del dashboard. Intenta recargar la página.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadAdminData();
+  }, [toast]);
 
   const quickLinks = [
     { name: 'Gestionar Usuarios', path: '/admin/usuarios', icon: <Users size={20}/> },
@@ -39,6 +74,14 @@ const AdminDashboardPage = () => {
     { name: 'Gestionar Tickets', path: '/admin/tickets', icon: <Ticket size={20}/> },
     { name: 'Gestionar Descuentos', path: '/admin/descuentos', icon: <Percent size={20}/> },
   ];
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -71,7 +114,7 @@ const AdminDashboardPage = () => {
           <CardContent>
             <div className="h-[260px] mt-2">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={usersByMonth}>
+                <LineChart data={chartData.users}>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-muted dark:stroke-gray-700" />
                   <XAxis dataKey="mes" className="text-muted-foreground dark:text-gray-400" />
                   <YAxis className="text-muted-foreground dark:text-gray-400" />
@@ -91,7 +134,7 @@ const AdminDashboardPage = () => {
           <CardContent>
             <div className="h-[260px] mt-2">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={subscriptionsByMonth}>
+                <LineChart data={chartData.subscriptions}>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-muted dark:stroke-gray-700" />
                   <XAxis dataKey="mes" className="text-muted-foreground dark:text-gray-400" />
                   <YAxis className="text-muted-foreground dark:text-gray-400" />

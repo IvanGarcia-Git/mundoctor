@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Menu, X, Search, Home, Stethoscope, Phone, LogIn, UserPlus, LayoutDashboard } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/ClerkAuthContext';
+import { UserButton } from '@clerk/clerk-react';
 import { cn } from '@/lib/utils';
 
 const navLinks = [
@@ -19,7 +20,7 @@ const SidebarNav = () => {
   const [isMobile, setIsMobile] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const sidebarRef = useRef(null);
 
   // Detectar si es móvil
@@ -69,10 +70,6 @@ const SidebarNav = () => {
     }
   };
 
-  const handleLogout = () => {
-    closeSidebar();
-    logout(navigate);
-  };
 
   const NavItem = ({ path, name, icon, onClick, exact }) => {
     const isActive = exact ? location.pathname === path : location.pathname.startsWith(path);
@@ -260,17 +257,28 @@ const SidebarNav = () => {
               transition={{ duration: 0.2 }}
               className="p-4 border-t border-border dark:border-gray-700/50"
             >
-              <Button 
-                onClick={handleLogout}
-                variant="ghost" 
-                className={cn(
-                  "w-full text-muted-foreground hover:text-destructive hover:bg-destructive/10",
-                  (isOpen || isMobile) ? "justify-start" : "justify-center px-0"
+              <div className={cn(
+                "flex items-center w-full",
+                (isOpen || isMobile) ? "justify-start" : "justify-center"
+              )}>
+                <UserButton
+                  appearance={{
+                    elements: {
+                      avatarBox: "h-8 w-8",
+                      userButtonPopoverCard: "bg-background border-border",
+                      userButtonPopoverText: "text-foreground"
+                    }
+                  }}
+                  userProfileMode="navigation"
+                  userProfileUrl="/perfil"
+                  afterSignOutUrl="/"
+                />
+                {(isOpen || isMobile) && (
+                  <span className="ml-3 text-sm text-muted-foreground">
+                    {user?.name || user?.email}
+                  </span>
                 )}
-              >
-                <LogIn size={20} className={cn("rotate-180", (isOpen || isMobile) && "mr-3")} />
-                {(isOpen || isMobile) && 'Cerrar Sesión'}
-              </Button>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
