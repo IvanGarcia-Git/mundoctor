@@ -20,8 +20,8 @@ import serviceRoutes from './routes/services.js';
 import validationRoutes from './routes/validation.js';
 import patientRoutes from './routes/patients.js';
 import reviewRoutes from './routes/reviews.js';
+import adminRoutes from './routes/admin.js';
 // import professionalRoutes from './routes/professionals.js';
-// import adminRoutes from './routes/admin.js';
 
 dotenv.config();
 
@@ -201,9 +201,9 @@ app.get('/api', (req, res) => {
       users: '/api/users',
       patients: '/api/patients',
       reviews: '/api/reviews',
+      admin: '/api/admin',
       professionals: '/api/professionals',
-      appointments: '/api/appointments',
-      admin: '/api/admin'
+      appointments: '/api/appointments'
     }
   });
 });
@@ -220,8 +220,8 @@ app.use('/api/services', clerkAuth, serviceRoutes);
 app.use('/api/validation', clerkAuth, validationRoutes);
 app.use('/api/patients', clerkAuth, patientRoutes);
 app.use('/api/reviews', clerkAuth, reviewRoutes);
+app.use('/api/admin', clerkAuth, adminRoutes);
 // app.use('/api/professionals', professionalRoutes);
-// app.use('/api/admin', adminRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

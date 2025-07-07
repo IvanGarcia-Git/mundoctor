@@ -189,3 +189,101 @@ SyntaxError: The requested module '../services/searchService.js' does not provid
 
 Node.js v18.19.1
 [31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node src/server.js`[39m
+file:///home/vers/Proyectos/mundoctor/backend/src/routes/patients.js:3
+import searchService from '../services/searchService.js';
+       ^^^^^^^^^^^^^
+SyntaxError: The requested module '../services/searchService.js' does not provide an export named 'default'
+    at ModuleJob._instantiate (node:internal/modules/esm/module_job:123:21)
+    at async ModuleJob.run (node:internal/modules/esm/module_job:191:5)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:336:24)
+    at async loadESM (node:internal/process/esm_loader:34:7)
+    at async handleMainPromise (node:internal/modules/run_main:106:12)
+
+Node.js v18.19.1
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node src/server.js`[39m
+file:///home/vers/Proyectos/mundoctor/backend/src/routes/patients.js:3
+import searchService from '../services/searchService.js';
+       ^^^^^^^^^^^^^
+SyntaxError: The requested module '../services/searchService.js' does not provide an export named 'default'
+    at ModuleJob._instantiate (node:internal/modules/esm/module_job:123:21)
+    at async ModuleJob.run (node:internal/modules/esm/module_job:191:5)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:336:24)
+    at async loadESM (node:internal/process/esm_loader:34:7)
+    at async handleMainPromise (node:internal/modules/run_main:106:12)
+
+Node.js v18.19.1
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node src/server.js`[39m
+file:///home/vers/Proyectos/mundoctor/backend/src/routes/patients.js:3
+import searchService from '../services/searchService.js';
+       ^^^^^^^^^^^^^
+SyntaxError: The requested module '../services/searchService.js' does not provide an export named 'default'
+    at ModuleJob._instantiate (node:internal/modules/esm/module_job:123:21)
+    at async ModuleJob.run (node:internal/modules/esm/module_job:191:5)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:336:24)
+    at async loadESM (node:internal/process/esm_loader:34:7)
+    at async handleMainPromise (node:internal/modules/run_main:106:12)
+
+Node.js v18.19.1
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node src/server.js`[39m
+file:///home/vers/Proyectos/mundoctor/backend/src/routes/patients.js:3
+import searchService from '../services/searchService.js';
+       ^^^^^^^^^^^^^
+SyntaxError: The requested module '../services/searchService.js' does not provide an export named 'default'
+    at ModuleJob._instantiate (node:internal/modules/esm/module_job:123:21)
+    at async ModuleJob.run (node:internal/modules/esm/module_job:191:5)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:336:24)
+    at async loadESM (node:internal/process/esm_loader:34:7)
+    at async handleMainPromise (node:internal/modules/run_main:106:12)
+
+Node.js v18.19.1
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node src/server.js`[39m
+file:///home/vers/Proyectos/mundoctor/backend/src/routes/patients.js:3
+import searchService from '../services/searchService.js';
+       ^^^^^^^^^^^^^
+SyntaxError: The requested module '../services/searchService.js' does not provide an export named 'default'
+    at ModuleJob._instantiate (node:internal/modules/esm/module_job:123:21)
+    at async ModuleJob.run (node:internal/modules/esm/module_job:191:5)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:336:24)
+    at async loadESM (node:internal/process/esm_loader:34:7)
+    at async handleMainPromise (node:internal/modules/run_main:106:12)
+
+Node.js v18.19.1
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node src/server.js`[39m
+file:///home/vers/Proyectos/mundoctor/backend/src/routes/patients.js:3
+import searchService from '../services/searchService.js';
+       ^^^^^^^^^^^^^
+SyntaxError: The requested module '../services/searchService.js' does not provide an export named 'default'
+    at ModuleJob._instantiate (node:internal/modules/esm/module_job:123:21)
+    at async ModuleJob.run (node:internal/modules/esm/module_job:191:5)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:336:24)
+    at async loadESM (node:internal/process/esm_loader:34:7)
+    at async handleMainPromise (node:internal/modules/run_main:106:12)
+
+Node.js v18.19.1
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node src/server.js`[39m
+file:///home/vers/Proyectos/mundoctor/backend/src/routes/patients.js:3
+import searchService from '../services/searchService.js';
+       ^^^^^^^^^^^^^
+SyntaxError: The requested module '../services/searchService.js' does not provide an export named 'default'
+    at ModuleJob._instantiate (node:internal/modules/esm/module_job:123:21)
+    at async ModuleJob.run (node:internal/modules/esm/module_job:191:5)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:336:24)
+    at async loadESM (node:internal/process/esm_loader:34:7)
+    at async handleMainPromise (node:internal/modules/run_main:106:12)
+
+Node.js v18.19.1
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
