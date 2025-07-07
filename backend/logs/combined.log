@@ -178,3 +178,8 @@
 {"level":"debug","message":"Client acquired from pool","processID":424,"timestamp":"2025-07-07T15:13:01.806Z"}
 {"level":"info","message":"Database connected successfully","poolStatus":{"idleCount":0,"totalCount":1,"waitingCount":0},"timestamp":"2025-07-07T15:13:01.808Z","version":"PostgreSQL 15.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit"}
 {"level":"debug","message":"Client released to pool","processID":424,"timestamp":"2025-07-07T15:13:01.813Z"}
+{"level":"warn","message":"No SMTP configuration found. Using test mode.","timestamp":"2025-07-07T20:14:10.392Z"}
+{"level":"warn","message":"No SMTP configuration found. Using test mode.","timestamp":"2025-07-07T20:14:10.878Z"}
+{"level":"warn","message":"No SMTP configuration found. Using test mode.","timestamp":"2025-07-07T20:14:17.630Z"}
+{"level":"warn","message":"No SMTP configuration found. Using test mode.","timestamp":"2025-07-07T20:14:18.145Z"}
+{"level":"warn","message":"No SMTP configuration found. Using test mode.","timestamp":"2025-07-07T20:14:24.635Z"}

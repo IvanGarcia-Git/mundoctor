@@ -5,8 +5,13 @@ import compression from 'compression';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
+import { createServer } from 'http';
 import { clerkMiddleware } from '@clerk/express';
 import { testConnection } from './config/database.js';
+
+// Import WebSocket and notification services
+import webSocketManager from './utils/websocket.js';
+import reminderJobsService from './jobs/reminderJobs.js';
 
 // Import routes
 import authRoutes from './routes/auth.js';
@@ -22,12 +27,16 @@ import patientRoutes from './routes/patients.js';
 import reviewRoutes from './routes/reviews.js';
 import adminRoutes from './routes/admin.js';
 import ticketRoutes from './routes/tickets.js';
+import notificationRoutes from './routes/notifications.js';
 // import professionalRoutes from './routes/professionals.js';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 8000;
+
+// Create HTTP server for WebSocket integration
+const server = createServer(app);
 
 // Security middleware
 app.use(helmet({
@@ -204,6 +213,7 @@ app.get('/api', (req, res) => {
       reviews: '/api/reviews',
       admin: '/api/admin',
       tickets: '/api/tickets',
+      notifications: '/api/notifications',
       professionals: '/api/professionals',
       appointments: '/api/appointments'
     }
@@ -224,6 +234,7 @@ app.use('/api/patients', clerkAuth, patientRoutes);
 app.use('/api/reviews', clerkAuth, reviewRoutes);
 app.use('/api/admin', clerkAuth, adminRoutes);
 app.use('/api/tickets', clerkAuth, ticketRoutes);
+app.use('/api/notifications', clerkAuth, notificationRoutes);
 // app.use('/api/professionals', professionalRoutes);
 
 // Error handling middleware
@@ -280,12 +291,22 @@ const startServer = async () => {
       process.exit(1);
     }
 
-    app.listen(PORT, '0.0.0.0', () => {
+    // Initialize WebSocket server
+    webSocketManager.initialize(server);
+
+    // Start reminder jobs
+    if (process.env.NODE_ENV !== 'test') {
+      reminderJobsService.start();
+    }
+
+    server.listen(PORT, '0.0.0.0', () => {
       console.log(`
 🚀 Mundoctor API Server running on port ${PORT}
 📊 Environment: ${process.env.NODE_ENV || 'development'}
 🔗 Health check: http://localhost:${PORT}/health
 📖 API docs: http://localhost:${PORT}/api
+🔔 WebSocket server: Active
+⏰ Reminder jobs: ${process.env.NODE_ENV !== 'test' ? 'Active' : 'Disabled (test mode)'}
       `);
     });
   } catch (error) {
@@ -297,11 +318,13 @@ const startServer = async () => {
 // Graceful shutdown
 process.on('SIGTERM', () => {
   console.log('SIGTERM received. Shutting down gracefully...');
+  reminderJobsService.stop();
   process.exit(0);
 });
 
 process.on('SIGINT', () => {
   console.log('SIGINT received. Shutting down gracefully...');
+  reminderJobsService.stop();
   process.exit(0);
 });
 
