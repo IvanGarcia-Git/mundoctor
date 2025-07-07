@@ -5,7 +5,14 @@ import { updateUserStatus, refreshUserStatus } from '../middleware/userStatus.js
 
 const router = express.Router();
 
-// Apply authentication middleware to all routes
+// Test endpoint without auth
+router.post('/test-select-role', async (req, res) => {
+  console.log('🔍 Test select role endpoint hit (no auth)');
+  console.log('🔍 Request body:', req.body);
+  res.json({ success: true, message: 'Test endpoint working' });
+});
+
+// Apply authentication middleware to all routes (except test endpoint)
 router.use(requireAuth);
 
 /**
@@ -14,6 +21,10 @@ router.use(requireAuth);
  */
 router.post('/select-role', async (req, res) => {
   try {
+    console.log('🔍 Select role endpoint hit');
+    console.log('🔍 Request auth:', req.auth);
+    console.log('🔍 Request body:', req.body);
+    
     const { userId } = req.auth;
     const { role } = req.body;
 
@@ -43,7 +54,7 @@ router.post('/select-role', async (req, res) => {
       if (role === 'patient') {
         // Create patient profile
         await client.query(`
-          INSERT INTO patient_profiles (user_id)
+          INSERT INTO patients (user_id)
           VALUES ($1)
           ON CONFLICT (user_id) DO NOTHING
         `, [user.id]);

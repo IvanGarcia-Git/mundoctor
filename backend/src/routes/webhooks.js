@@ -6,6 +6,7 @@ import {
   deleteUserFromDB,
   handleEmailUpdate,
   handleSMSUpdate,
+  handleEmailVerification,
   syncUserFromClerk,
   validateUserSync
 } from '../controllers/userController.js';
@@ -125,6 +126,11 @@ router.post('/clerk',
       case 'sms.created':
         console.log(`📱 SMS created for user: ${data.object.id}`);
         await handleSMSUpdate(data);
+        break;
+
+      case 'emailAddress.verified':
+        console.log(`✅ Email verified for user: ${data.object.id}`);
+        await handleEmailVerification(data);
         break;
 
       default:

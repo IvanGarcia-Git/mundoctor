@@ -223,7 +223,13 @@ export default function ProfessionalDataPage() {
         }
       });
 
-      navigate('/profesional/verificacion-pendiente');
+      // Check verification status and redirect appropriately
+      const verificationStatus = user.unsafeMetadata?.professionalData?.verificationStatus;
+      if (verificationStatus === 'approved') {
+        navigate('/profesionales/dashboard');
+      } else {
+        navigate('/profesional/verificacion-pendiente');
+      }
     } catch (error) {
       console.error('Error submitting professional data:', error);
       setErrors({ 

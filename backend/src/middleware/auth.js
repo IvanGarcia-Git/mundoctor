@@ -1,8 +1,21 @@
 import { requireAuth as clerkRequireAuth, clerkClient } from '@clerk/express';
 import { query } from '../config/database.js';
 
-// Clerk authentication middleware
-export const requireAuth = clerkRequireAuth();
+// Clerk authentication middleware with logging
+export const requireAuth = (req, res, next) => {
+  console.log('🔍 Auth middleware - Headers:', req.headers.authorization ? 'Token present' : 'No token');
+  console.log('🔍 Auth middleware - URL:', req.url);
+  
+  clerkRequireAuth()(req, res, (error) => {
+    if (error) {
+      console.error('🔍 Auth middleware error:', error);
+      return next(error);
+    }
+    
+    console.log('🔍 Auth middleware - User authenticated:', req.auth?.userId || 'No user ID');
+    next();
+  });
+};
 
 // Middleware to attach user data from database
 export const attachUser = async (req, res, next) => {

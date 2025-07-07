@@ -10,6 +10,8 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
  */
 export const useClerkApi = () => {
   const { getToken, isSignedIn } = useAuth();
+  
+  console.log('🔍 useClerkApi hook initialized - isSignedIn:', isSignedIn);
 
   const apiClient = useMemo(() => {
     /**
@@ -17,11 +19,15 @@ export const useClerkApi = () => {
      */
     const request = async (endpoint, options = {}) => {
       try {
+        console.log('🔍 Making API request to:', endpoint);
+        console.log('🔍 isSignedIn:', isSignedIn);
+        
         if (!isSignedIn) {
           throw new Error('User not signed in');
         }
 
         const token = await getToken();
+        console.log('🔍 Token obtained:', token ? 'Yes' : 'No');
         
         if (!token) {
           throw new Error('Failed to get authentication token');
@@ -37,22 +43,55 @@ export const useClerkApi = () => {
         };
 
         const url = `${API_BASE_URL}${endpoint}`;
-        const response = await fetch(url, config);
+        console.log('🔍 Full URL:', url);
+        console.log('🔍 Request config:', config);
+
+        // Add timeout to prevent hanging
+        const controller = new AbortController();
+        let timeoutId;
+        const timeoutPromise = new Promise((_, reject) => {
+          timeoutId = setTimeout(() => {
+            controller.abort();
+            reject(new Error('Request timeout - the server took too long to respond'));
+          }, 30000); // 30 second timeout
+        });
+        
+        config.signal = controller.signal;
+        
+        const fetchPromise = fetch(url, config);
+        const response = await Promise.race([fetchPromise, timeoutPromise]);
+        clearTimeout(timeoutId); // Clear timeout on successful response
+        console.log('🔍 Response received:', response.status, response.statusText);
 
         // Handle different response types
         if (!response.ok) {
+          console.log('🔍 Response not OK, getting error data...');
           const errorData = await response.json().catch(() => ({}));
+          console.log('🔍 Error data:', errorData);
           throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
         }
 
         // Return JSON if possible, otherwise return text
         const contentType = response.headers.get('content-type');
+        console.log('🔍 Content type:', contentType);
         if (contentType && contentType.includes('application/json')) {
-          return await response.json();
+          const jsonData = await response.json();
+          console.log('🔍 JSON response data:', jsonData);
+          return jsonData;
         }
-        return await response.text();
+        const textData = await response.text();
+        console.log('🔍 Text response data:', textData);
+        return textData;
       } catch (error) {
+        if (timeoutId) {
+          clearTimeout(timeoutId); // Clear timeout on error too
+        }
         console.error(`API Request failed (${endpoint}):`, error);
+        
+        if (error.name === 'AbortError') {
+          throw new Error('Request timeout - the server took too long to respond');
+        }
+        
         throw error;
       }
     };

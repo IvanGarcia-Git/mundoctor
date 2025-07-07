@@ -29,6 +29,12 @@ export const createUserInDB = async (clerkUser) => {
     const phone = phoneNumbers?.[0]?.phoneNumber || 
                   phone_numbers?.[0]?.phone_number || 
                   phone_numbers?.[0]?.phoneNumber;
+
+    // Check if email is verified from Clerk
+    const emailVerified = emailAddresses?.[0]?.verification?.status === 'verified' ||
+                         email_addresses?.[0]?.verification?.status === 'verified' ||
+                         clerkUser.primaryEmailAddress?.verification?.status === 'verified' ||
+                         false;
     
     if (!email) {
       throw new Error('Email is required');
@@ -48,10 +54,10 @@ export const createUserInDB = async (clerkUser) => {
     return await withTransaction(async (client) => {
       // Create user record with clerk_id as primary key
       const userResult = await client.query(`
-        INSERT INTO users (id, email, name, phone, avatar_url, role, status)
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        INSERT INTO users (id, email, name, phone, avatar_url, role, status, verified)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
         RETURNING *
-      `, [clerkId, email, name, phone, image_url, 'patient', 'incomplete']); // Use clerk_id as primary key
+      `, [clerkId, email, name, phone, image_url, 'patient', 'incomplete', emailVerified]); // Use clerk_id as primary key
 
       const user = userResult.rows[0];
 
@@ -80,11 +86,17 @@ export const createUserInDB = async (clerkUser) => {
 // Update user in database from Clerk webhook
 export const updateUserInDB = async (clerkUser) => {
   try {
-    const { id: clerkId, email_addresses, first_name, last_name, image_url, phone_numbers } = clerkUser;
+    const { id: clerkId, email_addresses, emailAddresses, first_name, firstName, last_name, lastName, image_url, imageUrl, phone_numbers, phoneNumbers } = clerkUser;
     
-    const email = email_addresses[0]?.email_address;
-    const name = `${first_name || ''} ${last_name || ''}`.trim() || email?.split('@')[0];
-    const phone = phone_numbers?.[0]?.phone_number;
+    const email = email_addresses?.[0]?.email_address || emailAddresses?.[0]?.emailAddress;
+    const name = `${first_name || firstName || ''} ${last_name || lastName || ''}`.trim() || email?.split('@')[0];
+    const phone = phone_numbers?.[0]?.phone_number || phoneNumbers?.[0]?.phoneNumber;
+
+    // Check if email is verified from Clerk
+    const emailVerified = emailAddresses?.[0]?.verification?.status === 'verified' ||
+                         email_addresses?.[0]?.verification?.status === 'verified' ||
+                         clerkUser.primaryEmailAddress?.verification?.status === 'verified' ||
+                         false;
 
     const result = await query(`
       UPDATE users 
@@ -93,10 +105,11 @@ export const updateUserInDB = async (clerkUser) => {
         name = $3,
         phone = $4,
         avatar_url = $5,
+        verified = $6,
         updated_at = NOW()
       WHERE id = $1
       RETURNING *
-    `, [clerkId, email, name, phone, image_url]);
+    `, [clerkId, email, name, phone, image_url || imageUrl, emailVerified]);
 
     if (result.rows.length === 0) {
       console.log(`User ${clerkId} not found for update, creating new user`);
@@ -362,6 +375,39 @@ export const handleSMSUpdate = async (webhookData) => {
 
   } catch (error) {
     console.error('Error handling SMS update:', error);
+    throw error;
+  }
+};
+
+// Handle email verification from Clerk webhook
+export const handleEmailVerification = async (webhookData) => {
+  try {
+    const { object } = webhookData;
+    const userId = object.id; // This is the Clerk user ID
+
+    if (!userId) {
+      console.log('Incomplete email verification data received');
+      return;
+    }
+
+    // Update user verification status in our database
+    const result = await query(`
+      UPDATE users 
+      SET verified = TRUE, updated_at = NOW()
+      WHERE id = $1
+      RETURNING *
+    `, [userId]);
+
+    if (result.rows.length > 0) {
+      console.log(`✅ Email verified for user: ${userId}`);
+    } else {
+      console.log(`ℹ️  User ${userId} not found for email verification`);
+    }
+
+    return result.rows[0];
+
+  } catch (error) {
+    console.error('Error handling email verification:', error);
     throw error;
   }
 };

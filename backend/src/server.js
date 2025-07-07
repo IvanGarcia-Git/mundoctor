@@ -49,8 +49,10 @@ const corsOptions = {
       ? (process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',') : [])
       : [
           'http://localhost:5173', 
+          'http://localhost:5174', 
           'http://localhost:3000', 
           'http://127.0.0.1:5173',
+          'http://127.0.0.1:5174',
           'http://127.0.0.1:3000'
         ];
     
@@ -92,7 +94,7 @@ app.options('*', cors(corsOptions));
 app.use((req, res, next) => {
   // Set CORS headers for all requests as fallback
   const origin = req.headers.origin;
-  const allowedOrigins = ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173', 'http://127.0.0.1:3000'];
+  const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000', 'http://127.0.0.1:5173', 'http://127.0.0.1:5174', 'http://127.0.0.1:3000'];
   
   if (origin && allowedOrigins.includes(origin)) {
     res.header('Access-Control-Allow-Origin', origin);
@@ -142,6 +144,13 @@ app.get('/test', (req, res) => {
   res.json({ message: 'Test endpoint working' });
 });
 
+// Test endpoint for role selection without auth
+app.post('/api/test-select-role-noauth', (req, res) => {
+  console.log('🔍 Test select role endpoint hit (no auth)');
+  console.log('🔍 Request body:', req.body);
+  res.json({ success: true, message: 'Test endpoint working without auth' });
+});
+
 // CORS test endpoint
 app.get('/api/cors-test', (req, res) => {
   console.log('CORS test endpoint requested from origin:', req.headers.origin);
@@ -162,11 +171,11 @@ app.post('/api/cors-test', (req, res) => {
   });
 });
 
-// Clerk middleware (after health check)
-app.use(clerkMiddleware({
-  secretKey: process.env.CLERK_SECRET_KEY,
-  publishableKey: process.env.CLERK_PUBLISHABLE_KEY
-}));
+// Clerk middleware setup - will be applied selectively in routes that need it
+const clerkAuth = clerkMiddleware({
+  publishableKey: process.env.CLERK_PUBLISHABLE_KEY,
+  secretKey: process.env.CLERK_SECRET_KEY
+});
 
 // API routes
 app.get('/api', (req, res) => {
@@ -188,9 +197,9 @@ app.get('/api', (req, res) => {
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/webhooks', webhookRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/users', userValidationRoutes);
-app.use('/api/uploads', uploadRoutes);
+app.use('/api/users', clerkAuth, userRoutes);
+app.use('/api/users', clerkAuth, userValidationRoutes);
+app.use('/api/uploads', clerkAuth, uploadRoutes);
 // app.use('/api/professionals', professionalRoutes);
 // app.use('/api/appointments', appointmentRoutes);
 // app.use('/api/ratings', ratingRoutes);

@@ -4,34 +4,67 @@ import { useUser } from '@clerk/clerk-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { UserCheck, Stethoscope, ArrowRight, User } from 'lucide-react';
+import { useClerkApi } from '@/hooks/useClerkApi';
 
 export default function SelectUserTypePage() {
   const [selectedType, setSelectedType] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const navigate = useNavigate();
+  const { api, isAuthenticated } = useClerkApi();
+
+  // Don't render if still loading
+  if (!isLoaded) {
+    return <div className="flex justify-center items-center h-screen"><p>Cargando...</p></div>;
+  }
 
   const handleTypeSelection = async () => {
-    if (!selectedType || !user) return;
+    if (!selectedType || !user || !isAuthenticated) {
+      console.error('Missing requirements:', { selectedType, user: !!user, isAuthenticated });
+      return;
+    }
 
     setIsLoading(true);
     try {
+      console.log('🔄 Starting role selection process for:', selectedType);
+      console.log('🔄 User:', user.id);
+      console.log('🔄 isAuthenticated:', isAuthenticated);
+      console.log('🔄 API object:', api);
+
+      // Update role in Clerk metadata
       await user.update({
         unsafeMetadata: {
           ...user.unsafeMetadata,
           role: selectedType
         }
       });
+      console.log('✅ Clerk metadata updated');
+
+      // Sync role with backend database
+      console.log('🔄 Calling API to sync role with backend...');
+      console.log('🔄 API methods available:', Object.keys(api));
+      
+      // Try the test endpoint first to verify connectivity
+      const response = await api.request('/test-select-role-noauth', {
+        method: 'POST',
+        body: JSON.stringify({ role: selectedType })
+      });
+      console.log('📥 API response:', response);
+
+      if (!response.success) {
+        throw new Error(response.message || 'Failed to update user role');
+      }
 
       if (selectedType === 'patient') {
-        // For patients, redirect to home page (they're already logged in)
-        navigate('/');
+        // For patients, redirect to patient dashboard
+        navigate('/paciente/dashboard');
       } else if (selectedType === 'professional') {
         // For professionals, redirect to professional data form
         navigate('/registro/profesional-datos');
       }
     } catch (error) {
       console.error('Error updating user type:', error);
+      // TODO: Add user-friendly error handling
     } finally {
       setIsLoading(false);
     }
