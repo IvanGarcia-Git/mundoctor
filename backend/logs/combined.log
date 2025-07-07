@@ -29,3 +29,143 @@
 {"level":"info","message":"Database connected successfully","poolStatus":{"idleCount":0,"totalCount":1,"waitingCount":0},"timestamp":"2025-07-07T14:39:34.138Z","version":"PostgreSQL 15.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit"}
 {"level":"debug","message":"Client released to pool","processID":366,"timestamp":"2025-07-07T14:39:34.146Z"}
 {"idleCount":1,"level":"debug","message":"Database pool status","timestamp":"2025-07-07T14:40:03.674Z","totalCount":1,"waitingCount":0}
+{"level":"debug","message":"New database client connected","processID":375,"timestamp":"2025-07-07T14:47:25.345Z"}
+{"level":"debug","message":"Client acquired from pool","processID":375,"timestamp":"2025-07-07T14:47:25.348Z"}
+{"level":"info","message":"Database connected successfully","poolStatus":{"idleCount":0,"totalCount":1,"waitingCount":0},"timestamp":"2025-07-07T14:47:25.349Z","version":"PostgreSQL 15.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit"}
+{"level":"debug","message":"Client released to pool","processID":375,"timestamp":"2025-07-07T14:47:25.356Z"}
+{"level":"debug","message":"New database client connected","processID":376,"timestamp":"2025-07-07T14:47:41.007Z"}
+{"level":"debug","message":"Client acquired from pool","processID":376,"timestamp":"2025-07-07T14:47:41.009Z"}
+{"level":"info","message":"Database connected successfully","poolStatus":{"idleCount":0,"totalCount":1,"waitingCount":0},"timestamp":"2025-07-07T14:47:41.010Z","version":"PostgreSQL 15.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit"}
+{"level":"debug","message":"Client released to pool","processID":376,"timestamp":"2025-07-07T14:47:41.016Z"}
+{"level":"debug","message":"New database client connected","processID":377,"timestamp":"2025-07-07T14:48:00.872Z"}
+{"level":"debug","message":"Client acquired from pool","processID":377,"timestamp":"2025-07-07T14:48:00.878Z"}
+{"level":"info","message":"Database connected successfully","poolStatus":{"idleCount":0,"totalCount":1,"waitingCount":0},"timestamp":"2025-07-07T14:48:00.885Z","version":"PostgreSQL 15.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit"}
+{"level":"debug","message":"Client released to pool","processID":377,"timestamp":"2025-07-07T14:48:00.912Z"}
+{"level":"debug","message":"New database client connected","processID":379,"timestamp":"2025-07-07T14:48:19.145Z"}
+{"level":"debug","message":"Client acquired from pool","processID":379,"timestamp":"2025-07-07T14:48:19.149Z"}
+{"level":"info","message":"Database connected successfully","poolStatus":{"idleCount":0,"totalCount":1,"waitingCount":0},"timestamp":"2025-07-07T14:48:19.152Z","version":"PostgreSQL 15.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit"}
+{"level":"debug","message":"Client released to pool","processID":379,"timestamp":"2025-07-07T14:48:19.160Z"}
+{"idleCount":1,"level":"debug","message":"Database pool status","timestamp":"2025-07-07T14:48:48.599Z","totalCount":1,"waitingCount":0}
+{"level":"debug","message":"New database client connected","processID":381,"timestamp":"2025-07-07T14:49:15.345Z"}
+{"level":"debug","message":"Client acquired from pool","processID":381,"timestamp":"2025-07-07T14:49:15.348Z"}
+{"level":"info","message":"Database connected successfully","poolStatus":{"idleCount":0,"totalCount":1,"waitingCount":0},"timestamp":"2025-07-07T14:49:15.352Z","version":"PostgreSQL 15.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit"}
+{"level":"debug","message":"Client released to pool","processID":381,"timestamp":"2025-07-07T14:49:15.361Z"}
+{"idleCount":1,"level":"debug","message":"Database pool status","timestamp":"2025-07-07T14:49:44.805Z","totalCount":1,"waitingCount":0}
+{"level":"debug","message":"New database client connected","processID":383,"timestamp":"2025-07-07T14:50:23.186Z"}
+{"level":"debug","message":"Client acquired from pool","processID":383,"timestamp":"2025-07-07T14:50:23.188Z"}
+{"level":"info","message":"Database connected successfully","poolStatus":{"idleCount":0,"totalCount":1,"waitingCount":0},"timestamp":"2025-07-07T14:50:23.189Z","version":"PostgreSQL 15.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit"}
+{"level":"debug","message":"Client released to pool","processID":383,"timestamp":"2025-07-07T14:50:23.197Z"}
+{"level":"debug","message":"New database client connected","processID":384,"timestamp":"2025-07-07T14:50:48.144Z"}
+{"level":"debug","message":"Client acquired from pool","processID":384,"timestamp":"2025-07-07T14:50:48.146Z"}
+{"level":"info","message":"Database connected successfully","poolStatus":{"idleCount":0,"totalCount":1,"waitingCount":0},"timestamp":"2025-07-07T14:50:48.147Z","version":"PostgreSQL 15.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit"}
+{"level":"debug","message":"Client released to pool","processID":384,"timestamp":"2025-07-07T14:50:48.154Z"}
+{"level":"debug","message":"New database client connected","processID":386,"timestamp":"2025-07-07T14:51:11.669Z"}
+{"level":"debug","message":"Client acquired from pool","processID":386,"timestamp":"2025-07-07T14:51:11.670Z"}
+{"level":"info","message":"Database connected successfully","poolStatus":{"idleCount":0,"totalCount":1,"waitingCount":0},"timestamp":"2025-07-07T14:51:11.672Z","version":"PostgreSQL 15.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit"}
+{"level":"debug","message":"Client released to pool","processID":386,"timestamp":"2025-07-07T14:51:11.676Z"}
+{"idleCount":1,"level":"debug","message":"Database pool status","timestamp":"2025-07-07T14:51:41.505Z","totalCount":1,"waitingCount":0}
+{"level":"debug","message":"New database client connected","processID":389,"timestamp":"2025-07-07T14:53:17.604Z"}
+{"level":"debug","message":"Client acquired from pool","processID":389,"timestamp":"2025-07-07T14:53:17.605Z"}
+{"level":"info","message":"Database connected successfully","poolStatus":{"idleCount":0,"totalCount":1,"waitingCount":0},"timestamp":"2025-07-07T14:53:17.607Z","version":"PostgreSQL 15.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit"}
+{"level":"debug","message":"Client released to pool","processID":389,"timestamp":"2025-07-07T14:53:17.612Z"}
+{"idleCount":1,"level":"debug","message":"Database pool status","timestamp":"2025-07-07T14:53:47.130Z","totalCount":1,"waitingCount":0}
+{"level":"debug","message":"New database client connected","processID":393,"timestamp":"2025-07-07T14:56:28.274Z"}
+{"level":"debug","message":"Client acquired from pool","processID":393,"timestamp":"2025-07-07T14:56:28.276Z"}
+{"level":"info","message":"Database connected successfully","poolStatus":{"idleCount":0,"totalCount":1,"waitingCount":0},"timestamp":"2025-07-07T14:56:28.280Z","version":"PostgreSQL 15.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit"}
+{"level":"debug","message":"Client released to pool","processID":393,"timestamp":"2025-07-07T14:56:28.286Z"}
+{"idleCount":1,"level":"debug","message":"Database pool status","timestamp":"2025-07-07T14:56:57.849Z","totalCount":1,"waitingCount":0}
+{"level":"debug","message":"New database client connected","processID":395,"timestamp":"2025-07-07T14:57:46.105Z"}
+{"level":"debug","message":"Client acquired from pool","processID":395,"timestamp":"2025-07-07T14:57:46.108Z"}
+{"level":"info","message":"Database connected successfully","poolStatus":{"idleCount":0,"totalCount":1,"waitingCount":0},"timestamp":"2025-07-07T14:57:46.110Z","version":"PostgreSQL 15.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit"}
+{"level":"debug","message":"Client released to pool","processID":395,"timestamp":"2025-07-07T14:57:46.116Z"}
+{"idleCount":1,"level":"debug","message":"Database pool status","timestamp":"2025-07-07T14:58:15.802Z","totalCount":1,"waitingCount":0}
+{"level":"debug","message":"New database client connected","processID":398,"timestamp":"2025-07-07T14:59:17.175Z"}
+{"level":"debug","message":"Client acquired from pool","processID":398,"timestamp":"2025-07-07T14:59:17.177Z"}
+{"level":"info","message":"Database connected successfully","poolStatus":{"idleCount":0,"totalCount":1,"waitingCount":0},"timestamp":"2025-07-07T14:59:17.179Z","version":"PostgreSQL 15.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit"}
+{"level":"debug","message":"Client released to pool","processID":398,"timestamp":"2025-07-07T14:59:17.185Z"}
+{"idleCount":1,"level":"debug","message":"Database pool status","timestamp":"2025-07-07T14:59:46.701Z","totalCount":1,"waitingCount":0}
+{"hasToken":true,"ip":"172.18.0.1","level":"info","message":"Authentication attempt","method":"GET","timestamp":"2025-07-07T15:06:03.812Z","url":"/api/users/profile","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0"}
+{"duration":1,"ip":"172.18.0.1","level":"info","message":"Authentication successful","timestamp":"2025-07-07T15:06:03.814Z","url":"/api/users/profile","userId":"user_2zKPi6dxQxXAMp1yvs1U6STLyG9"}
+{"level":"debug","message":"New database client connected","processID":410,"timestamp":"2025-07-07T15:06:03.843Z"}
+{"level":"debug","message":"Client acquired from pool","processID":410,"timestamp":"2025-07-07T15:06:03.844Z"}
+{"level":"debug","message":"Client released to pool","processID":410,"timestamp":"2025-07-07T15:06:03.860Z"}
+{"level":"debug","message":"Client acquired from pool","processID":410,"timestamp":"2025-07-07T15:06:03.861Z"}
+{"level":"debug","message":"Client released to pool","processID":410,"timestamp":"2025-07-07T15:06:03.871Z"}
+{"hasToken":true,"ip":"172.18.0.1","level":"info","message":"Authentication attempt","method":"GET","timestamp":"2025-07-07T15:06:05.065Z","url":"/api/users/dashboard-stats","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0"}
+{"duration":2,"ip":"172.18.0.1","level":"info","message":"Authentication successful","timestamp":"2025-07-07T15:06:05.067Z","url":"/api/users/dashboard-stats","userId":"user_2zKPi6dxQxXAMp1yvs1U6STLyG9"}
+{"level":"debug","message":"Client acquired from pool","processID":410,"timestamp":"2025-07-07T15:06:05.072Z"}
+{"hasToken":true,"ip":"172.18.0.1","level":"info","message":"Authentication attempt","method":"GET","timestamp":"2025-07-07T15:06:05.076Z","url":"/api/users/dashboard-appointments?limit=5","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0"}
+{"duration":2,"ip":"172.18.0.1","level":"info","message":"Authentication successful","timestamp":"2025-07-07T15:06:05.077Z","url":"/api/users/dashboard-appointments?limit=5","userId":"user_2zKPi6dxQxXAMp1yvs1U6STLyG9"}
+{"level":"debug","message":"Client released to pool","processID":410,"timestamp":"2025-07-07T15:06:05.090Z"}
+{"hasToken":true,"ip":"172.18.0.1","level":"info","message":"Authentication attempt","method":"GET","timestamp":"2025-07-07T15:06:05.125Z","url":"/api/users/dashboard-stats","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0"}
+{"duration":3,"ip":"172.18.0.1","level":"info","message":"Authentication successful","timestamp":"2025-07-07T15:06:05.128Z","url":"/api/users/dashboard-stats","userId":"user_2zKPi6dxQxXAMp1yvs1U6STLyG9"}
+{"level":"debug","message":"Client acquired from pool","processID":410,"timestamp":"2025-07-07T15:06:05.132Z"}
+{"level":"debug","message":"Client released to pool","processID":410,"timestamp":"2025-07-07T15:06:05.147Z"}
+{"level":"debug","message":"New database client connected","processID":411,"timestamp":"2025-07-07T15:06:05.154Z"}
+{"level":"debug","message":"Client acquired from pool","processID":411,"timestamp":"2025-07-07T15:06:05.155Z"}
+{"level":"debug","message":"Client released to pool","processID":411,"timestamp":"2025-07-07T15:06:05.175Z"}
+{"hasToken":true,"ip":"172.18.0.1","level":"info","message":"Authentication attempt","method":"GET","timestamp":"2025-07-07T15:06:05.210Z","url":"/api/users/dashboard-appointments?limit=5","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0"}
+{"duration":3,"ip":"172.18.0.1","level":"info","message":"Authentication successful","timestamp":"2025-07-07T15:06:05.213Z","url":"/api/users/dashboard-appointments?limit=5","userId":"user_2zKPi6dxQxXAMp1yvs1U6STLyG9"}
+{"level":"debug","message":"Client acquired from pool","processID":411,"timestamp":"2025-07-07T15:06:05.217Z"}
+{"level":"debug","message":"Client released to pool","processID":411,"timestamp":"2025-07-07T15:06:05.227Z"}
+{"hasToken":true,"ip":"172.18.0.1","level":"info","message":"Authentication attempt","method":"GET","timestamp":"2025-07-07T15:06:16.422Z","url":"/api/users/profile","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0"}
+{"duration":1,"ip":"172.18.0.1","level":"info","message":"Authentication successful","timestamp":"2025-07-07T15:06:16.423Z","url":"/api/users/profile","userId":"user_2zKPi6dxQxXAMp1yvs1U6STLyG9"}
+{"level":"debug","message":"Client acquired from pool","processID":411,"timestamp":"2025-07-07T15:06:16.428Z"}
+{"level":"debug","message":"Client released to pool","processID":411,"timestamp":"2025-07-07T15:06:16.438Z"}
+{"level":"debug","message":"Client acquired from pool","processID":411,"timestamp":"2025-07-07T15:06:16.439Z"}
+{"level":"debug","message":"Client released to pool","processID":411,"timestamp":"2025-07-07T15:06:16.453Z"}
+{"hasToken":true,"ip":"172.18.0.1","level":"info","message":"Authentication attempt","method":"GET","timestamp":"2025-07-07T15:06:16.633Z","url":"/api/users/dashboard-stats","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0"}
+{"duration":2,"ip":"172.18.0.1","level":"info","message":"Authentication successful","timestamp":"2025-07-07T15:06:16.635Z","url":"/api/users/dashboard-stats","userId":"user_2zKPi6dxQxXAMp1yvs1U6STLyG9"}
+{"level":"debug","message":"Client acquired from pool","processID":411,"timestamp":"2025-07-07T15:06:16.640Z"}
+{"hasToken":true,"ip":"172.18.0.1","level":"info","message":"Authentication attempt","method":"GET","timestamp":"2025-07-07T15:06:16.644Z","url":"/api/users/dashboard-appointments?limit=5","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0"}
+{"duration":6,"ip":"172.18.0.1","level":"info","message":"Authentication successful","timestamp":"2025-07-07T15:06:16.650Z","url":"/api/users/dashboard-appointments?limit=5","userId":"user_2zKPi6dxQxXAMp1yvs1U6STLyG9"}
+{"level":"debug","message":"Client acquired from pool","processID":410,"timestamp":"2025-07-07T15:06:16.652Z"}
+{"level":"debug","message":"Client released to pool","processID":411,"timestamp":"2025-07-07T15:06:16.661Z"}
+{"level":"debug","message":"Client released to pool","processID":410,"timestamp":"2025-07-07T15:06:16.667Z"}
+{"idleCount":2,"level":"debug","message":"Database pool status","timestamp":"2025-07-07T15:06:17.021Z","totalCount":2,"waitingCount":0}
+{"hasToken":true,"ip":"172.18.0.1","level":"info","message":"Authentication attempt","method":"GET","timestamp":"2025-07-07T15:06:37.745Z","url":"/api/users/profile","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0"}
+{"duration":3,"ip":"172.18.0.1","level":"info","message":"Authentication successful","timestamp":"2025-07-07T15:06:37.748Z","url":"/api/users/profile","userId":"user_2zKPi6dxQxXAMp1yvs1U6STLyG9"}
+{"level":"debug","message":"Client acquired from pool","processID":410,"timestamp":"2025-07-07T15:06:37.749Z"}
+{"level":"debug","message":"Client released to pool","processID":410,"timestamp":"2025-07-07T15:06:37.754Z"}
+{"level":"debug","message":"Client acquired from pool","processID":410,"timestamp":"2025-07-07T15:06:37.755Z"}
+{"level":"debug","message":"Client released to pool","processID":410,"timestamp":"2025-07-07T15:06:37.762Z"}
+{"hasToken":true,"ip":"172.18.0.1","level":"info","message":"Authentication attempt","method":"GET","timestamp":"2025-07-07T15:06:38.532Z","url":"/api/users/dashboard-stats","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0"}
+{"duration":2,"ip":"172.18.0.1","level":"info","message":"Authentication successful","timestamp":"2025-07-07T15:06:38.535Z","url":"/api/users/dashboard-stats","userId":"user_2zKPi6dxQxXAMp1yvs1U6STLyG9"}
+{"level":"debug","message":"Client acquired from pool","processID":410,"timestamp":"2025-07-07T15:06:38.539Z"}
+{"hasToken":true,"ip":"172.18.0.1","level":"info","message":"Authentication attempt","method":"GET","timestamp":"2025-07-07T15:06:38.543Z","url":"/api/users/dashboard-appointments?limit=5","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0"}
+{"duration":3,"ip":"172.18.0.1","level":"info","message":"Authentication successful","timestamp":"2025-07-07T15:06:38.546Z","url":"/api/users/dashboard-appointments?limit=5","userId":"user_2zKPi6dxQxXAMp1yvs1U6STLyG9"}
+{"level":"debug","message":"Client acquired from pool","processID":411,"timestamp":"2025-07-07T15:06:38.548Z"}
+{"level":"debug","message":"Client released to pool","processID":410,"timestamp":"2025-07-07T15:06:38.558Z"}
+{"level":"debug","message":"Client released to pool","processID":411,"timestamp":"2025-07-07T15:06:38.566Z"}
+{"hasToken":true,"ip":"172.18.0.1","level":"info","message":"Authentication attempt","method":"GET","timestamp":"2025-07-07T15:06:38.609Z","url":"/api/users/dashboard-stats","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0"}
+{"duration":3,"ip":"172.18.0.1","level":"info","message":"Authentication successful","timestamp":"2025-07-07T15:06:38.612Z","url":"/api/users/dashboard-stats","userId":"user_2zKPi6dxQxXAMp1yvs1U6STLyG9"}
+{"level":"debug","message":"Client acquired from pool","processID":411,"timestamp":"2025-07-07T15:06:38.615Z"}
+{"hasToken":true,"ip":"172.18.0.1","level":"info","message":"Authentication attempt","method":"GET","timestamp":"2025-07-07T15:06:38.627Z","url":"/api/users/dashboard-appointments?limit=5","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0"}
+{"duration":3,"ip":"172.18.0.1","level":"info","message":"Authentication successful","timestamp":"2025-07-07T15:06:38.630Z","url":"/api/users/dashboard-appointments?limit=5","userId":"user_2zKPi6dxQxXAMp1yvs1U6STLyG9"}
+{"level":"debug","message":"Client acquired from pool","processID":410,"timestamp":"2025-07-07T15:06:38.632Z"}
+{"level":"debug","message":"Client released to pool","processID":411,"timestamp":"2025-07-07T15:06:38.638Z"}
+{"level":"debug","message":"Client released to pool","processID":410,"timestamp":"2025-07-07T15:06:38.647Z"}
+{"idleCount":2,"level":"debug","message":"Database pool status","timestamp":"2025-07-07T15:06:47.024Z","totalCount":2,"waitingCount":0}
+{"hasToken":true,"ip":"172.18.0.1","level":"info","message":"Authentication attempt","method":"GET","timestamp":"2025-07-07T15:06:52.215Z","url":"/api/users/profile","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0"}
+{"duration":1,"ip":"172.18.0.1","level":"info","message":"Authentication successful","timestamp":"2025-07-07T15:06:52.215Z","url":"/api/users/profile","userId":"user_2zKPi6dxQxXAMp1yvs1U6STLyG9"}
+{"level":"debug","message":"Client acquired from pool","processID":410,"timestamp":"2025-07-07T15:06:52.216Z"}
+{"level":"debug","message":"Client released to pool","processID":410,"timestamp":"2025-07-07T15:06:52.219Z"}
+{"level":"debug","message":"Client acquired from pool","processID":410,"timestamp":"2025-07-07T15:06:52.220Z"}
+{"level":"debug","message":"Client released to pool","processID":410,"timestamp":"2025-07-07T15:06:52.223Z"}
+{"hasToken":true,"ip":"172.18.0.1","level":"info","message":"Authentication attempt","method":"GET","timestamp":"2025-07-07T15:06:54.502Z","url":"/api/users/dashboard-stats","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0"}
+{"duration":11,"ip":"172.18.0.1","level":"info","message":"Authentication successful","timestamp":"2025-07-07T15:06:54.507Z","url":"/api/users/dashboard-stats","userId":"user_2zKPi6dxQxXAMp1yvs1U6STLyG9"}
+{"level":"debug","message":"Client acquired from pool","processID":410,"timestamp":"2025-07-07T15:06:54.511Z"}
+{"hasToken":true,"ip":"172.18.0.1","level":"info","message":"Authentication attempt","method":"GET","timestamp":"2025-07-07T15:06:54.536Z","url":"/api/users/dashboard-appointments?limit=5","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0"}
+{"duration":4,"ip":"172.18.0.1","level":"info","message":"Authentication successful","timestamp":"2025-07-07T15:06:54.540Z","url":"/api/users/dashboard-appointments?limit=5","userId":"user_2zKPi6dxQxXAMp1yvs1U6STLyG9"}
+{"level":"debug","message":"Client acquired from pool","processID":411,"timestamp":"2025-07-07T15:06:54.543Z"}
+{"level":"debug","message":"Client released to pool","processID":410,"timestamp":"2025-07-07T15:06:54.551Z"}
+{"level":"debug","message":"Client released to pool","processID":411,"timestamp":"2025-07-07T15:06:54.565Z"}
+{"hasToken":true,"ip":"172.18.0.1","level":"info","message":"Authentication attempt","method":"GET","timestamp":"2025-07-07T15:06:54.611Z","url":"/api/users/dashboard-stats","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0"}
+{"duration":2,"ip":"172.18.0.1","level":"info","message":"Authentication successful","timestamp":"2025-07-07T15:06:54.612Z","url":"/api/users/dashboard-stats","userId":"user_2zKPi6dxQxXAMp1yvs1U6STLyG9"}
+{"level":"debug","message":"Client acquired from pool","processID":411,"timestamp":"2025-07-07T15:06:54.620Z"}
+{"hasToken":true,"ip":"172.18.0.1","level":"info","message":"Authentication attempt","method":"GET","timestamp":"2025-07-07T15:06:54.629Z","url":"/api/users/dashboard-appointments?limit=5","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0"}
+{"duration":3,"ip":"172.18.0.1","level":"info","message":"Authentication successful","timestamp":"2025-07-07T15:06:54.632Z","url":"/api/users/dashboard-appointments?limit=5","userId":"user_2zKPi6dxQxXAMp1yvs1U6STLyG9"}
+{"level":"debug","message":"Client acquired from pool","processID":410,"timestamp":"2025-07-07T15:06:54.634Z"}
+{"level":"debug","message":"Client released to pool","processID":411,"timestamp":"2025-07-07T15:06:54.640Z"}
+{"level":"debug","message":"Client released to pool","processID":410,"timestamp":"2025-07-07T15:06:54.650Z"}
+{"idleCount":2,"level":"debug","message":"Database pool status","timestamp":"2025-07-07T15:07:17.030Z","totalCount":2,"waitingCount":0}

@@ -10,17 +10,28 @@ import {
   syncUserFromClerk,
   validateUserSync
 } from '../controllers/userController.js';
+import { syncUserFromClerk as newSyncUser, validateUserConsistency, rollbackUserCreation } from '../services/clerkSync.js';
+import { logInfo, logError, logWarning } from '../utils/logger.js';
+import { successResponse, errorResponse, internalServerErrorResponse } from '../utils/responses.js';
+import { createAuditLog, AuditActions, RiskLevels } from '../utils/auditLog.js';
+import { asyncHandler } from '../middleware/errorHandler.js';
 
 const router = express.Router();
 
-// Middleware to verify Clerk webhook signature
+// Enhanced middleware to verify Clerk webhook signature with audit logging
 const verifyWebhook = (req, res, next) => {
+  const startTime = Date.now();
+  const ip = req.ip || req.connection.remoteAddress;
+  
   try {
     const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
     
     if (!WEBHOOK_SECRET) {
-      console.error('CLERK_WEBHOOK_SECRET not configured');
-      return res.status(500).json({ error: 'Webhook secret not configured' });
+      logError(new Error('CLERK_WEBHOOK_SECRET not configured'), {
+        event: 'webhook_configuration_error',
+        ip,
+      });
+      return errorResponse(res, 'Webhook secret not configured', 500);
     }
 
     const svix_id = req.get('svix-id');
@@ -28,8 +39,15 @@ const verifyWebhook = (req, res, next) => {
     const svix_signature = req.get('svix-signature');
 
     if (!svix_id || !svix_timestamp || !svix_signature) {
-      console.error('Missing svix headers');
-      return res.status(400).json({ error: 'Missing svix headers' });
+      logWarning('Missing svix headers in webhook request', {
+        ip,
+        headers: {
+          'svix-id': !!svix_id,
+          'svix-timestamp': !!svix_timestamp,
+          'svix-signature': !!svix_signature,
+        },
+      });
+      return errorResponse(res, 'Missing svix headers', 400);
     }
 
     const webhook = new Webhook(WEBHOOK_SECRET);
@@ -42,14 +60,25 @@ const verifyWebhook = (req, res, next) => {
     });
 
     req.webhookPayload = payload;
+    
+    logInfo('Webhook signature verified successfully', {
+      type: payload.type,
+      svixId: svix_id,
+      timestamp: svix_timestamp,
+      ip,
+      duration: Date.now() - startTime,
+    });
+    
     next();
 
   } catch (error) {
-    console.error('Webhook verification failed:', error.message);
-    return res.status(400).json({ 
-      error: 'Webhook verification failed',
-      details: error.message 
+    logError(error, {
+      event: 'webhook_verification_failed',
+      ip,
+      duration: Date.now() - startTime,
     });
+    
+    return errorResponse(res, 'Webhook verification failed', 400, error);
   }
 };
 

@@ -1,27 +1,56 @@
 import { requireAuth as clerkRequireAuth, clerkClient } from '@clerk/express';
 import { query } from '../config/database.js';
+import { logInfo, logWarning, logError } from '../utils/logger.js';
+import { unauthorizedResponse, forbiddenResponse, badRequestResponse, internalServerErrorResponse } from '../utils/responses.js';
+import { AuthenticationError, AuthorizationError, AppError } from './errorHandler.js';
 
-// Clerk authentication middleware with logging
+// Enhanced Clerk authentication middleware with comprehensive logging
 export const requireAuth = (req, res, next) => {
-  console.log('🔍 Auth middleware - Headers:', req.headers.authorization ? 'Token present' : 'No token');
-  console.log('🔍 Auth middleware - URL:', req.url);
+  const startTime = Date.now();
+  const ip = req.ip || req.connection.remoteAddress;
+  const userAgent = req.get('User-Agent');
+  
+  logInfo('Authentication attempt', {
+    url: req.originalUrl,
+    method: req.method,
+    ip,
+    userAgent,
+    hasToken: !!req.headers.authorization,
+  });
   
   clerkRequireAuth()(req, res, (error) => {
+    const duration = Date.now() - startTime;
+    
     if (error) {
-      console.error('🔍 Auth middleware error:', error);
-      return next(error);
+      logError(error, {
+        event: 'authentication_failed',
+        url: req.originalUrl,
+        ip,
+        userAgent,
+        duration,
+      });
+      
+      throw new AuthenticationError('Authentication failed');
     }
     
-    console.log('🔍 Auth middleware - User authenticated:', req.auth?.userId || 'No user ID');
+    logInfo('Authentication successful', {
+      userId: req.auth?.userId,
+      url: req.originalUrl,
+      ip,
+      duration,
+    });
+    
     next();
   });
 };
 
-// Middleware to attach user data from database
+// Enhanced middleware to attach user data from database with comprehensive user info
 export const attachUser = async (req, res, next) => {
+  const startTime = Date.now();
+  
   try {
     if (!req.auth?.userId) {
-      return res.status(401).json({ error: 'Authentication required' });
+      throw new AuthenticationError('Authentication required');
     }
 
     const userResult = await query(`
@@ -30,38 +59,80 @@ export const attachUser = async (req, res, next) => {
         up.theme,
         up.notifications_enabled,
         up.language,
-        up.timezone
+        up.timezone,
+        CASE 
+          WHEN u.role = 'professional' THEN (
+            SELECT row_to_json(p.*) FROM professionals p WHERE p.user_id = u.id
+          )
+          WHEN u.role = 'patient' THEN (
+            SELECT row_to_json(pt.*) FROM patients pt WHERE pt.user_id = u.id
+          )
+          ELSE NULL
+        END as role_data
       FROM users u
       LEFT JOIN user_preferences up ON u.id = up.user_id
       WHERE u.id = $1
     `, [req.auth.userId]);
 
     if (userResult.rows.length === 0) {
-      return res.status(404).json({ error: 'User not found in database' });
+      logWarning('User not found in database', {
+        userId: req.auth.userId,
+        url: req.originalUrl,
+      });
+      throw new AuthenticationError('User not found in database');
     }
 
-    req.user = userResult.rows[0];
+    const user = userResult.rows[0];
+    req.user = user;
+    
+    // Log user access
+    logInfo('User data attached', {
+      userId: user.id,
+      role: user.role,
+      status: user.status,
+      url: req.originalUrl,
+      duration: Date.now() - startTime,
+    });
+    
     next();
   } catch (error) {
-    console.error('Attach user error:', error);
-    res.status(500).json({ error: 'Failed to fetch user data' });
+    logError(error, {
+      event: 'attach_user_failed',
+      userId: req.auth?.userId,
+      url: req.originalUrl,
+      duration: Date.now() - startTime,
+    });
+    
+    throw error;
   }
 };
 
-// Role-based authorization middleware
+// Enhanced role-based authorization middleware with audit logging
 export const requireRole = (allowedRoles) => {
   return (req, res, next) => {
     if (!req.user) {
-      return res.status(401).json({ error: 'Authentication required' });
+      throw new AuthenticationError('Authentication required');
     }
 
     if (!allowedRoles.includes(req.user.role)) {
-      return res.status(403).json({ 
-        error: 'Insufficient permissions',
-        required: allowedRoles,
-        current: req.user.role
+      logWarning('Authorization failed - insufficient permissions', {
+        userId: req.user.id,
+        userRole: req.user.role,
+        requiredRoles: allowedRoles,
+        url: req.originalUrl,
+        method: req.method,
+        ip: req.ip,
       });
+      
+      throw new AuthorizationError(`Access denied. Required roles: ${allowedRoles.join(', ')}`);
     }
+
+    logInfo('Authorization successful', {
+      userId: req.user.id,
+      userRole: req.user.role,
+      url: req.originalUrl,
+      method: req.method,
+    });
 
     next();
   };
