@@ -12,7 +12,7 @@ import {
   validateContactId,
   validateProfessionalId
 } from '../validators/patientValidator.js';
-import { createAuditLog } from '../utils/auditLog.js';
+import { createAuditLog as auditLog } from '../utils/auditLog.js';
 import { successResponse, errorResponse } from '../utils/responses.js';
 
 const router = express.Router();
@@ -421,4 +421,4 @@ router.get('/search/featured', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

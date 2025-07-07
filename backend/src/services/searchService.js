@@ -1,5 +1,5 @@
-const db = require('../config/database');
-const { logger } = require('../utils/logger');
+import { query } from '../config/database.js';
+import { logInfo, logError } from '../utils/logger.js';
 
 class SearchService {
   // Búsqueda general de profesionales
@@ -92,7 +92,7 @@ class SearchService {
       
       queryParams.push(limit, offset);
       
-      const result = await db.query(searchQuery, queryParams);
+      const result = await query(searchQuery, queryParams);
       
       // Obtener total de resultados
       const countQuery = `
@@ -377,4 +377,4 @@ class SearchService {
   }
 }
 
-module.exports = new SearchService();
+export default new SearchService();

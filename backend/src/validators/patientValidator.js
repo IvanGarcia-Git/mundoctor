@@ -1,5 +1,5 @@
-const { body, query, param, validationResult } = require('express-validator');
-const { errorResponse } = require('../utils/responses');
+import { body, query, param, validationResult } from 'express-validator';
+import { errorResponse } from '../utils/responses.js';
 
 // Validación para actualizar perfil de paciente
 const validatePatientProfile = [
@@ -418,7 +418,7 @@ const validateProfessionalId = [
   }
 ];
 
-module.exports = {
+export {
   validatePatientProfile,
   validateProfessionalSearch,
   validateNearbySearch,
