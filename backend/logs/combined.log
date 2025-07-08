@@ -353,3 +353,268 @@
 {"level":"debug","message":"Client released to pool","processID":97,"timestamp":"2025-07-08T11:28:00.836Z"}
 {"duration":6,"level":"debug","message":"Query completed","queryId":"k99q1j099","rows":3,"timestamp":"2025-07-08T11:28:00.837Z"}
 {"idleCount":2,"level":"debug","message":"Database pool status","timestamp":"2025-07-08T11:28:26.570Z","totalCount":2,"waitingCount":0}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"9zzet3e8d","timestamp":"2025-07-08T11:31:54.166Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"4e3fnd0nu","timestamp":"2025-07-08T11:31:54.167Z"}
+{"level":"debug","message":"New database client connected","processID":102,"timestamp":"2025-07-08T11:31:54.186Z"}
+{"level":"debug","message":"Client acquired from pool","processID":102,"timestamp":"2025-07-08T11:31:54.187Z"}
+{"level":"debug","message":"New database client connected","processID":103,"timestamp":"2025-07-08T11:31:54.193Z"}
+{"level":"debug","message":"Client acquired from pool","processID":103,"timestamp":"2025-07-08T11:31:54.194Z"}
+{"level":"debug","message":"Client released to pool","processID":102,"timestamp":"2025-07-08T11:31:54.212Z"}
+{"duration":47,"level":"debug","message":"Query completed","queryId":"9zzet3e8d","rows":16,"timestamp":"2025-07-08T11:31:54.214Z"}
+{"level":"debug","message":"Client released to pool","processID":103,"timestamp":"2025-07-08T11:31:54.230Z"}
+{"duration":63,"level":"debug","message":"Query completed","queryId":"4e3fnd0nu","rows":16,"timestamp":"2025-07-08T11:31:54.230Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"5gkv8tv2h","timestamp":"2025-07-08T11:31:54.240Z"}
+{"level":"debug","message":"Client acquired from pool","processID":103,"timestamp":"2025-07-08T11:31:54.241Z"}
+{"level":"debug","message":"Client released to pool","processID":103,"timestamp":"2025-07-08T11:31:54.246Z"}
+{"duration":7,"level":"debug","message":"Query completed","queryId":"5gkv8tv2h","rows":3,"timestamp":"2025-07-08T11:31:54.247Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"zcmpzr2ac","timestamp":"2025-07-08T11:31:54.256Z"}
+{"level":"debug","message":"Client acquired from pool","processID":103,"timestamp":"2025-07-08T11:31:54.256Z"}
+{"level":"debug","message":"Client released to pool","processID":103,"timestamp":"2025-07-08T11:31:54.263Z"}
+{"duration":8,"level":"debug","message":"Query completed","queryId":"zcmpzr2ac","rows":3,"timestamp":"2025-07-08T11:31:54.264Z"}
+{"idleCount":2,"level":"debug","message":"Database pool status","timestamp":"2025-07-08T11:31:56.747Z","totalCount":2,"waitingCount":0}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"mehlbicm3","timestamp":"2025-07-08T11:32:09.661Z"}
+{"level":"debug","message":"Client acquired from pool","processID":103,"timestamp":"2025-07-08T11:32:09.661Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"buixpb3ds","timestamp":"2025-07-08T11:32:09.662Z"}
+{"level":"debug","message":"Client acquired from pool","processID":102,"timestamp":"2025-07-08T11:32:09.663Z"}
+{"level":"debug","message":"Client released to pool","processID":103,"timestamp":"2025-07-08T11:32:09.668Z"}
+{"duration":9,"level":"debug","message":"Query completed","queryId":"mehlbicm3","rows":16,"timestamp":"2025-07-08T11:32:09.670Z"}
+{"level":"debug","message":"Client released to pool","processID":102,"timestamp":"2025-07-08T11:32:09.673Z"}
+{"duration":11,"level":"debug","message":"Query completed","queryId":"buixpb3ds","rows":16,"timestamp":"2025-07-08T11:32:09.674Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"uyksmlqem","timestamp":"2025-07-08T11:32:09.735Z"}
+{"level":"debug","message":"Client acquired from pool","processID":102,"timestamp":"2025-07-08T11:32:09.735Z"}
+{"level":"debug","message":"Client released to pool","processID":102,"timestamp":"2025-07-08T11:32:09.742Z"}
+{"duration":7,"level":"debug","message":"Query completed","queryId":"uyksmlqem","rows":3,"timestamp":"2025-07-08T11:32:09.742Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"ny9k0vxkm","timestamp":"2025-07-08T11:32:13.984Z"}
+{"level":"debug","message":"Client acquired from pool","processID":102,"timestamp":"2025-07-08T11:32:13.985Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"i23lntvfu","timestamp":"2025-07-08T11:32:13.986Z"}
+{"level":"debug","message":"Client acquired from pool","processID":103,"timestamp":"2025-07-08T11:32:13.986Z"}
+{"level":"debug","message":"Client released to pool","processID":102,"timestamp":"2025-07-08T11:32:13.988Z"}
+{"duration":4,"level":"debug","message":"Query completed","queryId":"ny9k0vxkm","rows":16,"timestamp":"2025-07-08T11:32:13.988Z"}
+{"level":"debug","message":"Client released to pool","processID":103,"timestamp":"2025-07-08T11:32:13.993Z"}
+{"duration":8,"level":"debug","message":"Query completed","queryId":"i23lntvfu","rows":16,"timestamp":"2025-07-08T11:32:13.994Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"pmd9dgl13","timestamp":"2025-07-08T11:32:14.035Z"}
+{"level":"debug","message":"Client acquired from pool","processID":103,"timestamp":"2025-07-08T11:32:14.036Z"}
+{"level":"debug","message":"Client released to pool","processID":103,"timestamp":"2025-07-08T11:32:14.042Z"}
+{"duration":7,"level":"debug","message":"Query completed","queryId":"pmd9dgl13","rows":3,"timestamp":"2025-07-08T11:32:14.042Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"a3y6vudj5","timestamp":"2025-07-08T11:32:17.005Z"}
+{"level":"debug","message":"Client acquired from pool","processID":103,"timestamp":"2025-07-08T11:32:17.005Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"u47jnfyrr","timestamp":"2025-07-08T11:32:17.005Z"}
+{"level":"debug","message":"Client acquired from pool","processID":102,"timestamp":"2025-07-08T11:32:17.006Z"}
+{"level":"debug","message":"Client released to pool","processID":103,"timestamp":"2025-07-08T11:32:17.008Z"}
+{"duration":3,"level":"debug","message":"Query completed","queryId":"a3y6vudj5","rows":16,"timestamp":"2025-07-08T11:32:17.008Z"}
+{"level":"debug","message":"Client released to pool","processID":102,"timestamp":"2025-07-08T11:32:17.010Z"}
+{"duration":5,"level":"debug","message":"Query completed","queryId":"u47jnfyrr","rows":16,"timestamp":"2025-07-08T11:32:17.010Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"0awe8xp63","timestamp":"2025-07-08T11:32:17.038Z"}
+{"level":"debug","message":"Client acquired from pool","processID":102,"timestamp":"2025-07-08T11:32:17.039Z"}
+{"level":"debug","message":"Client released to pool","processID":102,"timestamp":"2025-07-08T11:32:17.044Z"}
+{"duration":6,"level":"debug","message":"Query completed","queryId":"0awe8xp63","rows":3,"timestamp":"2025-07-08T11:32:17.044Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"adnk3rfn6","timestamp":"2025-07-08T11:32:23.085Z"}
+{"level":"debug","message":"Client acquired from pool","processID":102,"timestamp":"2025-07-08T11:32:23.086Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"umxowndh","timestamp":"2025-07-08T11:32:23.087Z"}
+{"level":"debug","message":"Client acquired from pool","processID":103,"timestamp":"2025-07-08T11:32:23.087Z"}
+{"level":"debug","message":"Client released to pool","processID":102,"timestamp":"2025-07-08T11:32:23.089Z"}
+{"duration":5,"level":"debug","message":"Query completed","queryId":"adnk3rfn6","rows":16,"timestamp":"2025-07-08T11:32:23.090Z"}
+{"level":"debug","message":"Client released to pool","processID":103,"timestamp":"2025-07-08T11:32:23.094Z"}
+{"duration":7,"level":"debug","message":"Query completed","queryId":"umxowndh","rows":16,"timestamp":"2025-07-08T11:32:23.095Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"qipecs0sw","timestamp":"2025-07-08T11:32:23.131Z"}
+{"level":"debug","message":"Client acquired from pool","processID":103,"timestamp":"2025-07-08T11:32:23.131Z"}
+{"level":"debug","message":"Client released to pool","processID":103,"timestamp":"2025-07-08T11:32:23.136Z"}
+{"duration":6,"level":"debug","message":"Query completed","queryId":"qipecs0sw","rows":3,"timestamp":"2025-07-08T11:32:23.136Z"}
+{"idleCount":2,"level":"debug","message":"Database pool status","timestamp":"2025-07-08T11:32:26.749Z","totalCount":2,"waitingCount":0}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"9v9wjk7k9","timestamp":"2025-07-08T11:35:11.480Z"}
+{"level":"debug","message":"New database client connected","processID":107,"timestamp":"2025-07-08T11:35:11.488Z"}
+{"level":"debug","message":"Client acquired from pool","processID":107,"timestamp":"2025-07-08T11:35:11.488Z"}
+{"level":"debug","message":"Client released to pool","processID":107,"timestamp":"2025-07-08T11:35:11.496Z"}
+{"duration":17,"level":"debug","message":"Query completed","queryId":"9v9wjk7k9","rows":3,"timestamp":"2025-07-08T11:35:11.497Z"}
+{"idleCount":1,"level":"debug","message":"Database pool status","timestamp":"2025-07-08T11:35:26.877Z","totalCount":1,"waitingCount":0}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"p2xt3wvpo","timestamp":"2025-07-08T11:36:33.343Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"ga56hm1br","timestamp":"2025-07-08T11:36:33.343Z"}
+{"level":"debug","message":"New database client connected","processID":109,"timestamp":"2025-07-08T11:36:33.358Z"}
+{"level":"debug","message":"Client acquired from pool","processID":109,"timestamp":"2025-07-08T11:36:33.358Z"}
+{"level":"debug","message":"New database client connected","processID":110,"timestamp":"2025-07-08T11:36:33.360Z"}
+{"level":"debug","message":"Client acquired from pool","processID":110,"timestamp":"2025-07-08T11:36:33.360Z"}
+{"level":"debug","message":"Client released to pool","processID":109,"timestamp":"2025-07-08T11:36:33.376Z"}
+{"duration":34,"level":"debug","message":"Query completed","queryId":"p2xt3wvpo","rows":16,"timestamp":"2025-07-08T11:36:33.376Z"}
+{"level":"debug","message":"Client released to pool","processID":110,"timestamp":"2025-07-08T11:36:33.378Z"}
+{"duration":35,"level":"debug","message":"Query completed","queryId":"ga56hm1br","rows":16,"timestamp":"2025-07-08T11:36:33.378Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"11us37ix8","timestamp":"2025-07-08T11:36:33.388Z"}
+{"level":"debug","message":"Client acquired from pool","processID":110,"timestamp":"2025-07-08T11:36:33.388Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"61ldqj0ek","timestamp":"2025-07-08T11:36:33.391Z"}
+{"level":"debug","message":"Client acquired from pool","processID":109,"timestamp":"2025-07-08T11:36:33.391Z"}
+{"level":"debug","message":"Client released to pool","processID":110,"timestamp":"2025-07-08T11:36:33.392Z"}
+{"duration":4,"level":"debug","message":"Query completed","queryId":"11us37ix8","rows":3,"timestamp":"2025-07-08T11:36:33.393Z"}
+{"level":"debug","message":"Client released to pool","processID":109,"timestamp":"2025-07-08T11:36:33.398Z"}
+{"duration":7,"level":"debug","message":"Query completed","queryId":"61ldqj0ek","rows":3,"timestamp":"2025-07-08T11:36:33.398Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"muvvqw4ia","timestamp":"2025-07-08T11:36:35.110Z"}
+{"level":"debug","message":"Client acquired from pool","processID":109,"timestamp":"2025-07-08T11:36:35.110Z"}
+{"level":"debug","message":"Client released to pool","processID":109,"timestamp":"2025-07-08T11:36:35.117Z"}
+{"duration":7,"level":"debug","message":"Query completed","queryId":"muvvqw4ia","rows":16,"timestamp":"2025-07-08T11:36:35.117Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"sqcxt09km","timestamp":"2025-07-08T11:36:35.124Z"}
+{"level":"debug","message":"Client acquired from pool","processID":109,"timestamp":"2025-07-08T11:36:35.125Z"}
+{"level":"debug","message":"Client released to pool","processID":109,"timestamp":"2025-07-08T11:36:35.131Z"}
+{"duration":7,"level":"debug","message":"Query completed","queryId":"sqcxt09km","rows":16,"timestamp":"2025-07-08T11:36:35.132Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"sbuk2mkcb","timestamp":"2025-07-08T11:36:35.147Z"}
+{"level":"debug","message":"Client acquired from pool","processID":109,"timestamp":"2025-07-08T11:36:35.149Z"}
+{"level":"debug","message":"Client released to pool","processID":109,"timestamp":"2025-07-08T11:36:35.153Z"}
+{"duration":8,"level":"debug","message":"Query completed","queryId":"sbuk2mkcb","rows":3,"timestamp":"2025-07-08T11:36:35.154Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"qap3k99w1","timestamp":"2025-07-08T11:36:35.159Z"}
+{"level":"debug","message":"Client acquired from pool","processID":109,"timestamp":"2025-07-08T11:36:35.160Z"}
+{"level":"debug","message":"Client released to pool","processID":109,"timestamp":"2025-07-08T11:36:35.165Z"}
+{"duration":8,"level":"debug","message":"Query completed","queryId":"qap3k99w1","rows":3,"timestamp":"2025-07-08T11:36:35.166Z"}
+{"idleCount":2,"level":"debug","message":"Database pool status","timestamp":"2025-07-08T11:36:56.910Z","totalCount":2,"waitingCount":0}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"hwidwrc0k","timestamp":"2025-07-08T11:37:54.319Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"v41at3sb6","timestamp":"2025-07-08T11:37:54.320Z"}
+{"level":"debug","message":"New database client connected","processID":113,"timestamp":"2025-07-08T11:37:54.336Z"}
+{"level":"debug","message":"Client acquired from pool","processID":113,"timestamp":"2025-07-08T11:37:54.337Z"}
+{"level":"debug","message":"New database client connected","processID":114,"timestamp":"2025-07-08T11:37:54.339Z"}
+{"level":"debug","message":"Client acquired from pool","processID":114,"timestamp":"2025-07-08T11:37:54.339Z"}
+{"level":"debug","message":"Client released to pool","processID":113,"timestamp":"2025-07-08T11:37:54.355Z"}
+{"duration":37,"level":"debug","message":"Query completed","queryId":"hwidwrc0k","rows":16,"timestamp":"2025-07-08T11:37:54.356Z"}
+{"level":"debug","message":"Client released to pool","processID":114,"timestamp":"2025-07-08T11:37:54.362Z"}
+{"duration":43,"level":"debug","message":"Query completed","queryId":"v41at3sb6","rows":16,"timestamp":"2025-07-08T11:37:54.363Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"reu25rn3j","timestamp":"2025-07-08T11:37:54.383Z"}
+{"level":"debug","message":"Client acquired from pool","processID":114,"timestamp":"2025-07-08T11:37:54.384Z"}
+{"level":"debug","message":"Client released to pool","processID":114,"timestamp":"2025-07-08T11:37:54.398Z"}
+{"duration":16,"level":"debug","message":"Query completed","queryId":"reu25rn3j","rows":3,"timestamp":"2025-07-08T11:37:54.399Z"}
+{"idleCount":2,"level":"debug","message":"Database pool status","timestamp":"2025-07-08T11:37:56.932Z","totalCount":2,"waitingCount":0}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"bs1paumfc","timestamp":"2025-07-08T11:37:58.055Z"}
+{"level":"debug","message":"Client acquired from pool","processID":114,"timestamp":"2025-07-08T11:37:58.056Z"}
+{"level":"debug","message":"Client released to pool","processID":114,"timestamp":"2025-07-08T11:37:58.061Z"}
+{"duration":8,"level":"debug","message":"Query completed","queryId":"bs1paumfc","rows":16,"timestamp":"2025-07-08T11:37:58.062Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"c48r8334b","timestamp":"2025-07-08T11:37:58.069Z"}
+{"level":"debug","message":"Client acquired from pool","processID":114,"timestamp":"2025-07-08T11:37:58.070Z"}
+{"level":"debug","message":"Client released to pool","processID":114,"timestamp":"2025-07-08T11:37:58.082Z"}
+{"duration":15,"level":"debug","message":"Query completed","queryId":"c48r8334b","rows":16,"timestamp":"2025-07-08T11:37:58.083Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"1vx3hi8sx","timestamp":"2025-07-08T11:37:58.100Z"}
+{"level":"debug","message":"Client acquired from pool","processID":114,"timestamp":"2025-07-08T11:37:58.101Z"}
+{"level":"debug","message":"Client released to pool","processID":114,"timestamp":"2025-07-08T11:37:58.108Z"}
+{"duration":9,"level":"debug","message":"Query completed","queryId":"1vx3hi8sx","rows":3,"timestamp":"2025-07-08T11:37:58.109Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"4zv0036du","timestamp":"2025-07-08T11:37:58.145Z"}
+{"level":"debug","message":"Client acquired from pool","processID":114,"timestamp":"2025-07-08T11:37:58.147Z"}
+{"level":"debug","message":"Client released to pool","processID":114,"timestamp":"2025-07-08T11:37:58.159Z"}
+{"duration":15,"level":"debug","message":"Query completed","queryId":"4zv0036du","rows":3,"timestamp":"2025-07-08T11:37:58.160Z"}
+{"idleCount":1,"level":"debug","message":"Database pool status","timestamp":"2025-07-08T11:38:26.935Z","totalCount":1,"waitingCount":0}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"jsfupylxi","timestamp":"2025-07-08T11:39:03.292Z"}
+{"level":"debug","message":"New database client connected","processID":116,"timestamp":"2025-07-08T11:39:03.317Z"}
+{"level":"debug","message":"Client acquired from pool","processID":116,"timestamp":"2025-07-08T11:39:03.318Z"}
+{"level":"debug","message":"Client released to pool","processID":116,"timestamp":"2025-07-08T11:39:03.354Z"}
+{"duration":63,"level":"debug","message":"Query completed","queryId":"jsfupylxi","rows":3,"timestamp":"2025-07-08T11:39:03.355Z"}
+{"idleCount":1,"level":"debug","message":"Database pool status","timestamp":"2025-07-08T11:39:26.957Z","totalCount":1,"waitingCount":0}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"f0ct7hc1j","timestamp":"2025-07-08T11:40:51.296Z"}
+{"level":"debug","message":"New database client connected","processID":118,"timestamp":"2025-07-08T11:40:51.324Z"}
+{"level":"debug","message":"Client acquired from pool","processID":118,"timestamp":"2025-07-08T11:40:51.325Z"}
+{"level":"debug","message":"Client released to pool","processID":118,"timestamp":"2025-07-08T11:40:51.357Z"}
+{"duration":62,"level":"debug","message":"Query completed","queryId":"f0ct7hc1j","rows":3,"timestamp":"2025-07-08T11:40:51.357Z"}
+{"idleCount":1,"level":"debug","message":"Database pool status","timestamp":"2025-07-08T11:40:56.984Z","totalCount":1,"waitingCount":0}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"zmjqcwesg","timestamp":"2025-07-08T11:41:07.291Z"}
+{"level":"debug","message":"Client acquired from pool","processID":118,"timestamp":"2025-07-08T11:41:07.292Z"}
+{"level":"debug","message":"Client released to pool","processID":118,"timestamp":"2025-07-08T11:41:07.301Z"}
+{"duration":12,"level":"debug","message":"Query completed","queryId":"zmjqcwesg","rows":3,"timestamp":"2025-07-08T11:41:07.303Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"7368bmpv4","timestamp":"2025-07-08T11:41:07.309Z"}
+{"level":"debug","message":"Client acquired from pool","processID":118,"timestamp":"2025-07-08T11:41:07.311Z"}
+{"level":"debug","message":"Client released to pool","processID":118,"timestamp":"2025-07-08T11:41:07.320Z"}
+{"duration":13,"level":"debug","message":"Query completed","queryId":"7368bmpv4","rows":3,"timestamp":"2025-07-08T11:41:07.322Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"wdl57cn0y","timestamp":"2025-07-08T11:41:11.186Z"}
+{"level":"debug","message":"Client acquired from pool","processID":118,"timestamp":"2025-07-08T11:41:11.187Z"}
+{"level":"debug","message":"Client released to pool","processID":118,"timestamp":"2025-07-08T11:41:11.193Z"}
+{"duration":7,"level":"debug","message":"Query completed","queryId":"wdl57cn0y","rows":3,"timestamp":"2025-07-08T11:41:11.193Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"t3rkrq68b","timestamp":"2025-07-08T11:41:15.331Z"}
+{"level":"debug","message":"Client acquired from pool","processID":118,"timestamp":"2025-07-08T11:41:15.331Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"jxtds4gbe","timestamp":"2025-07-08T11:41:15.332Z"}
+{"level":"debug","message":"Client released to pool","processID":118,"timestamp":"2025-07-08T11:41:15.342Z"}
+{"duration":12,"level":"debug","message":"Query completed","queryId":"t3rkrq68b","rows":16,"timestamp":"2025-07-08T11:41:15.342Z"}
+{"level":"debug","message":"New database client connected","processID":120,"timestamp":"2025-07-08T11:41:15.365Z"}
+{"level":"debug","message":"Client acquired from pool","processID":120,"timestamp":"2025-07-08T11:41:15.365Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"0bmcmyfyr","timestamp":"2025-07-08T11:41:15.366Z"}
+{"level":"debug","message":"Client acquired from pool","processID":118,"timestamp":"2025-07-08T11:41:15.367Z"}
+{"level":"debug","message":"Client released to pool","processID":118,"timestamp":"2025-07-08T11:41:15.373Z"}
+{"duration":8,"level":"debug","message":"Query completed","queryId":"0bmcmyfyr","rows":3,"timestamp":"2025-07-08T11:41:15.374Z"}
+{"level":"debug","message":"Client released to pool","processID":120,"timestamp":"2025-07-08T11:41:15.393Z"}
+{"duration":61,"level":"debug","message":"Query completed","queryId":"jxtds4gbe","rows":16,"timestamp":"2025-07-08T11:41:15.393Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"a7om7jf0l","timestamp":"2025-07-08T11:41:15.438Z"}
+{"level":"debug","message":"Client acquired from pool","processID":120,"timestamp":"2025-07-08T11:41:15.439Z"}
+{"level":"debug","message":"Client released to pool","processID":120,"timestamp":"2025-07-08T11:41:15.448Z"}
+{"duration":12,"level":"debug","message":"Query completed","queryId":"a7om7jf0l","rows":3,"timestamp":"2025-07-08T11:41:15.449Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"0jgob201n","timestamp":"2025-07-08T11:41:16.706Z"}
+{"level":"debug","message":"Client acquired from pool","processID":120,"timestamp":"2025-07-08T11:41:16.707Z"}
+{"level":"debug","message":"Client released to pool","processID":120,"timestamp":"2025-07-08T11:41:16.721Z"}
+{"duration":17,"level":"debug","message":"Query completed","queryId":"0jgob201n","rows":3,"timestamp":"2025-07-08T11:41:16.722Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"ukd4qy72x","timestamp":"2025-07-08T11:41:16.727Z"}
+{"level":"debug","message":"Client acquired from pool","processID":120,"timestamp":"2025-07-08T11:41:16.728Z"}
+{"level":"debug","message":"Client released to pool","processID":120,"timestamp":"2025-07-08T11:41:16.743Z"}
+{"duration":18,"level":"debug","message":"Query completed","queryId":"ukd4qy72x","rows":3,"timestamp":"2025-07-08T11:41:16.745Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"26n84h3f0","timestamp":"2025-07-08T11:41:17.403Z"}
+{"level":"debug","message":"Client acquired from pool","processID":120,"timestamp":"2025-07-08T11:41:17.404Z"}
+{"level":"debug","message":"Client released to pool","processID":120,"timestamp":"2025-07-08T11:41:17.413Z"}
+{"duration":12,"level":"debug","message":"Query completed","queryId":"26n84h3f0","rows":16,"timestamp":"2025-07-08T11:41:17.414Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"eaukwrnkj","timestamp":"2025-07-08T11:41:17.421Z"}
+{"level":"debug","message":"Client acquired from pool","processID":120,"timestamp":"2025-07-08T11:41:17.423Z"}
+{"level":"debug","message":"Client released to pool","processID":120,"timestamp":"2025-07-08T11:41:17.432Z"}
+{"duration":13,"level":"debug","message":"Query completed","queryId":"eaukwrnkj","rows":16,"timestamp":"2025-07-08T11:41:17.433Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"uwljutijd","timestamp":"2025-07-08T11:41:17.452Z"}
+{"level":"debug","message":"Client acquired from pool","processID":120,"timestamp":"2025-07-08T11:41:17.453Z"}
+{"level":"debug","message":"Client released to pool","processID":120,"timestamp":"2025-07-08T11:41:17.461Z"}
+{"duration":9,"level":"debug","message":"Query completed","queryId":"uwljutijd","rows":3,"timestamp":"2025-07-08T11:41:17.462Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"bzibxla2x","timestamp":"2025-07-08T11:41:17.472Z"}
+{"level":"debug","message":"Client acquired from pool","processID":120,"timestamp":"2025-07-08T11:41:17.473Z"}
+{"level":"debug","message":"Client released to pool","processID":120,"timestamp":"2025-07-08T11:41:17.481Z"}
+{"duration":10,"level":"debug","message":"Query completed","queryId":"bzibxla2x","rows":3,"timestamp":"2025-07-08T11:41:17.482Z"}
+{"idleCount":2,"level":"debug","message":"Database pool status","timestamp":"2025-07-08T11:41:26.988Z","totalCount":2,"waitingCount":0}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"ya3a7cdt1","timestamp":"2025-07-08T11:44:31.393Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"lvf3fvs6s","timestamp":"2025-07-08T11:44:31.397Z"}
+{"level":"debug","message":"New database client connected","processID":124,"timestamp":"2025-07-08T11:44:31.422Z"}
+{"level":"debug","message":"Client acquired from pool","processID":124,"timestamp":"2025-07-08T11:44:31.423Z"}
+{"level":"debug","message":"New database client connected","processID":125,"timestamp":"2025-07-08T11:44:31.426Z"}
+{"level":"debug","message":"Client acquired from pool","processID":125,"timestamp":"2025-07-08T11:44:31.427Z"}
+{"level":"debug","message":"Client released to pool","processID":125,"timestamp":"2025-07-08T11:44:31.445Z"}
+{"duration":48,"level":"debug","message":"Query completed","queryId":"lvf3fvs6s","rows":16,"timestamp":"2025-07-08T11:44:31.445Z"}
+{"level":"debug","message":"Client released to pool","processID":124,"timestamp":"2025-07-08T11:44:31.452Z"}
+{"duration":59,"level":"debug","message":"Query completed","queryId":"ya3a7cdt1","rows":16,"timestamp":"2025-07-08T11:44:31.452Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"t7ldobx96","timestamp":"2025-07-08T11:44:31.485Z"}
+{"level":"debug","message":"Client acquired from pool","processID":124,"timestamp":"2025-07-08T11:44:31.486Z"}
+{"level":"debug","message":"Client released to pool","processID":124,"timestamp":"2025-07-08T11:44:31.491Z"}
+{"duration":6,"level":"debug","message":"Query completed","queryId":"t7ldobx96","rows":3,"timestamp":"2025-07-08T11:44:31.492Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"kgexe4gbp","timestamp":"2025-07-08T11:44:33.964Z"}
+{"level":"debug","message":"Client acquired from pool","processID":124,"timestamp":"2025-07-08T11:44:33.965Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"x6sa6wkfb","timestamp":"2025-07-08T11:44:33.968Z"}
+{"level":"debug","message":"Client acquired from pool","processID":125,"timestamp":"2025-07-08T11:44:33.971Z"}
+{"level":"debug","message":"Client released to pool","processID":124,"timestamp":"2025-07-08T11:44:33.979Z"}
+{"duration":17,"level":"debug","message":"Query completed","queryId":"kgexe4gbp","rows":3,"timestamp":"2025-07-08T11:44:33.981Z"}
+{"level":"debug","message":"Client released to pool","processID":125,"timestamp":"2025-07-08T11:44:33.988Z"}
+{"duration":23,"level":"debug","message":"Query completed","queryId":"x6sa6wkfb","rows":3,"timestamp":"2025-07-08T11:44:33.991Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"c0cytojar","timestamp":"2025-07-08T11:44:36.592Z"}
+{"level":"debug","message":"Client acquired from pool","processID":125,"timestamp":"2025-07-08T11:44:36.593Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"nfs302spt","timestamp":"2025-07-08T11:44:36.594Z"}
+{"level":"debug","message":"Client acquired from pool","processID":124,"timestamp":"2025-07-08T11:44:36.594Z"}
+{"level":"debug","message":"Client released to pool","processID":125,"timestamp":"2025-07-08T11:44:36.600Z"}
+{"duration":9,"level":"debug","message":"Query completed","queryId":"c0cytojar","rows":16,"timestamp":"2025-07-08T11:44:36.602Z"}
+{"level":"debug","message":"Client released to pool","processID":124,"timestamp":"2025-07-08T11:44:36.606Z"}
+{"duration":14,"level":"debug","message":"Query completed","queryId":"nfs302spt","rows":16,"timestamp":"2025-07-08T11:44:36.607Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"lc4jo4xu4","timestamp":"2025-07-08T11:44:36.631Z"}
+{"level":"debug","message":"Client acquired from pool","processID":124,"timestamp":"2025-07-08T11:44:36.632Z"}
+{"level":"debug","message":"Client released to pool","processID":124,"timestamp":"2025-07-08T11:44:36.637Z"}
+{"duration":6,"level":"debug","message":"Query completed","queryId":"lc4jo4xu4","rows":3,"timestamp":"2025-07-08T11:44:36.638Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"hqssms9vb","timestamp":"2025-07-08T11:44:36.649Z"}
+{"level":"debug","message":"Client acquired from pool","processID":124,"timestamp":"2025-07-08T11:44:36.649Z"}
+{"level":"debug","message":"Client released to pool","processID":124,"timestamp":"2025-07-08T11:44:36.659Z"}
+{"duration":11,"level":"debug","message":"Query completed","queryId":"hqssms9vb","rows":3,"timestamp":"2025-07-08T11:44:36.660Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"79ed0j4vb","timestamp":"2025-07-08T11:44:37.805Z"}
+{"level":"debug","message":"Client acquired from pool","processID":124,"timestamp":"2025-07-08T11:44:37.805Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"0feq6o3jq","timestamp":"2025-07-08T11:44:37.807Z"}
+{"level":"debug","message":"Client acquired from pool","processID":125,"timestamp":"2025-07-08T11:44:37.807Z"}
+{"level":"debug","message":"Client released to pool","processID":124,"timestamp":"2025-07-08T11:44:37.815Z"}
+{"duration":12,"level":"debug","message":"Query completed","queryId":"79ed0j4vb","rows":3,"timestamp":"2025-07-08T11:44:37.816Z"}
+{"level":"debug","message":"Client released to pool","processID":125,"timestamp":"2025-07-08T11:44:37.821Z"}
+{"duration":15,"level":"debug","message":"Query completed","queryId":"0feq6o3jq","rows":3,"timestamp":"2025-07-08T11:44:37.822Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"2q2uzrrgi","timestamp":"2025-07-08T11:44:38.535Z"}
+{"level":"debug","message":"Client acquired from pool","processID":125,"timestamp":"2025-07-08T11:44:38.536Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"5zhetojpz","timestamp":"2025-07-08T11:44:38.538Z"}
+{"level":"debug","message":"Client acquired from pool","processID":124,"timestamp":"2025-07-08T11:44:38.539Z"}
+{"level":"debug","message":"Client released to pool","processID":125,"timestamp":"2025-07-08T11:44:38.546Z"}
+{"duration":12,"level":"debug","message":"Query completed","queryId":"2q2uzrrgi","rows":16,"timestamp":"2025-07-08T11:44:38.547Z"}
+{"level":"debug","message":"Client released to pool","processID":124,"timestamp":"2025-07-08T11:44:38.560Z"}
+{"duration":23,"level":"debug","message":"Query completed","queryId":"5zhetojpz","rows":16,"timestamp":"2025-07-08T11:44:38.561Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"rzt758531","timestamp":"2025-07-08T11:44:38.591Z"}
+{"level":"debug","message":"Client acquired from pool","processID":124,"timestamp":"2025-07-08T11:44:38.591Z"}
+{"level":"debug","message":"Client released to pool","processID":124,"timestamp":"2025-07-08T11:44:38.596Z"}
+{"duration":6,"level":"debug","message":"Query completed","queryId":"rzt758531","rows":3,"timestamp":"2025-07-08T11:44:38.597Z"}
