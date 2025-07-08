@@ -28,6 +28,7 @@ import reviewRoutes from './routes/reviews.js';
 import adminRoutes from './routes/admin.js';
 import ticketRoutes from './routes/tickets.js';
 import notificationRoutes from './routes/notifications.js';
+import paymentRoutes from './routes/payments.js';
 // import professionalRoutes from './routes/professionals.js';
 
 dotenv.config();
@@ -214,6 +215,7 @@ app.get('/api', (req, res) => {
       admin: '/api/admin',
       tickets: '/api/tickets',
       notifications: '/api/notifications',
+      payments: '/api/payments',
       professionals: '/api/professionals',
       appointments: '/api/appointments'
     }
@@ -235,6 +237,7 @@ app.use('/api/reviews', clerkAuth, reviewRoutes);
 app.use('/api/admin', clerkAuth, adminRoutes);
 app.use('/api/tickets', clerkAuth, ticketRoutes);
 app.use('/api/notifications', clerkAuth, notificationRoutes);
+app.use('/api/payments', paymentRoutes); // Webhooks need to be processed without auth
 // app.use('/api/professionals', professionalRoutes);
 
 // Error handling middleware
