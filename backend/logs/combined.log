@@ -209,3 +209,147 @@
 {"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT table_name \n      FROM information_schema.tables \n      WHERE table_schema = 'public' ...","queryId":"tm9forbco","timestamp":"2025-07-08T10:45:34.405Z"}
 {"level":"debug","message":"Client acquired from pool","processID":42,"timestamp":"2025-07-08T10:45:34.406Z"}
 {"level":"debug","message":"Client released to pool","processID":42,"timestamp":"2025-07-08T10:45:34.417Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT column_name, data_type \n      FROM information_schema.columns \n      WHERE table_name ...","queryId":"wjr1m02o9","timestamp":"2025-07-08T10:51:24.156Z"}
+{"level":"debug","message":"New database client connected","processID":49,"timestamp":"2025-07-08T10:51:24.178Z"}
+{"level":"debug","message":"Client acquired from pool","processID":49,"timestamp":"2025-07-08T10:51:24.178Z"}
+{"level":"debug","message":"Client released to pool","processID":49,"timestamp":"2025-07-08T10:51:24.194Z"}
+{"duration":41,"level":"debug","message":"Query completed","queryId":"wjr1m02o9","rows":11,"timestamp":"2025-07-08T10:51:24.195Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT id, name, email, role, status, created_at\n      FROM users \n      WHERE role = 'profes...","queryId":"97ozl6810","timestamp":"2025-07-08T10:51:24.197Z"}
+{"level":"debug","message":"Client acquired from pool","processID":49,"timestamp":"2025-07-08T10:51:24.198Z"}
+{"level":"debug","message":"Client released to pool","processID":49,"timestamp":"2025-07-08T10:51:24.206Z"}
+{"duration":10,"level":"debug","message":"Query completed","queryId":"97ozl6810","rows":4,"timestamp":"2025-07-08T10:51:24.207Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT table_name \n      FROM information_schema.tables \n      WHERE table_schema = 'public' ...","queryId":"cqzrir41d","timestamp":"2025-07-08T10:51:24.209Z"}
+{"level":"debug","message":"Client acquired from pool","processID":49,"timestamp":"2025-07-08T10:51:24.210Z"}
+{"level":"debug","message":"Client released to pool","processID":49,"timestamp":"2025-07-08T10:51:24.215Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT column_name, data_type, is_nullable\n      FROM information_schema.columns \n      WHERE...","queryId":"tbwhzcosl","timestamp":"2025-07-08T10:51:41.495Z"}
+{"level":"debug","message":"New database client connected","processID":50,"timestamp":"2025-07-08T10:51:41.519Z"}
+{"level":"debug","message":"Client acquired from pool","processID":50,"timestamp":"2025-07-08T10:51:41.520Z"}
+{"level":"debug","message":"Client released to pool","processID":50,"timestamp":"2025-07-08T10:51:41.537Z"}
+{"duration":45,"level":"debug","message":"Query completed","queryId":"tbwhzcosl","rows":23,"timestamp":"2025-07-08T10:51:41.538Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT p.*, u.name, u.email, u.status as user_status\n      FROM professionals p\n      JOIN us...","queryId":"cx5nhduz5","timestamp":"2025-07-08T10:51:41.541Z"}
+{"level":"debug","message":"Client acquired from pool","processID":50,"timestamp":"2025-07-08T10:51:41.544Z"}
+{"level":"debug","message":"Client released to pool","processID":50,"timestamp":"2025-07-08T10:51:41.559Z"}
+{"duration":19,"level":"debug","message":"Query completed","queryId":"cx5nhduz5","rows":3,"timestamp":"2025-07-08T10:51:41.559Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT COUNT(*) as count\n      FROM information_schema.tables \n      WHERE table_name = 'serv...","queryId":"16bm60261","timestamp":"2025-07-08T10:51:41.560Z"}
+{"level":"debug","message":"Client acquired from pool","processID":50,"timestamp":"2025-07-08T10:51:41.561Z"}
+{"level":"debug","message":"Client released to pool","processID":50,"timestamp":"2025-07-08T10:51:41.569Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT table_name \n      FROM information_schema.tables \n      WHERE table_schema = 'public' ...","queryId":"og1b1syf5","timestamp":"2025-07-08T10:52:15.771Z"}
+{"level":"debug","message":"New database client connected","processID":52,"timestamp":"2025-07-08T10:52:15.800Z"}
+{"level":"debug","message":"Client acquired from pool","processID":52,"timestamp":"2025-07-08T10:52:15.800Z"}
+{"level":"debug","message":"Client released to pool","processID":52,"timestamp":"2025-07-08T10:52:15.810Z"}
+{"duration":41,"level":"debug","message":"Query completed","queryId":"og1b1syf5","rows":1,"timestamp":"2025-07-08T10:52:15.811Z"}
+{"level":"debug","message":"Executing query","paramCount":1,"query":"\n        SELECT column_name, data_type\n        FROM information_schema.columns \n        WHERE table_...","queryId":"g7ckasbkn","timestamp":"2025-07-08T10:52:15.812Z"}
+{"level":"debug","message":"Client acquired from pool","processID":52,"timestamp":"2025-07-08T10:52:15.813Z"}
+{"event":"pool_release_error","level":"error","message":"syntax error at or near \"ORDER\"","processID":52,"stack":"error: syntax error at or near \"ORDER\"\n    at Parser.parseErrorMessage (/home/vers/Proyectos/mundoctor/backend/node_modules/pg-protocol/dist/parser.js:285:98)\n    at Parser.handlePacket (/home/vers/Proyectos/mundoctor/backend/node_modules/pg-protocol/dist/parser.js:122:29)\n    at Parser.parse (/home/vers/Proyectos/mundoctor/backend/node_modules/pg-protocol/dist/parser.js:35:38)\n    at Socket.<anonymous> (/home/vers/Proyectos/mundoctor/backend/node_modules/pg-protocol/dist/index.js:11:42)\n    at Socket.emit (node:events:517:28)\n    at addChunk (node:internal/streams/readable:368:12)\n    at readableAddChunk (node:internal/streams/readable:341:9)\n    at Readable.push (node:internal/streams/readable:278:10)\n    at TCP.onStreamRead (node:internal/stream_base_commons:190:23)","timestamp":"2025-07-08T10:52:15.816Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT column_name, data_type\n      FROM information_schema.columns \n      WHERE table_name =...","queryId":"2hu49b1pd","timestamp":"2025-07-08T10:52:26.980Z"}
+{"level":"debug","message":"New database client connected","processID":53,"timestamp":"2025-07-08T10:52:27.001Z"}
+{"level":"debug","message":"Client acquired from pool","processID":53,"timestamp":"2025-07-08T10:52:27.002Z"}
+{"level":"debug","message":"Client released to pool","processID":53,"timestamp":"2025-07-08T10:52:27.014Z"}
+{"duration":37,"level":"debug","message":"Query completed","queryId":"2hu49b1pd","rows":5,"timestamp":"2025-07-08T10:52:27.015Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"SELECT * FROM specialties LIMIT 10","queryId":"5kne61lxm","timestamp":"2025-07-08T10:52:27.016Z"}
+{"level":"debug","message":"Client acquired from pool","processID":53,"timestamp":"2025-07-08T10:52:27.016Z"}
+{"level":"debug","message":"Client released to pool","processID":53,"timestamp":"2025-07-08T10:52:27.020Z"}
+{"level":"warn","message":"No SMTP configuration found. Using test mode.","timestamp":"2025-07-08T10:55:04.618Z"}
+{"level":"warn","message":"No SMTP configuration found. Using test mode.","timestamp":"2025-07-08T10:55:34.430Z"}
+{"level":"warn","message":"No SMTP configuration found. Using test mode.","timestamp":"2025-07-08T10:55:42.613Z"}
+{"level":"warn","message":"No SMTP configuration found. Using test mode.","timestamp":"2025-07-08T10:55:49.300Z"}
+{"level":"warn","message":"No SMTP configuration found. Using test mode.","timestamp":"2025-07-08T10:55:54.982Z"}
+{"level":"warn","message":"No SMTP configuration found. Using test mode.","timestamp":"2025-07-08T10:56:01.234Z"}
+{"level":"warn","message":"No SMTP configuration found. Using test mode.","timestamp":"2025-07-08T10:57:24.263Z"}
+{"level":"warn","message":"No SMTP configuration found. Using test mode.","timestamp":"2025-07-08T10:58:24.210Z"}
+{"level":"warn","message":"No SMTP configuration found. Using test mode.","timestamp":"2025-07-08T10:58:42.827Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        p.specialty...","queryId":"oeg7p3vaq","timestamp":"2025-07-08T10:58:46.060Z"}
+{"level":"debug","message":"New database client connected","processID":60,"timestamp":"2025-07-08T10:58:46.083Z"}
+{"level":"debug","message":"Client acquired from pool","processID":60,"timestamp":"2025-07-08T10:58:46.083Z"}
+{"level":"debug","message":"Client released to pool","processID":60,"timestamp":"2025-07-08T10:58:46.100Z"}
+{"duration":43,"level":"debug","message":"Query completed","queryId":"oeg7p3vaq","rows":0,"timestamp":"2025-07-08T10:58:46.101Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"SELECT id, name FROM specialties LIMIT 5","queryId":"9ugssc0ot","timestamp":"2025-07-08T10:58:46.101Z"}
+{"level":"debug","message":"Client acquired from pool","processID":60,"timestamp":"2025-07-08T10:58:46.102Z"}
+{"level":"debug","message":"Client released to pool","processID":60,"timestamp":"2025-07-08T10:58:46.103Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT u.role, u.status, COUNT(*) as count\n      FROM users u\n      WHERE u.role = 'professio...","queryId":"jxoqcqmlk","timestamp":"2025-07-08T10:59:00.722Z"}
+{"level":"debug","message":"New database client connected","processID":62,"timestamp":"2025-07-08T10:59:00.750Z"}
+{"level":"debug","message":"Client acquired from pool","processID":62,"timestamp":"2025-07-08T10:59:00.751Z"}
+{"level":"debug","message":"Client released to pool","processID":62,"timestamp":"2025-07-08T10:59:00.758Z"}
+{"duration":39,"level":"debug","message":"Query completed","queryId":"jxoqcqmlk","rows":2,"timestamp":"2025-07-08T10:59:00.759Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        p.id,\n        u.name,\n        u.status,\n        p.city\n      FROM professiona...","queryId":"p7bvifqez","timestamp":"2025-07-08T10:59:00.760Z"}
+{"level":"debug","message":"Client acquired from pool","processID":62,"timestamp":"2025-07-08T10:59:00.760Z"}
+{"level":"debug","message":"Client released to pool","processID":62,"timestamp":"2025-07-08T10:59:00.764Z"}
+{"level":"warn","message":"No SMTP configuration found. Using test mode.","timestamp":"2025-07-08T10:59:11.206Z"}
+{"level":"warn","message":"No SMTP configuration found. Using test mode.","timestamp":"2025-07-08T10:59:17.500Z"}
+{"level":"warn","message":"No SMTP configuration found. Using test mode.","timestamp":"2025-07-08T10:59:23.400Z"}
+{"level":"warn","message":"No SMTP configuration found. Using test mode.","timestamp":"2025-07-08T10:59:30.612Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        p.specialty...","queryId":"ewg7hzayi","timestamp":"2025-07-08T10:59:35.063Z"}
+{"level":"debug","message":"New database client connected","processID":63,"timestamp":"2025-07-08T10:59:35.092Z"}
+{"level":"debug","message":"Client acquired from pool","processID":63,"timestamp":"2025-07-08T10:59:35.092Z"}
+{"level":"debug","message":"Client released to pool","processID":63,"timestamp":"2025-07-08T10:59:35.108Z"}
+{"duration":47,"level":"debug","message":"Query completed","queryId":"ewg7hzayi","rows":3,"timestamp":"2025-07-08T10:59:35.109Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"SELECT id, name FROM specialties LIMIT 5","queryId":"8pvrj305o","timestamp":"2025-07-08T10:59:35.110Z"}
+{"level":"debug","message":"Client acquired from pool","processID":63,"timestamp":"2025-07-08T10:59:35.110Z"}
+{"level":"debug","message":"Client released to pool","processID":63,"timestamp":"2025-07-08T10:59:35.112Z"}
+{"level":"warn","message":"No SMTP configuration found. Using test mode.","timestamp":"2025-07-08T10:59:57.197Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"hbg8sjb3v","timestamp":"2025-07-08T11:00:38.267Z"}
+{"level":"debug","message":"New database client connected","processID":65,"timestamp":"2025-07-08T11:00:38.328Z"}
+{"level":"debug","message":"Client acquired from pool","processID":65,"timestamp":"2025-07-08T11:00:38.329Z"}
+{"level":"debug","message":"Client released to pool","processID":65,"timestamp":"2025-07-08T11:00:38.369Z"}
+{"duration":109,"level":"debug","message":"Query completed","queryId":"hbg8sjb3v","rows":3,"timestamp":"2025-07-08T11:00:38.370Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"vq47nudie","timestamp":"2025-07-08T11:00:45.644Z"}
+{"level":"debug","message":"Client acquired from pool","processID":65,"timestamp":"2025-07-08T11:00:45.645Z"}
+{"level":"debug","message":"Client released to pool","processID":65,"timestamp":"2025-07-08T11:00:45.662Z"}
+{"duration":21,"level":"debug","message":"Query completed","queryId":"vq47nudie","rows":16,"timestamp":"2025-07-08T11:00:45.665Z"}
+{"level":"debug","message":"Executing query","paramCount":5,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"eu2fuotkj","timestamp":"2025-07-08T11:00:52.242Z"}
+{"level":"debug","message":"Client acquired from pool","processID":65,"timestamp":"2025-07-08T11:00:52.244Z"}
+{"level":"debug","message":"Client released to pool","processID":65,"timestamp":"2025-07-08T11:00:52.258Z"}
+{"duration":18,"level":"debug","message":"Query completed","queryId":"eu2fuotkj","rows":1,"timestamp":"2025-07-08T11:00:52.260Z"}
+{"idleCount":1,"level":"debug","message":"Database pool status","timestamp":"2025-07-08T11:00:57.792Z","totalCount":1,"waitingCount":0}
+{"level":"warn","message":"No SMTP configuration found. Using test mode.","timestamp":"2025-07-08T11:08:33.696Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"ktrjzwdcy","timestamp":"2025-07-08T11:16:33.176Z"}
+{"level":"debug","message":"New database client connected","processID":82,"timestamp":"2025-07-08T11:16:33.221Z"}
+{"level":"debug","message":"Client acquired from pool","processID":82,"timestamp":"2025-07-08T11:16:33.222Z"}
+{"level":"debug","message":"Client released to pool","processID":82,"timestamp":"2025-07-08T11:16:33.266Z"}
+{"duration":96,"level":"debug","message":"Query completed","queryId":"ktrjzwdcy","rows":3,"timestamp":"2025-07-08T11:16:33.267Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"cidkormv6","timestamp":"2025-07-08T11:16:41.023Z"}
+{"level":"debug","message":"Client acquired from pool","processID":82,"timestamp":"2025-07-08T11:16:41.024Z"}
+{"level":"debug","message":"Client released to pool","processID":82,"timestamp":"2025-07-08T11:16:41.035Z"}
+{"duration":13,"level":"debug","message":"Query completed","queryId":"cidkormv6","rows":16,"timestamp":"2025-07-08T11:16:41.036Z"}
+{"level":"warn","message":"No SMTP configuration found. Using test mode.","timestamp":"2025-07-08T11:17:40.016Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"o4uwzipj4","timestamp":"2025-07-08T11:27:09.367Z"}
+{"level":"debug","message":"New database client connected","processID":94,"timestamp":"2025-07-08T11:27:09.385Z"}
+{"level":"debug","message":"Client acquired from pool","processID":94,"timestamp":"2025-07-08T11:27:09.385Z"}
+{"level":"debug","message":"Client released to pool","processID":94,"timestamp":"2025-07-08T11:27:09.398Z"}
+{"duration":33,"level":"debug","message":"Query completed","queryId":"o4uwzipj4","rows":3,"timestamp":"2025-07-08T11:27:09.398Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"u20e8jil9","timestamp":"2025-07-08T11:27:21.015Z"}
+{"level":"debug","message":"Client acquired from pool","processID":94,"timestamp":"2025-07-08T11:27:21.015Z"}
+{"level":"debug","message":"Client released to pool","processID":94,"timestamp":"2025-07-08T11:27:21.019Z"}
+{"duration":6,"level":"debug","message":"Query completed","queryId":"u20e8jil9","rows":16,"timestamp":"2025-07-08T11:27:21.021Z"}
+{"idleCount":1,"level":"debug","message":"Database pool status","timestamp":"2025-07-08T11:27:26.543Z","totalCount":1,"waitingCount":0}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"cwhy77p96","timestamp":"2025-07-08T11:27:56.653Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"12euuu9ma","timestamp":"2025-07-08T11:27:56.654Z"}
+{"level":"debug","message":"New database client connected","processID":97,"timestamp":"2025-07-08T11:27:56.665Z"}
+{"level":"debug","message":"Client acquired from pool","processID":97,"timestamp":"2025-07-08T11:27:56.665Z"}
+{"level":"debug","message":"New database client connected","processID":96,"timestamp":"2025-07-08T11:27:56.666Z"}
+{"level":"debug","message":"Client acquired from pool","processID":96,"timestamp":"2025-07-08T11:27:56.666Z"}
+{"level":"debug","message":"Client released to pool","processID":96,"timestamp":"2025-07-08T11:27:56.685Z"}
+{"duration":33,"level":"debug","message":"Query completed","queryId":"cwhy77p96","rows":16,"timestamp":"2025-07-08T11:27:56.686Z"}
+{"level":"debug","message":"Client released to pool","processID":97,"timestamp":"2025-07-08T11:27:56.691Z"}
+{"duration":38,"level":"debug","message":"Query completed","queryId":"12euuu9ma","rows":16,"timestamp":"2025-07-08T11:27:56.692Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"setw0mopd","timestamp":"2025-07-08T11:27:56.716Z"}
+{"level":"debug","message":"Client acquired from pool","processID":97,"timestamp":"2025-07-08T11:27:56.717Z"}
+{"level":"debug","message":"Client released to pool","processID":97,"timestamp":"2025-07-08T11:27:56.721Z"}
+{"duration":6,"level":"debug","message":"Query completed","queryId":"setw0mopd","rows":3,"timestamp":"2025-07-08T11:27:56.721Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"yex2t2hzm","timestamp":"2025-07-08T11:28:00.800Z"}
+{"level":"debug","message":"Client acquired from pool","processID":97,"timestamp":"2025-07-08T11:28:00.801Z"}
+{"level":"debug","message":"Executing query","paramCount":0,"query":"\n      SELECT \n        s.id,\n        s.name,\n        s.description,\n        s.icon,\n        COUNT(p....","queryId":"gswp2hoq3","timestamp":"2025-07-08T11:28:00.802Z"}
+{"level":"debug","message":"Client acquired from pool","processID":96,"timestamp":"2025-07-08T11:28:00.803Z"}
+{"level":"debug","message":"Client released to pool","processID":96,"timestamp":"2025-07-08T11:28:00.811Z"}
+{"duration":10,"level":"debug","message":"Query completed","queryId":"gswp2hoq3","rows":16,"timestamp":"2025-07-08T11:28:00.812Z"}
+{"level":"debug","message":"Client released to pool","processID":97,"timestamp":"2025-07-08T11:28:00.814Z"}
+{"duration":15,"level":"debug","message":"Query completed","queryId":"yex2t2hzm","rows":16,"timestamp":"2025-07-08T11:28:00.814Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"uvfxw9w2k","timestamp":"2025-07-08T11:28:00.822Z"}
+{"level":"debug","message":"Client acquired from pool","processID":97,"timestamp":"2025-07-08T11:28:00.823Z"}
+{"level":"debug","message":"Client released to pool","processID":97,"timestamp":"2025-07-08T11:28:00.826Z"}
+{"duration":5,"level":"debug","message":"Query completed","queryId":"uvfxw9w2k","rows":3,"timestamp":"2025-07-08T11:28:00.827Z"}
+{"level":"debug","message":"Executing query","paramCount":4,"query":"\n      SELECT \n        p.id,\n        p.user_id,\n        u.name,\n        u.email,\n        u.phone,\n  ...","queryId":"k99q1j099","timestamp":"2025-07-08T11:28:00.832Z"}
+{"level":"debug","message":"Client acquired from pool","processID":97,"timestamp":"2025-07-08T11:28:00.833Z"}
+{"level":"debug","message":"Client released to pool","processID":97,"timestamp":"2025-07-08T11:28:00.836Z"}
+{"duration":6,"level":"debug","message":"Query completed","queryId":"k99q1j099","rows":3,"timestamp":"2025-07-08T11:28:00.837Z"}
+{"idleCount":2,"level":"debug","message":"Database pool status","timestamp":"2025-07-08T11:28:26.570Z","totalCount":2,"waitingCount":0}

@@ -1,6 +1,6 @@
 import express from 'express';
 import { requireAuth, requireRole } from '../middleware/auth.js';
-import { validateRequest } from '../middleware/validation.js';
+// import { validateRequest } from '../middleware/validation.js';
 import { query } from '../config/database.js';
 import logger from '../utils/logger.js';
 import paymentService from '../services/paymentService.js';
@@ -20,14 +20,7 @@ const router = express.Router();
 // ================== PAYMENT INTENTS ==================
 
 // Create payment intent
-router.post('/intent', requireAuth, validateRequest([
-  { field: 'amount', type: 'number', required: true },
-  { field: 'currency', type: 'string', required: false },
-  { field: 'paymentType', type: 'string', required: false },
-  { field: 'description', type: 'string', required: false },
-  { field: 'appointmentId', type: 'string', required: false },
-  { field: 'subscriptionId', type: 'string', required: false }
-]), async (req, res) => {
+router.post('/intent', requireAuth, async (req, res) => {
   try {
     const {
       amount,
@@ -103,11 +96,7 @@ router.post('/intent/:intentId/confirm', requireAuth, async (req, res) => {
 // ================== SUBSCRIPTIONS ==================
 
 // Create subscription
-router.post('/subscriptions', requireAuth, validateRequest([
-  { field: 'planId', type: 'string', required: true },
-  { field: 'priceId', type: 'string', required: true },
-  { field: 'paymentMethodId', type: 'string', required: true }
-]), async (req, res) => {
+router.post('/subscriptions', requireAuth, async (req, res) => {
   try {
     const { planId, priceId, paymentMethodId, trialPeriodDays = 0 } = req.body;
 

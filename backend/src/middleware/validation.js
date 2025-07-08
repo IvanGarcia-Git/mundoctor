@@ -228,6 +228,96 @@ export const sanitizeInput = (req, res, next) => {
   next();
 };
 
+// Simple validation function for basic field validation
+export const validateRequest = (validationRules) => {
+  return (req, res, next) => {
+    const errors = [];
+    const data = req.body;
+
+    for (const rule of validationRules) {
+      const { field, type, required = false, min, max } = rule;
+      const value = data[field];
+
+      // Check if required field is missing
+      if (required && (value === undefined || value === null || value === '')) {
+        errors.push(`${field} is required`);
+        continue;
+      }
+
+      // Skip validation if field is not provided and not required
+      if (!required && (value === undefined || value === null)) {
+        continue;
+      }
+
+      // Type validation
+      switch (type) {
+        case 'string':
+          if (typeof value !== 'string') {
+            errors.push(`${field} must be a string`);
+          } else {
+            if (min && value.length < min) {
+              errors.push(`${field} must be at least ${min} characters long`);
+            }
+            if (max && value.length > max) {
+              errors.push(`${field} must not exceed ${max} characters`);
+            }
+          }
+          break;
+        case 'number':
+          if (typeof value !== 'number' && !isNaN(parseFloat(value))) {
+            // Convert string numbers to numbers
+            data[field] = parseFloat(value);
+          } else if (typeof value !== 'number') {
+            errors.push(`${field} must be a number`);
+          } else {
+            if (min !== undefined && value < min) {
+              errors.push(`${field} must be at least ${min}`);
+            }
+            if (max !== undefined && value > max) {
+              errors.push(`${field} must not exceed ${max}`);
+            }
+          }
+          break;
+        case 'array':
+          if (!Array.isArray(value)) {
+            errors.push(`${field} must be an array`);
+          }
+          break;
+        case 'object':
+          if (typeof value !== 'object' || Array.isArray(value)) {
+            errors.push(`${field} must be an object`);
+          }
+          break;
+        case 'boolean':
+          if (typeof value !== 'boolean') {
+            errors.push(`${field} must be a boolean`);
+          }
+          break;
+        case 'email':
+          if (typeof value === 'string') {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(value)) {
+              errors.push(`${field} must be a valid email address`);
+            }
+          } else {
+            errors.push(`${field} must be a valid email address`);
+          }
+          break;
+      }
+    }
+
+    if (errors.length > 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'Validation failed',
+        details: errors
+      });
+    }
+
+    next();
+  };
+};
+
 export default {
   validateSchema,
   validateBody,
@@ -240,6 +330,7 @@ export default {
   validateUserUpdate,
   validateProfessionalProfile,
   validateRoleSelection,
+  validateRequest,
   sanitizeInput,
   schemas,
 };
