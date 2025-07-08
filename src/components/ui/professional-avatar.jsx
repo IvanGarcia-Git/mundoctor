@@ -9,6 +9,7 @@ const ProfessionalAvatar = ({
   className = "" 
 }) => {
   const [imageError, setImageError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const sizeClasses = {
     sm: "w-10 h-10",
@@ -19,15 +20,33 @@ const ProfessionalAvatar = ({
 
   const handleImageError = () => {
     setImageError(true);
+    setIsLoading(false);
   };
+
+  const handleImageLoad = () => {
+    setIsLoading(false);
+  };
+
+  const handleImageStart = () => {
+    setIsLoading(true);
+    setImageError(false);
+  };
+
+  // Default fallback image URL - professional medical setting
+  const defaultImageUrl = "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80";
+  
+  // Use provided imageUrl, or fallback to default, or show User icon if all fail
+  const displayImageUrl = imageUrl || defaultImageUrl;
 
   return (
     <Avatar className={`${sizeClasses[size]} ${className}`}>
-      {imageUrl && !imageError ? (
+      {displayImageUrl && !imageError ? (
         <AvatarImage
-          src={imageUrl}
+          src={displayImageUrl}
           alt={`Foto de perfil de ${name}`}
           onError={handleImageError}
+          onLoad={handleImageLoad}
+          onLoadStart={handleImageStart}
           className="object-cover"
         />
       ) : (

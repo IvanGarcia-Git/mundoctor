@@ -55,7 +55,7 @@ const transformProfessionalData = (apiData) => {
     licenseNumber: prof.license_number || 'No especificado',
     rating: prof.rating || 0,
     reviews: prof.total_reviews || 0,
-    image: prof.avatar_url || "https://images.unsplash.com/photo-1675270714610-11a5cadcc7b3",
+    image: prof.avatar_url, // Let ProfessionalAvatar handle fallback
     priceRange: [prof.consultation_fee || 50, prof.consultation_fee ? prof.consultation_fee + 30 : 80],
     services: prof.services || [],
     insurance: {

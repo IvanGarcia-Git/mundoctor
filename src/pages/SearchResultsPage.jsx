@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Slider } from "@/components/ui/slider";
 import { Star, MapPin, Users, CalendarCheck, Filter, Search as SearchIcon, X, Tag, Eye as ViewIcon, Loader2 } from 'lucide-react';
 import InteractiveMap from '@/components/search/InteractiveMap';
+import ProfessionalAvatar from '@/components/ui/professional-avatar';
 
 // API Configuration  
 const API_BASE_URL = 'http://localhost:8001/api';
@@ -43,6 +44,7 @@ const getSpecialties = async () => {
 const transformProfessional = (prof) => ({
   id: prof.id,
   name: prof.name,
+  avatar_url: prof.avatar_url, // Foto de perfil del usuario asociado al profesional
   specialty: prof.specialty?.name || prof.specialty_name || 'Medicina General',
   specialty_id: prof.specialty?.id || prof.specialty_id,
   city: prof.city || 'No especificada',
@@ -236,11 +238,12 @@ const SearchResultsPage = () => {
   const ProfessionalCard = ({ professional }) => (
     <div className="bg-card/80 dark:bg-gray-800/60 backdrop-blur-md border border-border dark:border-gray-700/50 rounded-xl p-4 hover:border-primary/70 dark:hover:border-blue-500/70 transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-primary/20 dark:hover:shadow-blue-500/20">
       <div className="flex flex-col sm:flex-row gap-4">
-        <div className="w-full sm:w-24 h-32 sm:h-24 flex-shrink-0">
-          <img 
-            alt={`Foto de ${professional.name}, ${professional.specialty}`} 
-            className="w-full h-full object-cover rounded-lg" 
-            src={professional.avatar_url || "https://images.unsplash.com/photo-1675270714610-11a5cadcc7b3"} 
+        <div className="w-full sm:w-24 h-32 sm:h-24 flex-shrink-0 flex items-center justify-center">
+          <ProfessionalAvatar
+            imageUrl={professional.avatar_url}
+            name={professional.name}
+            size="lg"
+            className="rounded-lg"
           />
         </div>
         <div className="flex-grow">
