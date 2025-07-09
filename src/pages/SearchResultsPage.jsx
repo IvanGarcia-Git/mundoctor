@@ -238,12 +238,12 @@ const SearchResultsPage = () => {
   const ProfessionalCard = ({ professional }) => (
     <div className="bg-card/80 dark:bg-gray-800/60 backdrop-blur-md border border-border dark:border-gray-700/50 rounded-xl p-4 hover:border-primary/70 dark:hover:border-blue-500/70 transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-primary/20 dark:hover:shadow-blue-500/20">
       <div className="flex flex-col sm:flex-row gap-4">
-        <div className="w-full sm:w-24 h-32 sm:h-24 flex-shrink-0 flex items-center justify-center">
+        <div className="w-full sm:w-20 h-20 sm:h-20 flex-shrink-0 flex items-center justify-center p-2">
           <ProfessionalAvatar
             imageUrl={professional.avatar_url}
             name={professional.name}
-            size="lg"
-            className="rounded-lg"
+            size="md"
+            className="rounded-full"
           />
         </div>
         <div className="flex-grow">

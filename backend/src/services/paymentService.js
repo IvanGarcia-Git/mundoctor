@@ -18,7 +18,7 @@ import {
 
 class PaymentService {
   constructor() {
-    this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+    this.stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null;
     this.webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
     this.clerkPublishableKey = process.env.CLERK_PUBLISHABLE_KEY;
     this.clerkSecretKey = process.env.CLERK_SECRET_KEY;

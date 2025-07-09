@@ -1,6 +1,6 @@
 import logger from '../utils/logger.js';
 import webSocketManager from '../utils/websocket.js';
-import { sendEmail } from './emailService.js';
+import emailService from './emailService.js';
 import { sendSMS } from './smsService.js';
 import { createAuditLog } from '../utils/auditLog.js';
 
@@ -194,12 +194,12 @@ class NotificationService {
           const emailSubject = this.replaceTemplateVariables(template.emailSubject, variables);
           const emailContent = this.replaceTemplateVariables(template.message, variables);
           
-          results.email = await sendEmail({
-            to: data.email,
-            subject: emailSubject,
-            template: template.emailTemplate,
-            variables: { ...variables, message: emailContent }
-          });
+          results.email = await emailService.sendEmail(
+            data.email,
+            emailSubject,
+            emailContent,
+            emailContent
+          );
         } catch (error) {
           logger.error('Email notification failed:', error);
         }

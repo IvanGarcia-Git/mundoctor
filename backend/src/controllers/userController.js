@@ -60,7 +60,7 @@ export const createUserInDB = async (clerkUser) => {
         INSERT INTO users (id, email, name, phone, avatar_url, role, status, verified)
         VALUES ($1, $2, $3, $4, $5, $6::user_role, $7::user_status, $8)
         RETURNING *
-      `, [clerkId, email, name, phone, image_url, userRole, 'incomplete', emailVerified]); // Use clerk_id as primary key
+      `, [clerkId, email, name, phone, imageUrl || image_url, userRole, 'incomplete', emailVerified]); // Use clerk_id as primary key
 
       const user = userResult.rows[0];
 

@@ -52,7 +52,9 @@
       "Bash(docker logs:*)",
       "Bash(timeout 10s npm run dev)",
       "Bash(timeout:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(PORT=8001 node test-webhook.js)",
+      "Bash(PORT=8002 npm run dev)"
     ],
     "deny": []
   },

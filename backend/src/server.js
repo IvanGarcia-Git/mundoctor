@@ -95,7 +95,7 @@ const corsOptions = {
     'svix-timestamp', 
     'svix-signature'
   ],
-  exposedHeaders: ['Content-Length'],
+  exposedHeaders: ['Content-Length', 'Authorization'],
   preflightContinue: false,
   optionsSuccessStatus: 200 // Some legacy browsers (IE11, various SmartTVs) choke on 204
 };

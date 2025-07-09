@@ -2,7 +2,7 @@ import { query } from '../config/database.js';
 import logger from '../utils/logger.js';
 import { createAuditLog } from '../utils/auditLog.js';
 import notificationService, { NOTIFICATION_TYPES, NOTIFICATION_CHANNELS } from './notificationService.js';
-import { sendEmail } from './emailService.js';
+import emailService from './emailService.js';
 import pdfGenerator from '../utils/pdfGenerator.js';
 import {
   INVOICE_STATUSES,
@@ -256,23 +256,12 @@ class InvoiceService {
       }
 
       // Send email with PDF attachment
-      const emailResult = await sendEmail({
-        to: invoice.customer_info.email,
-        subject: `Factura ${invoice.invoice_number} - Mundoctor`,
-        template: 'invoice_email',
-        variables: {
-          customerName: invoice.customer_info.name,
-          invoiceNumber: invoice.invoice_number,
-          total: formatCurrency(invoice.total, invoice.currency),
-          dueDate: new Date(invoice.due_date).toLocaleDateString('es-MX'),
-          invoiceUrl: `${process.env.FRONTEND_URL}/invoices/${invoice.id}`
-        },
-        attachments: [{
-          filename: pdfData.filename,
-          content: pdfData.pdfBuffer,
-          contentType: 'application/pdf'
-        }]
-      });
+      const emailResult = await emailService.sendEmail(
+        invoice.customer_info.email,
+        `Factura ${invoice.invoice_number} - Mundoctor`,
+        `<p>Estimado/a ${invoice.customer_info.name},</p><p>Adjuntamos su factura ${invoice.invoice_number}.</p>`,
+        `Estimado/a ${invoice.customer_info.name}, adjuntamos su factura ${invoice.invoice_number}.`
+      );
 
       if (emailResult.success) {
         // Update invoice status

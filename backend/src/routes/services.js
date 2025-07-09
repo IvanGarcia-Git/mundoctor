@@ -41,7 +41,7 @@ const serviceCreateSchema = z.object({
   path: ['is_virtual_available']
 });
 
-const serviceUpdateSchema = serviceCreateSchema.partial();
+const serviceUpdateSchema = serviceCreateSchema;
 
 const serviceQuerySchema = z.object({
   professionalId: z.string().optional(),

@@ -57,7 +57,7 @@ const scheduleCreateSchema = z.object({
   path: ['breakEndTime']
 });
 
-const scheduleUpdateSchema = scheduleCreateSchema.partial();
+const scheduleUpdateSchema = scheduleCreateSchema;
 
 const exceptionCreateSchema = z.object({
   title: z.string().min(1).max(255),
