@@ -1582,3 +1582,71 @@
 {"timestamp":"2025-07-09 18:04:47","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":458}}
 {"timestamp":"2025-07-09 18:04:47","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":458}}
 {"timestamp":"2025-07-09 18:05:16","level":"debug","message":"Database pool status","service":"mundoctor-backend","environment":"development","meta":{"totalCount":1,"idleCount":1,"waitingCount":0}}
+{"timestamp":"2025-07-09 18:29:38","level":"warn","message":"No SMTP configuration found. Using test mode.","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:29:38","level":"info","message":"Email service initialized","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:29:39","level":"warn","message":"Twilio credentials not configured. SMS service disabled.","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:29:40","level":"debug","message":"New database client connected","service":"mundoctor-backend","environment":"development","meta":{"processID":484}}
+{"timestamp":"2025-07-09 18:29:40","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":484}}
+{"timestamp":"2025-07-09 18:29:40","level":"info","message":"Database connected successfully","service":"mundoctor-backend","environment":"development","meta":{"version":"PostgreSQL 15.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit","poolStatus":{"totalCount":1,"idleCount":0,"waitingCount":0}}}
+{"timestamp":"2025-07-09 18:29:40","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":484}}
+{"timestamp":"2025-07-09 18:29:40","level":"info","message":"WebSocket server initialized","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:29:40","level":"info","message":"Starting reminder jobs...","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:29:40","level":"info","message":"Started job: appointment_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:29:40","level":"info","message":"Started job: subscription_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:29:40","level":"info","message":"Started job: validation_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:29:40","level":"info","message":"Started job: auto_close_tickets","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:29:40","level":"info","message":"Started job: escalate_tickets","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:29:40","level":"info","message":"Started job: cleanup_notifications","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:29:40","level":"info","message":"All reminder jobs started successfully","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:30:08","level":"debug","message":"Database pool status","service":"mundoctor-backend","environment":"development","meta":{"totalCount":1,"idleCount":1,"waitingCount":0}}
+{"timestamp":"2025-07-09 18:31:22","level":"warn","message":"No SMTP configuration found. Using test mode.","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:31:22","level":"info","message":"Email service initialized","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:31:23","level":"warn","message":"Twilio credentials not configured. SMS service disabled.","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:31:23","level":"debug","message":"New database client connected","service":"mundoctor-backend","environment":"development","meta":{"processID":486}}
+{"timestamp":"2025-07-09 18:31:23","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":486}}
+{"timestamp":"2025-07-09 18:31:23","level":"info","message":"Database connected successfully","service":"mundoctor-backend","environment":"development","meta":{"version":"PostgreSQL 15.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit","poolStatus":{"totalCount":1,"idleCount":0,"waitingCount":0}}}
+{"timestamp":"2025-07-09 18:31:23","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":486}}
+{"timestamp":"2025-07-09 18:31:23","level":"info","message":"WebSocket server initialized","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:31:23","level":"info","message":"Starting reminder jobs...","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:31:24","level":"info","message":"Started job: appointment_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:31:24","level":"info","message":"Started job: subscription_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:31:24","level":"info","message":"Started job: validation_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:31:24","level":"info","message":"Started job: auto_close_tickets","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:31:24","level":"info","message":"Started job: escalate_tickets","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:31:24","level":"info","message":"Started job: cleanup_notifications","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:31:24","level":"info","message":"All reminder jobs started successfully","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:31:52","level":"debug","message":"Database pool status","service":"mundoctor-backend","environment":"development","meta":{"totalCount":1,"idleCount":1,"waitingCount":0}}
+{"timestamp":"2025-07-09 18:32:45","level":"warn","message":"No SMTP configuration found. Using test mode.","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:32:45","level":"info","message":"Email service initialized","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:32:46","level":"warn","message":"Twilio credentials not configured. SMS service disabled.","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:32:47","level":"debug","message":"New database client connected","service":"mundoctor-backend","environment":"development","meta":{"processID":489}}
+{"timestamp":"2025-07-09 18:32:47","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":489}}
+{"timestamp":"2025-07-09 18:32:47","level":"info","message":"Database connected successfully","service":"mundoctor-backend","environment":"development","meta":{"version":"PostgreSQL 15.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit","poolStatus":{"totalCount":1,"idleCount":0,"waitingCount":0}}}
+{"timestamp":"2025-07-09 18:32:47","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":489}}
+{"timestamp":"2025-07-09 18:32:47","level":"info","message":"WebSocket server initialized","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:32:47","level":"info","message":"Starting reminder jobs...","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:32:47","level":"info","message":"Started job: appointment_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:32:47","level":"info","message":"Started job: subscription_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:32:47","level":"info","message":"Started job: validation_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:32:47","level":"info","message":"Started job: auto_close_tickets","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:32:47","level":"info","message":"Started job: escalate_tickets","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:32:47","level":"info","message":"Started job: cleanup_notifications","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:32:47","level":"info","message":"All reminder jobs started successfully","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:33:15","level":"debug","message":"Database pool status","service":"mundoctor-backend","environment":"development","meta":{"totalCount":1,"idleCount":1,"waitingCount":0}}
+{"timestamp":"2025-07-09 18:34:12","level":"warn","message":"No SMTP configuration found. Using test mode.","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:34:12","level":"info","message":"Email service initialized","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:34:12","level":"warn","message":"Twilio credentials not configured. SMS service disabled.","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:34:13","level":"debug","message":"New database client connected","service":"mundoctor-backend","environment":"development","meta":{"processID":491}}
+{"timestamp":"2025-07-09 18:34:13","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":491}}
+{"timestamp":"2025-07-09 18:34:13","level":"info","message":"Database connected successfully","service":"mundoctor-backend","environment":"development","meta":{"version":"PostgreSQL 15.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit","poolStatus":{"totalCount":1,"idleCount":0,"waitingCount":0}}}
+{"timestamp":"2025-07-09 18:34:13","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":491}}
+{"timestamp":"2025-07-09 18:34:13","level":"info","message":"WebSocket server initialized","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:34:13","level":"info","message":"Starting reminder jobs...","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:34:14","level":"info","message":"Started job: appointment_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:34:14","level":"info","message":"Started job: subscription_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:34:14","level":"info","message":"Started job: validation_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:34:14","level":"info","message":"Started job: auto_close_tickets","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:34:14","level":"info","message":"Started job: escalate_tickets","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:34:14","level":"info","message":"Started job: cleanup_notifications","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:34:14","level":"info","message":"All reminder jobs started successfully","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-09 18:34:41","level":"debug","message":"Database pool status","service":"mundoctor-backend","environment":"development","meta":{"totalCount":1,"idleCount":1,"waitingCount":0}}
