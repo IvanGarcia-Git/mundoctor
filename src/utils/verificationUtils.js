@@ -1,12 +1,8 @@
-// Simulación de actualización de metadata de Clerk
-// En producción, esto sería manejado por el backend
+// Utilidades para verificación de usuarios
+// Archivo alternativo para evitar problemas de importación
 
 // Función para simular la actualización del metadata del usuario
 export const simulateClerkMetadataUpdate = (clerkId, verificationStatus) => {
-  // En una implementación real, esto actualizaría el metadata del usuario en Clerk
-  // Por ahora, solo simulamos el comportamiento
-  
-  // Guardar el estado de verificación en localStorage para simular la persistencia
   const verificationData = {
     clerkId,
     verificationStatus,
@@ -14,7 +10,6 @@ export const simulateClerkMetadataUpdate = (clerkId, verificationStatus) => {
   };
   
   localStorage.setItem(`clerk_verification_${clerkId}`, JSON.stringify(verificationData));
-  
   console.log(`Simulated Clerk metadata update for user ${clerkId}:`, verificationData);
   
   return verificationData;

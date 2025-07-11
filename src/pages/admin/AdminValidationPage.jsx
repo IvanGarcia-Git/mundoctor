@@ -30,10 +30,19 @@ const AdminValidationPage = () => {
     if (success) {
       toast({ 
         title: "Validación Aprobada", 
-        description: `La documentación de ${selectedValidation?.fullName || selectedValidation?.professionalName} ha sido aprobada.`
+        description: `La documentación de ${selectedValidation?.fullName || selectedValidation?.professionalName} ha sido aprobada. El usuario ya puede acceder a su dashboard.`
       });
       setIsModalOpen(false);
       refetch();
+      
+      // Informar al usuario que si el profesional verificado está activo, debería actualizar su página
+      setTimeout(() => {
+        toast({
+          title: "Información",
+          description: "Si el profesional está actualmente en línea, deberá refrescar su página para ver los cambios.",
+          variant: "default"
+        });
+      }, 2000);
     } else {
       toast({ 
         title: "Error", 
@@ -48,11 +57,20 @@ const AdminValidationPage = () => {
     if (success) {
       toast({ 
         title: "Validación Rechazada", 
-        description: `La documentación de ${selectedValidation?.fullName || selectedValidation?.professionalName} ha sido rechazada.`, 
+        description: `La documentación de ${selectedValidation?.fullName || selectedValidation?.professionalName} ha sido rechazada. El usuario será notificado.`, 
         variant: "destructive" 
       });
       setIsModalOpen(false);
       refetch();
+      
+      // Informar al usuario que si el profesional verificado está activo, debería actualizar su página
+      setTimeout(() => {
+        toast({
+          title: "Información",
+          description: "Si el profesional está actualmente en línea, deberá refrescar su página para ver los cambios.",
+          variant: "default"
+        });
+      }, 2000);
     } else {
       toast({ 
         title: "Error", 

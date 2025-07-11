@@ -166,8 +166,96 @@ app.get('/api/professionals/specialties', async (req, res) => {
   }
 });
 
+// Get user verification status from database
+app.get('/api/users/:clerkId/verification-status', async (req, res) => {
+  try {
+    const { clerkId } = req.params;
+    
+    console.log(`Getting verification status for user: ${clerkId}`);
+    
+    // Get user status from users table
+    const userQuery = `
+      SELECT 
+        id,
+        email,
+        name,
+        status,
+        verified,
+        role,
+        created_at,
+        updated_at
+      FROM users 
+      WHERE id = $1
+    `;
+    
+    const userResult = await query(userQuery, [clerkId]);
+    
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'User not found'
+      });
+    }
+    
+    const user = userResult.rows[0];
+    
+    // Get professional validation status if user is a professional
+    let validationStatus = null;
+    if (user.role === 'professional') {
+      const validationQuery = `
+        SELECT 
+          id,
+          validation_status,
+          urgency,
+          notes,
+          review_notes,
+          reviewed_by,
+          reviewed_at,
+          created_at,
+          updated_at
+        FROM professional_validations 
+        WHERE user_id = $1 
+        ORDER BY created_at DESC 
+        LIMIT 1
+      `;
+      
+      const validationResult = await query(validationQuery, [clerkId]);
+      
+      if (validationResult.rows.length > 0) {
+        validationStatus = validationResult.rows[0];
+      }
+    }
+    
+    const responseData = {
+      user_id: user.id,
+      user_status: user.status,
+      user_verified: user.verified,
+      role: user.role,
+      validation_status: validationStatus?.validation_status || null,
+      validation_details: validationStatus,
+      last_updated: user.updated_at
+    };
+    
+    console.log(`Verification status for ${clerkId}:`, responseData);
+    
+    res.json({
+      success: true,
+      data: responseData
+    });
+
+  } catch (error) {
+    console.error('Error getting verification status:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to get verification status',
+      details: error.message
+    });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Test server running on http://localhost:${PORT}`);
   console.log(`Try: http://localhost:${PORT}/api/professionals/search`);
   console.log(`Try: http://localhost:${PORT}/api/professionals/specialties`);
+  console.log(`Try: http://localhost:${PORT}/api/users/[clerkId]/verification-status`);
 });

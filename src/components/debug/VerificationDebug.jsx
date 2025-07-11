@@ -1,14 +1,14 @@
 import { useUser } from '@clerk/clerk-react';
 import { useVerificationStatus } from '@/hooks/useVerificationStatus';
-import { getSimulatedVerificationStatus, clearSimulatedVerificationData } from '@/utils/clerkSimulation';
+import { getSimulatedVerificationStatus, clearSimulatedVerificationData, forceUpdateVerificationStatus } from '@/utils/verificationUtils';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Bug, Trash2 } from 'lucide-react';
+import { Bug, Trash2, RefreshCw, CheckCircle, XCircle } from 'lucide-react';
 
 export default function VerificationDebug() {
   const { user } = useUser();
-  const { verificationStatus, refreshVerificationStatus } = useVerificationStatus();
+  const { verificationStatus, statusSource, refreshVerificationStatus } = useVerificationStatus();
 
   if (!user) return null;
 
@@ -18,6 +18,18 @@ export default function VerificationDebug() {
   const handleClearSimulation = () => {
     clearSimulatedVerificationData(user.id);
     refreshVerificationStatus();
+  };
+
+  const handleForceApproved = () => {
+    forceUpdateVerificationStatus(user.id, 'approved');
+  };
+
+  const handleForceRejected = () => {
+    forceUpdateVerificationStatus(user.id, 'rejected');
+  };
+
+  const handleForcePending = () => {
+    forceUpdateVerificationStatus(user.id, 'pending');
   };
 
   return (
@@ -32,7 +44,7 @@ export default function VerificationDebug() {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <h4 className="font-semibold text-sm mb-2">Estado en Clerk:</h4>
             <Badge variant={clerkStatus === 'approved' ? 'default' : 'secondary'}>
@@ -43,6 +55,12 @@ export default function VerificationDebug() {
             <h4 className="font-semibold text-sm mb-2">Estado Simulado:</h4>
             <Badge variant={simulatedStatus === 'approved' ? 'default' : 'secondary'}>
               {simulatedStatus || 'No definido'}
+            </Badge>
+          </div>
+          <div>
+            <h4 className="font-semibold text-sm mb-2">Fuente del Estado:</h4>
+            <Badge variant={statusSource === 'database' ? 'default' : 'outline'}>
+              {statusSource}
             </Badge>
           </div>
         </div>
@@ -61,7 +79,7 @@ export default function VerificationDebug() {
           </pre>
         </div>
 
-        <div className="flex gap-2">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
           <Button 
             onClick={handleClearSimulation}
             variant="outline"
@@ -77,7 +95,35 @@ export default function VerificationDebug() {
             size="sm"
             className="text-orange-700 border-orange-300"
           >
+            <RefreshCw className="w-4 h-4 mr-2" />
             Refrescar Estado
+          </Button>
+          <Button 
+            onClick={handleForceApproved}
+            variant="outline"
+            size="sm"
+            className="text-green-700 border-green-300"
+          >
+            <CheckCircle className="w-4 h-4 mr-2" />
+            Forzar Aprobado
+          </Button>
+          <Button 
+            onClick={handleForceRejected}
+            variant="outline"
+            size="sm"
+            className="text-red-700 border-red-300"
+          >
+            <XCircle className="w-4 h-4 mr-2" />
+            Forzar Rechazado
+          </Button>
+          <Button 
+            onClick={handleForcePending}
+            variant="outline"
+            size="sm"
+            className="text-yellow-700 border-yellow-300"
+          >
+            <RefreshCw className="w-4 h-4 mr-2" />
+            Forzar Pendiente
           </Button>
         </div>
 

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, XCircle, Clock, RefreshCw } from 'lucide-react';
-import { clearSimulatedVerificationData } from '@/utils/clerkSimulation';
+import { clearSimulatedVerificationData } from '@/utils/verificationUtils';
 
 export default function ProfessionalVerificationControl() {
   const { user } = useUser();
