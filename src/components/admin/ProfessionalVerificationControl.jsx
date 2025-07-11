@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, XCircle, Clock, RefreshCw } from 'lucide-react';
+import { clearSimulatedVerificationData } from '@/utils/clerkSimulation';
 
 export default function ProfessionalVerificationControl() {
   const { user } = useUser();
@@ -16,6 +17,10 @@ export default function ProfessionalVerificationControl() {
 
     setIsUpdating(true);
     try {
+      // Clear any existing simulation data first
+      clearSimulatedVerificationData(user.id);
+      
+      // Update Clerk metadata
       await user.update({
         unsafeMetadata: {
           ...user.unsafeMetadata,

@@ -43,6 +43,7 @@ import { useUser } from '@clerk/clerk-react';
 import { SignedIn, SignedOut, RedirectToSignIn } from '@clerk/clerk-react';
 import AuthenticatedLayout from '@/components/layout/AuthenticatedLayout';
 import AdminProtectedRoute from '@/components/auth/AdminProtectedRoute';
+import { useVerificationStatus } from '@/hooks/useVerificationStatus';
 
 // Loading fallback component
 const PageLoader = () => (
@@ -54,8 +55,9 @@ const PageLoader = () => (
   </div>
 );
 
-const ProtectedRoute = ({ children, allowedRoles }) => {
+const ProtectedRoute = ({ children, allowedRoles, requireVerification = false }) => {
   const { user, isLoaded } = useUser();
+  const { verificationStatus } = useVerificationStatus();
   const location = useLocation();
 
   if (!isLoaded) {
@@ -69,11 +71,9 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     return <Navigate to="/" state={{ from: location }} replace />; 
   }
 
-  // Check if professional is verified for professional routes
-  if (userRole === 'professional' && allowedRoles?.includes('professional')) {
-    const verificationStatus = user?.unsafeMetadata?.professionalData?.verificationStatus;
-    
-    // If professional is not verified, redirect to verification pending page
+  // Check if professional is verified ONLY for Dashboard and other protected routes
+  if (userRole === 'professional' && allowedRoles?.includes('professional') && requireVerification) {
+    // Use the verification status from our hook (includes simulation)
     if (verificationStatus !== 'approved') {
       return <Navigate to="/profesional/verificacion-pendiente" replace />;
     }
@@ -181,7 +181,7 @@ const AppRoutes = () => {
       <Route 
         path="/profesionales/dashboard" 
         element={
-          <ProtectedRoute allowedRoles={['professional']}>
+          <ProtectedRoute allowedRoles={['professional']} requireVerification={true}>
             <Suspense fallback={<PageLoader />}>
               <ProfessionalDashboardPage />
             </Suspense>
@@ -191,7 +191,7 @@ const AppRoutes = () => {
       <Route 
         path="/profesionales/citas" 
         element={
-          <ProtectedRoute allowedRoles={['professional']}>
+          <ProtectedRoute allowedRoles={['professional']} requireVerification={true}>
             <Suspense fallback={<PageLoader />}>
               <ProfessionalAppointmentsPage />
             </Suspense>
@@ -201,7 +201,7 @@ const AppRoutes = () => {
       <Route 
         path="/profesionales/pacientes" 
         element={
-          <ProtectedRoute allowedRoles={['professional']}>
+          <ProtectedRoute allowedRoles={['professional']} requireVerification={true}>
             <Suspense fallback={<PageLoader />}>
               <ProfessionalPatientsPage />
             </Suspense>
@@ -221,7 +221,7 @@ const AppRoutes = () => {
        <Route 
         path="/profesionales/servicios" 
         element={
-          <ProtectedRoute allowedRoles={['professional']}>
+          <ProtectedRoute allowedRoles={['professional']} requireVerification={true}>
             <Suspense fallback={<PageLoader />}>
               <ProfessionalServicesPage />
             </Suspense>
@@ -241,7 +241,7 @@ const AppRoutes = () => {
        <Route 
         path="/profesionales/estadisticas" 
         element={
-          <ProtectedRoute allowedRoles={['professional']}>
+          <ProtectedRoute allowedRoles={['professional']} requireVerification={true}>
             <Suspense fallback={<PageLoader />}>
               <ProfessionalAnalyticsPage />
             </Suspense>
@@ -261,7 +261,7 @@ const AppRoutes = () => {
       <Route 
         path="/profesionales/valoraciones" 
         element={
-          <ProtectedRoute allowedRoles={['professional']}>
+          <ProtectedRoute allowedRoles={['professional']} requireVerification={true}>
             <Suspense fallback={<PageLoader />}>
               <ProfessionalValoracionesPage />
             </Suspense>
