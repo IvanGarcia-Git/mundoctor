@@ -5,8 +5,14 @@ import { query } from './src/config/database.js';
 const app = express();
 const PORT = 8001;
 
-// Basic CORS and JSON parsing
-app.use(cors());
+// CORS configuration to allow frontend requests
+const corsOptions = {
+  origin: ['http://localhost:5174', 'http://localhost:5173', 'http://localhost:3000'],
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Health check
