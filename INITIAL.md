@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # MunDoctor Healthcare Platform - Comprehensive Functionality Review Plan
 
 ## FEATURE:
@@ -312,3 +313,20 @@ A systematic review and optimization of all functional components in the MunDoct
 - Documentation updated to reflect current functionality
 
 This comprehensive review plan ensures every aspect of the MunDoctor platform is thoroughly evaluated and optimized for healthcare delivery excellence.
+=======
+## FEATURE:
+
+[Insert your feature here]
+
+## EXAMPLES:
+
+[Provide and explain examples that you have in the `examples/` folder]
+
+## DOCUMENTATION:
+
+[List out any documentation (web pages, sources for an MCP server like Crawl4AI RAG, etc.) that will need to be referenced during development]
+
+## OTHER CONSIDERATIONS:
+
+[Any other considerations or specific requirements - great place to include gotchas that you see AI coding assistants miss with your projects a lot]
+>>>>>>> 716bf14 (PRP - Implementacion del repo para PRP)
