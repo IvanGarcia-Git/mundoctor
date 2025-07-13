@@ -2,6 +2,7 @@ import { query, withTransaction } from '../config/database.js';
 import { logInfo, logError, logWarning } from '../utils/logger.js';
 import { createAuditLog, AuditActions, RiskLevels } from '../utils/auditLog.js';
 import { AppError, ValidationError, NotFoundError, ConflictError } from '../middleware/errorHandler.js';
+import { syncMetadataToClerk } from './clerkSync.js';
 
 // Create a new validation request
 export const createValidationRequest = async (requestData, createdBy) => {
@@ -140,12 +141,12 @@ export const getValidationRequests = async (filters = {}, pagination = {}) => {
 
     // Build WHERE conditions
     if (status) {
-      whereConditions.push(`pv.status = $${paramIndex++}`);
+      whereConditions.push(`pv.validation_status = $${paramIndex++}`);
       params.push(status);
     }
 
     if (professionalId) {
-      whereConditions.push(`pv.professional_id = $${paramIndex++}`);
+      whereConditions.push(`pv.user_id = $${paramIndex++}`);
       params.push(professionalId);
     }
 
@@ -191,19 +192,16 @@ export const getValidationRequests = async (filters = {}, pagination = {}) => {
         u.name as professional_name,
         u.email as professional_email,
         u.phone as professional_phone,
-        p.specialties,
-        p.location,
+        p.location as professional_city,
         cb.name as created_by_name,
-        rb.name as reviewed_by_name,
-        COUNT(vd.id) as documents_count
+        rb.name as reviewed_by_name
       FROM professional_validations pv
-      LEFT JOIN users u ON pv.professional_id = u.id
-      LEFT JOIN professionals p ON pv.professional_id = p.user_id
+      LEFT JOIN users u ON pv.user_id = u.id
+      LEFT JOIN professionals p ON pv.user_id = p.user_id
       LEFT JOIN users cb ON pv.created_by = cb.id
       LEFT JOIN users rb ON pv.reviewed_by = rb.id
-      LEFT JOIN validation_documents vd ON pv.id = vd.validation_id
       ${whereClause}
-      GROUP BY pv.id, u.name, u.email, u.phone, p.specialties, p.location, cb.name, rb.name
+      GROUP BY pv.id, u.name, u.email, u.phone, p.location, cb.name, rb.name
       ORDER BY pv.${sortColumn} ${order}
       LIMIT $${paramIndex++} OFFSET $${paramIndex++}
     `, [...params, limit, offset]);
@@ -247,14 +245,13 @@ export const getValidationRequestById = async (requestId) => {
         u.name as professional_name,
         u.email as professional_email,
         u.phone as professional_phone,
-        p.specialties,
-        p.location,
         p.verified as professional_verified,
+        p.location as professional_city,
         cb.name as created_by_name,
         rb.name as reviewed_by_name
       FROM professional_validations pv
-      LEFT JOIN users u ON pv.professional_id = u.id
-      LEFT JOIN professionals p ON pv.professional_id = p.user_id
+      LEFT JOIN users u ON pv.user_id = u.id
+      LEFT JOIN professionals p ON pv.user_id = p.user_id
       LEFT JOIN users cb ON pv.created_by = cb.id
       LEFT JOIN users rb ON pv.reviewed_by = rb.id
       WHERE pv.id = $1
@@ -323,21 +320,17 @@ export const updateValidationStatus = async (requestId, statusData, reviewedBy) 
       const updateResult = await client.query(`
         UPDATE professional_validations 
         SET 
-          status = $1,
-          review_notes = $2,
-          required_documents = $3,
-          reviewed_by = $4,
+          validation_status = $1,
+          validation_notes = $2,
+          reviewed_by = $3,
           reviewed_at = CURRENT_TIMESTAMP,
-          expiration_date = $5,
           updated_at = CURRENT_TIMESTAMP
-        WHERE id = $6
+        WHERE id = $4
         RETURNING *
       `, [
         statusData.status,
         statusData.reviewNotes,
-        statusData.requiredDocuments ? JSON.stringify(statusData.requiredDocuments) : null,
         reviewedBy,
-        statusData.expirationDate,
         requestId
       ]);
 
@@ -349,14 +342,49 @@ export const updateValidationStatus = async (requestId, statusData, reviewedBy) 
           UPDATE professionals 
           SET 
             verified = true,
-            verification_date = CURRENT_TIMESTAMP,
-            verification_expiry = $1,
             updated_at = CURRENT_TIMESTAMP
-          WHERE user_id = $2
-        `, [statusData.expirationDate, currentRequest.professional_id]);
+          WHERE user_id = $1
+        `, [currentRequest.user_id]);
+
+        // Update user status in main users table
+        await client.query(`
+          UPDATE users 
+          SET 
+            status = 'active',
+            verified = true,
+            updated_at = CURRENT_TIMESTAMP
+          WHERE id = $1
+        `, [currentRequest.user_id]);
+
+        // Sync verification status to Clerk metadata
+        try {
+          await syncMetadataToClerk(currentRequest.user_id, {
+            role: 'professional',
+            verified: true,
+            verificationStatus: 'approved',
+            verifiedAt: new Date().toISOString(),
+            professionalData: {
+              verificationStatus: 'approved',
+              verifiedAt: new Date().toISOString(),
+              verifiedBy: reviewedBy
+            }
+          });
+
+          logInfo('Professional verification synced to Clerk successfully', {
+            professionalId: currentRequest.user_id,
+            reviewedBy
+          });
+        } catch (clerkError) {
+          logError(clerkError, {
+            event: 'clerk_sync_failed_after_approval',
+            professionalId: currentRequest.user_id,
+            reviewedBy
+          });
+          // Don't throw error here - database update succeeded
+        }
 
         logInfo('Professional verified successfully', {
-          professionalId: currentRequest.professional_id,
+          professionalId: currentRequest.user_id,
           reviewedBy
         });
       }
@@ -369,8 +397,8 @@ export const updateValidationStatus = async (requestId, statusData, reviewedBy) 
         resourceId: requestId,
         details: {
           requestId,
-          professionalId: currentRequest.professional_id,
-          oldStatus: currentRequest.status,
+          professionalId: currentRequest.user_id,
+          oldStatus: currentRequest.validation_status,
           newStatus: statusData.status,
           reviewNotes: statusData.reviewNotes,
           approved: statusData.status === 'approved'
@@ -380,8 +408,8 @@ export const updateValidationStatus = async (requestId, statusData, reviewedBy) 
 
       logInfo('Validation status updated successfully', {
         requestId,
-        professionalId: currentRequest.professional_id,
-        oldStatus: currentRequest.status,
+        professionalId: currentRequest.user_id,
+        oldStatus: currentRequest.validation_status,
         newStatus: statusData.status,
         reviewedBy
       });
