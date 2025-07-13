@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/clerk-react';
+<<<<<<< HEAD
 import { simulateClerkMetadataUpdate, forceUpdateVerificationStatus } from '@/utils/verificationUtils';
+=======
+>>>>>>> 2bc12bd (Pre-PRP)
 
 // Simulamos una base de datos local para demostración
 // En producción, esto vendría del backend
 let professionalDatabase = [];
 
+<<<<<<< HEAD
 // Función para actualizar el metadata del usuario en Clerk
 const updateUserClerkMetadata = async (clerkId, verificationStatus) => {
   try {
@@ -71,6 +75,8 @@ const updateCurrentUserIfMatch = async (clerkId, verificationStatus, currentUser
   return false;
 };
 
+=======
+>>>>>>> 2bc12bd (Pre-PRP)
 export const useProfessionalValidations = () => {
   const [professionals, setProfessionals] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -120,6 +126,7 @@ export const useProfessionalValidations = () => {
   // Función para actualizar el estado de verificación
   const updateVerificationStatus = async (professionalId, status, notes = '') => {
     try {
+<<<<<<< HEAD
       console.log(`=== STARTING VERIFICATION UPDATE ===`);
       console.log(`Professional ID: ${professionalId}`);
       console.log(`New Status: ${status}`);
@@ -137,6 +144,8 @@ export const useProfessionalValidations = () => {
       console.log(`Is current user? ${professionalToUpdate.clerkId === user?.id}`);
 
       // Actualizar la base de datos local
+=======
+>>>>>>> 2bc12bd (Pre-PRP)
       const updatedProfessionals = professionalDatabase.map(prof => {
         if (prof.id === professionalId) {
           return {
@@ -155,9 +164,14 @@ export const useProfessionalValidations = () => {
       setProfessionals([...professionalDatabase]);
       console.log(`Local database updated successfully`);
 
+<<<<<<< HEAD
       // Actualizar el metadata del usuario en Clerk
       const clerkUpdateResult = await updateUserClerkMetadata(professionalToUpdate.clerkId, status);
       console.log(`Clerk metadata update result: ${clerkUpdateResult}`);
+=======
+      // En una implementación real, también actualizarías el metadata del usuario en Clerk
+      // Para demostración, no lo haremos aquí ya que requeriría backend
+>>>>>>> 2bc12bd (Pre-PRP)
       
       // Si el usuario que está siendo verificado es el usuario actual, actualizar su metadata directamente
       const currentUserUpdateResult = await updateCurrentUserIfMatch(professionalToUpdate.clerkId, status, user);

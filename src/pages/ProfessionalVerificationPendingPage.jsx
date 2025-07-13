@@ -6,20 +6,24 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Clock, CheckCircle, AlertCircle, Mail, Phone, FileText, LogOut } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useVerificationStatus } from '@/hooks/useVerificationStatus';
-import VerificationDebug from '@/components/debug/VerificationDebug';
 
 export default function ProfessionalVerificationPendingPage() {
   const { user } = useUser();
   const navigate = useNavigate();
-  const { verificationStatus, refreshVerificationStatus } = useVerificationStatus();
+  const [verificationStatus, setVerificationStatus] = useState('pending');
 
-  // Check verification status and redirect if approved
+  // Check verification status from user metadata
   useEffect(() => {
-    if (verificationStatus === 'approved') {
-      navigate('/profesionales/dashboard');
+    if (user?.unsafeMetadata?.professionalData) {
+      const status = user.unsafeMetadata.professionalData.verificationStatus || 'pending';
+      setVerificationStatus(status);
+
+      // If approved, redirect to dashboard
+      if (status === 'approved') {
+        navigate('/profesionales/dashboard');
+      }
     }
-  }, [verificationStatus, navigate]);
+  }, [user, navigate]);
 
   const handleLogout = () => {
     navigate('/');
@@ -28,10 +32,6 @@ export default function ProfessionalVerificationPendingPage() {
   const handleContactSupport = () => {
     // This could open a support ticket or redirect to contact page
     navigate('/contacto');
-  };
-
-  const handleRefreshStatus = () => {
-    refreshVerificationStatus();
   };
 
   const getStatusIcon = () => {
@@ -85,9 +85,6 @@ export default function ProfessionalVerificationPendingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-slate-900 dark:to-slate-800 flex items-center justify-center p-4">
       <div className="w-full max-w-2xl mx-auto space-y-6">
-        
-        {/* Debug Component */}
-        <VerificationDebug />
         
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -171,15 +168,6 @@ export default function ProfessionalVerificationPendingPage() {
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 pt-4">
-              <Button 
-                onClick={handleRefreshStatus}
-                variant="default" 
-                className="flex-1 h-12"
-              >
-                <CheckCircle className="w-4 h-4 mr-2" />
-                Verificar Estado
-              </Button>
-              
               <Button 
                 onClick={handleContactSupport}
                 variant="outline" 
