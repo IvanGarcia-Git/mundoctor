@@ -1,29 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/clerk-react';
-import { simulateClerkMetadataUpdate } from '@/utils/clerkSimulation';
 
 // Simulamos una base de datos local para demostración
 // En producción, esto vendría del backend
 let professionalDatabase = [];
-
-// Función para actualizar el metadata del usuario en Clerk
-const updateUserClerkMetadata = async (clerkId, verificationStatus) => {
-  try {
-    // En una implementación real, esto sería una llamada a tu backend
-    // que a su vez haría una llamada al Clerk Backend API
-    
-    // Para demostración, usamos la simulación
-    simulateClerkMetadataUpdate(clerkId, verificationStatus);
-    
-    console.log(`Simulated Clerk metadata update for user ${clerkId} with verification status: ${verificationStatus}`);
-    
-    // Simular que la actualización fue exitosa
-    return true;
-  } catch (error) {
-    console.error('Error updating Clerk metadata:', error);
-    return false;
-  }
-};
 
 export const useProfessionalValidations = () => {
   const [professionals, setProfessionals] = useState([]);
@@ -74,14 +54,6 @@ export const useProfessionalValidations = () => {
   // Función para actualizar el estado de verificación
   const updateVerificationStatus = async (professionalId, status, notes = '') => {
     try {
-      // Encontrar el profesional en la base de datos local
-      const professionalToUpdate = professionalDatabase.find(prof => prof.id === professionalId);
-      if (!professionalToUpdate) {
-        console.error('Professional not found with ID:', professionalId);
-        return false;
-      }
-
-      // Actualizar la base de datos local
       const updatedProfessionals = professionalDatabase.map(prof => {
         if (prof.id === professionalId) {
           return {
@@ -99,8 +71,8 @@ export const useProfessionalValidations = () => {
       localStorage.setItem('mundoctor_professionals', JSON.stringify(professionalDatabase));
       setProfessionals([...professionalDatabase]);
 
-      // Actualizar el metadata del usuario en Clerk
-      await updateUserClerkMetadata(professionalToUpdate.clerkId, status);
+      // En una implementación real, también actualizarías el metadata del usuario en Clerk
+      // Para demostración, no lo haremos aquí ya que requeriría backend
       
       return true;
     } catch (error) {
