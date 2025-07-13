@@ -77,11 +77,17 @@ export const createUserInDB = async (clerkUser) => {
           ON CONFLICT (user_id) DO NOTHING
         `, [user.id]);
       } else if (userRole === 'professional') {
+        // Use unique temporary values to avoid constraint violations
+        // Use timestamp to ensure uniqueness while keeping within field length limits
+        const uniqueId = Date.now();
+        const tempLicenseNumber = `PEND_${uniqueId}`;
+        const tempDni = `PEND_${uniqueId}`;
+        
         await client.query(`
           INSERT INTO professionals (user_id, license_number, dni, profile_completed, verified)
-          VALUES ($1, 'PENDING', 'PENDING', FALSE, FALSE)
+          VALUES ($1, $2, $3, FALSE, FALSE)
           ON CONFLICT (user_id) DO NOTHING
-        `, [user.id]);
+        `, [user.id, tempLicenseNumber, tempDni]);
       }
 
       console.log(`✅ User created: ${email} (${clerkId})`);

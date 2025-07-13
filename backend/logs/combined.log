@@ -3920,3 +3920,412 @@
 {"timestamp":"2025-07-13 14:10:54","level":"info","message":"Started job: cleanup_notifications","service":"mundoctor-backend","environment":"development"}
 {"timestamp":"2025-07-13 14:10:54","level":"info","message":"All reminder jobs started successfully","service":"mundoctor-backend","environment":"development"}
 {"timestamp":"2025-07-13 14:11:23","level":"debug","message":"Database pool status","service":"mundoctor-backend","environment":"development","meta":{"totalCount":1,"idleCount":1,"waitingCount":0}}
+{"timestamp":"2025-07-13 14:12:27","level":"warn","message":"No SMTP configuration found. Using test mode.","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:12:27","level":"info","message":"Email service initialized","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:12:28","level":"warn","message":"Twilio credentials not configured. SMS service disabled.","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:12:28","level":"debug","message":"New database client connected","service":"mundoctor-backend","environment":"development","meta":{"processID":38}}
+{"timestamp":"2025-07-13 14:12:28","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":38}}
+{"timestamp":"2025-07-13 14:12:28","level":"info","message":"Database connected successfully","service":"mundoctor-backend","environment":"development","meta":{"version":"PostgreSQL 15.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit","poolStatus":{"totalCount":1,"idleCount":0,"waitingCount":0}}}
+{"timestamp":"2025-07-13 14:12:28","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":38}}
+{"timestamp":"2025-07-13 14:12:28","level":"info","message":"WebSocket server initialized","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:12:28","level":"info","message":"Starting reminder jobs...","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:12:28","level":"info","message":"Started job: appointment_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:12:28","level":"info","message":"Started job: subscription_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:12:28","level":"info","message":"Started job: validation_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:12:28","level":"info","message":"Started job: auto_close_tickets","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:12:28","level":"info","message":"Started job: escalate_tickets","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:12:28","level":"info","message":"Started job: cleanup_notifications","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:12:28","level":"info","message":"All reminder jobs started successfully","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:12:57","level":"debug","message":"Database pool status","service":"mundoctor-backend","environment":"development","meta":{"totalCount":1,"idleCount":1,"waitingCount":0}}
+{"timestamp":"2025-07-13 14:13:54","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/profile","method":"GET","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:13:54","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zp6b59vKGpgqwdVQ4Q9vKKTsaC","meta":{"url":"/api/users/profile","ip":"172.18.0.1","duration":1}}
+{"timestamp":"2025-07-13 14:13:54","level":"debug","message":"New database client connected","service":"mundoctor-backend","environment":"development","meta":{"processID":41}}
+{"timestamp":"2025-07-13 14:13:54","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":41}}
+{"timestamp":"2025-07-13 14:13:54","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":41}}
+{"timestamp":"2025-07-13 14:13:55","level":"debug","message":"Executing query","service":"mundoctor-backend","environment":"development","meta":{"queryId":"faj5jeasa","query":"\n      SELECT \n        u.*,\n        up.theme,\n        up.notifications_enabled,\n        up.language,...","paramCount":1}}
+{"timestamp":"2025-07-13 14:13:55","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":41}}
+{"timestamp":"2025-07-13 14:13:55","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":41}}
+{"timestamp":"2025-07-13 14:13:55","level":"debug","message":"Query completed","service":"mundoctor-backend","environment":"development","meta":{"queryId":"faj5jeasa","duration":8,"rows":0}}
+{"timestamp":"2025-07-13 14:13:55","level":"debug","message":"Executing query","service":"mundoctor-backend","environment":"development","meta":{"queryId":"3ay2o7ozu","query":"SELECT id FROM users WHERE id = $1 OR email = $2","paramCount":2}}
+{"timestamp":"2025-07-13 14:13:55","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":41}}
+{"timestamp":"2025-07-13 14:13:55","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":41}}
+{"timestamp":"2025-07-13 14:13:55","level":"debug","message":"Query completed","service":"mundoctor-backend","environment":"development","meta":{"queryId":"3ay2o7ozu","duration":3,"rows":0}}
+{"timestamp":"2025-07-13 14:13:55","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":41}}
+{"timestamp":"2025-07-13 14:13:55","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":41}}
+{"timestamp":"2025-07-13 14:13:55","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":41}}
+{"timestamp":"2025-07-13 14:13:55","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":41}}
+{"timestamp":"2025-07-13 14:13:56","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/select-role","method":"POST","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:13:56","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zp6b59vKGpgqwdVQ4Q9vKKTsaC","meta":{"url":"/api/users/select-role","ip":"172.18.0.1","duration":1}}
+{"timestamp":"2025-07-13 14:13:56","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":41}}
+{"timestamp":"2025-07-13 14:13:56","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":41}}
+{"timestamp":"2025-07-13 14:13:57","level":"debug","message":"Database pool status","service":"mundoctor-backend","environment":"development","meta":{"totalCount":1,"idleCount":1,"waitingCount":0}}
+{"timestamp":"2025-07-13 14:18:19","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/profile","method":"GET","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:18:19","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zp6b59vKGpgqwdVQ4Q9vKKTsaC","meta":{"url":"/api/users/profile","ip":"172.18.0.1","duration":2}}
+{"timestamp":"2025-07-13 14:18:19","level":"debug","message":"New database client connected","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:18:19","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:18:19","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:18:19","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:18:19","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:18:22","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/select-role","method":"POST","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:18:22","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zp6b59vKGpgqwdVQ4Q9vKKTsaC","meta":{"url":"/api/users/select-role","ip":"172.18.0.1","duration":5}}
+{"timestamp":"2025-07-13 14:18:22","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:18:23","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:18:27","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/profile","method":"GET","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:18:27","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zp6b59vKGpgqwdVQ4Q9vKKTsaC","meta":{"url":"/api/users/profile","ip":"172.18.0.1","duration":2}}
+{"timestamp":"2025-07-13 14:18:27","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:18:27","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:18:27","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:18:27","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:18:28","level":"debug","message":"Database pool status","service":"mundoctor-backend","environment":"development","meta":{"totalCount":1,"idleCount":1,"waitingCount":0}}
+{"timestamp":"2025-07-13 14:18:48","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/profile","method":"GET","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:18:48","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zp6b59vKGpgqwdVQ4Q9vKKTsaC","meta":{"url":"/api/users/profile","ip":"172.18.0.1","duration":1}}
+{"timestamp":"2025-07-13 14:18:48","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:18:48","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:18:48","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:18:48","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:18:51","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/profile","method":"GET","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:18:51","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zp6b59vKGpgqwdVQ4Q9vKKTsaC","meta":{"url":"/api/users/profile","ip":"172.18.0.1","duration":1}}
+{"timestamp":"2025-07-13 14:18:51","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:18:51","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:18:51","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:18:51","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:18:52","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/select-role","method":"POST","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:18:52","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zp6b59vKGpgqwdVQ4Q9vKKTsaC","meta":{"url":"/api/users/select-role","ip":"172.18.0.1","duration":1}}
+{"timestamp":"2025-07-13 14:18:52","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:18:52","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:18:58","level":"debug","message":"Database pool status","service":"mundoctor-backend","environment":"development","meta":{"totalCount":1,"idleCount":1,"waitingCount":0}}
+{"timestamp":"2025-07-13 14:18:58","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/profile","method":"GET","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:18:58","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zp6b59vKGpgqwdVQ4Q9vKKTsaC","meta":{"url":"/api/users/profile","ip":"172.18.0.1","duration":0}}
+{"timestamp":"2025-07-13 14:18:58","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:18:58","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:18:58","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:18:58","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:19:17","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/profile","method":"GET","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:19:17","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zp6b59vKGpgqwdVQ4Q9vKKTsaC","meta":{"url":"/api/users/profile","ip":"172.18.0.1","duration":1}}
+{"timestamp":"2025-07-13 14:19:17","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:19:17","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:19:17","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:19:17","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:19:18","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/select-role","method":"POST","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:19:18","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zp6b59vKGpgqwdVQ4Q9vKKTsaC","meta":{"url":"/api/users/select-role","ip":"172.18.0.1","duration":2}}
+{"timestamp":"2025-07-13 14:19:18","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:19:18","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:19:23","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/profile","method":"GET","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:19:23","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zp6b59vKGpgqwdVQ4Q9vKKTsaC","meta":{"url":"/api/users/profile","ip":"172.18.0.1","duration":1}}
+{"timestamp":"2025-07-13 14:19:23","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:19:23","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:19:23","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:19:23","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:19:25","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/select-role","method":"POST","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:19:25","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zp6b59vKGpgqwdVQ4Q9vKKTsaC","meta":{"url":"/api/users/select-role","ip":"172.18.0.1","duration":1}}
+{"timestamp":"2025-07-13 14:19:25","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:19:25","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:19:28","level":"debug","message":"Database pool status","service":"mundoctor-backend","environment":"development","meta":{"totalCount":1,"idleCount":1,"waitingCount":0}}
+{"timestamp":"2025-07-13 14:19:37","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/profile","method":"GET","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:19:37","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zp6b59vKGpgqwdVQ4Q9vKKTsaC","meta":{"url":"/api/users/profile","ip":"172.18.0.1","duration":1}}
+{"timestamp":"2025-07-13 14:19:37","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:19:37","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:19:37","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:19:37","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:19:39","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/profile","method":"GET","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:19:39","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zp6b59vKGpgqwdVQ4Q9vKKTsaC","meta":{"url":"/api/users/profile","ip":"172.18.0.1","duration":2}}
+{"timestamp":"2025-07-13 14:19:39","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:19:39","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:19:39","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:19:39","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:19:41","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/select-role","method":"POST","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:19:41","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zp6b59vKGpgqwdVQ4Q9vKKTsaC","meta":{"url":"/api/users/select-role","ip":"172.18.0.1","duration":2}}
+{"timestamp":"2025-07-13 14:19:41","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:19:41","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":48}}
+{"timestamp":"2025-07-13 14:19:58","level":"debug","message":"Database pool status","service":"mundoctor-backend","environment":"development","meta":{"totalCount":1,"idleCount":1,"waitingCount":0}}
+{"timestamp":"2025-07-13 14:22:32","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/profile","method":"GET","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:22:32","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zp6b59vKGpgqwdVQ4Q9vKKTsaC","meta":{"url":"/api/users/profile","ip":"172.18.0.1","duration":2}}
+{"timestamp":"2025-07-13 14:22:32","level":"debug","message":"New database client connected","service":"mundoctor-backend","environment":"development","meta":{"processID":54}}
+{"timestamp":"2025-07-13 14:22:32","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":54}}
+{"timestamp":"2025-07-13 14:22:32","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":54}}
+{"timestamp":"2025-07-13 14:22:32","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":54}}
+{"timestamp":"2025-07-13 14:22:32","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":54}}
+{"timestamp":"2025-07-13 14:22:58","level":"debug","message":"Database pool status","service":"mundoctor-backend","environment":"development","meta":{"totalCount":1,"idleCount":1,"waitingCount":0}}
+{"timestamp":"2025-07-13 14:29:05","level":"warn","message":"No SMTP configuration found. Using test mode.","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:29:05","level":"info","message":"Email service initialized","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:29:05","level":"warn","message":"Twilio credentials not configured. SMS service disabled.","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:29:05","level":"debug","message":"New database client connected","service":"mundoctor-backend","environment":"development","meta":{"processID":62}}
+{"timestamp":"2025-07-13 14:29:05","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":62}}
+{"timestamp":"2025-07-13 14:29:05","level":"info","message":"Database connected successfully","service":"mundoctor-backend","environment":"development","meta":{"version":"PostgreSQL 15.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit","poolStatus":{"totalCount":1,"idleCount":0,"waitingCount":0}}}
+{"timestamp":"2025-07-13 14:29:05","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":62}}
+{"timestamp":"2025-07-13 14:29:05","level":"info","message":"WebSocket server initialized","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:29:05","level":"info","message":"Starting reminder jobs...","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:29:05","level":"info","message":"Started job: appointment_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:29:05","level":"info","message":"Started job: subscription_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:29:05","level":"info","message":"Started job: validation_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:29:05","level":"info","message":"Started job: auto_close_tickets","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:29:05","level":"info","message":"Started job: escalate_tickets","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:29:05","level":"info","message":"Started job: cleanup_notifications","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:29:05","level":"info","message":"All reminder jobs started successfully","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:29:17","level":"warn","message":"No SMTP configuration found. Using test mode.","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:29:17","level":"info","message":"Email service initialized","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:29:17","level":"warn","message":"Twilio credentials not configured. SMS service disabled.","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:29:17","level":"debug","message":"New database client connected","service":"mundoctor-backend","environment":"development","meta":{"processID":63}}
+{"timestamp":"2025-07-13 14:29:17","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":63}}
+{"timestamp":"2025-07-13 14:29:17","level":"info","message":"Database connected successfully","service":"mundoctor-backend","environment":"development","meta":{"version":"PostgreSQL 15.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit","poolStatus":{"totalCount":1,"idleCount":0,"waitingCount":0}}}
+{"timestamp":"2025-07-13 14:29:17","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":63}}
+{"timestamp":"2025-07-13 14:29:17","level":"info","message":"WebSocket server initialized","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:29:17","level":"info","message":"Starting reminder jobs...","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:29:17","level":"info","message":"Started job: appointment_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:29:17","level":"info","message":"Started job: subscription_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:29:17","level":"info","message":"Started job: validation_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:29:17","level":"info","message":"Started job: auto_close_tickets","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:29:17","level":"info","message":"Started job: escalate_tickets","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:29:17","level":"info","message":"Started job: cleanup_notifications","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:29:17","level":"info","message":"All reminder jobs started successfully","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 16:29:29","level":"warn","message":"No SMTP configuration found. Using test mode.","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 16:29:29","level":"info","message":"Email service initialized","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 16:29:29","level":"warn","message":"Twilio credentials not configured. SMS service disabled.","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 16:29:30","level":"debug","message":"New database client connected","service":"mundoctor-backend","environment":"development","meta":{"processID":64}}
+{"timestamp":"2025-07-13 16:29:30","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":64}}
+{"timestamp":"2025-07-13 16:29:30","level":"info","message":"Database connected successfully","service":"mundoctor-backend","environment":"development","meta":{"version":"PostgreSQL 15.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit","poolStatus":{"totalCount":1,"idleCount":0,"waitingCount":0}}}
+{"timestamp":"2025-07-13 16:29:30","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":64}}
+{"timestamp":"2025-07-13 16:29:30","level":"info","message":"WebSocket server initialized","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 16:29:30","level":"info","message":"Starting reminder jobs...","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 16:29:30","level":"info","message":"Started job: appointment_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 16:29:30","level":"info","message":"Started job: subscription_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 16:29:30","level":"info","message":"Started job: validation_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 16:29:30","level":"info","message":"Started job: auto_close_tickets","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 16:29:30","level":"info","message":"Started job: escalate_tickets","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 16:29:30","level":"info","message":"Started job: cleanup_notifications","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 16:29:30","level":"info","message":"All reminder jobs started successfully","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:29:47","level":"debug","message":"Database pool status","service":"mundoctor-backend","environment":"development","meta":{"totalCount":1,"idleCount":1,"waitingCount":0}}
+{"timestamp":"2025-07-13 14:30:28","level":"warn","message":"No SMTP configuration found. Using test mode.","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:30:28","level":"info","message":"Email service initialized","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:30:29","level":"warn","message":"Twilio credentials not configured. SMS service disabled.","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:30:29","level":"debug","message":"New database client connected","service":"mundoctor-backend","environment":"development","meta":{"processID":66}}
+{"timestamp":"2025-07-13 14:30:29","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":66}}
+{"timestamp":"2025-07-13 14:30:29","level":"info","message":"Database connected successfully","service":"mundoctor-backend","environment":"development","meta":{"version":"PostgreSQL 15.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit","poolStatus":{"totalCount":1,"idleCount":0,"waitingCount":0}}}
+{"timestamp":"2025-07-13 14:30:29","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":66}}
+{"timestamp":"2025-07-13 14:30:29","level":"info","message":"WebSocket server initialized","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:30:29","level":"info","message":"Starting reminder jobs...","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:30:29","level":"info","message":"Started job: appointment_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:30:29","level":"info","message":"Started job: subscription_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:30:29","level":"info","message":"Started job: validation_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:30:29","level":"info","message":"Started job: auto_close_tickets","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:30:29","level":"info","message":"Started job: escalate_tickets","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:30:29","level":"info","message":"Started job: cleanup_notifications","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:30:29","level":"info","message":"All reminder jobs started successfully","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 16:30:37","level":"debug","message":"Executing query","service":"mundoctor-backend","environment":"development","meta":{"queryId":"uw3o50u9n","query":"SELECT user_id, license_number, dni FROM professionals WHERE license_number = $1 OR dni = $1 ORDER B...","paramCount":1}}
+{"timestamp":"2025-07-13 16:30:37","level":"debug","message":"New database client connected","service":"mundoctor-backend","environment":"development","meta":{"processID":67}}
+{"timestamp":"2025-07-13 16:30:37","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":67}}
+{"timestamp":"2025-07-13 16:30:37","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":67}}
+{"timestamp":"2025-07-13 14:30:49","level":"warn","message":"No SMTP configuration found. Using test mode.","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:30:49","level":"info","message":"Email service initialized","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:30:49","level":"warn","message":"Twilio credentials not configured. SMS service disabled.","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:30:50","level":"debug","message":"New database client connected","service":"mundoctor-backend","environment":"development","meta":{"processID":68}}
+{"timestamp":"2025-07-13 14:30:50","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":68}}
+{"timestamp":"2025-07-13 14:30:50","level":"info","message":"Database connected successfully","service":"mundoctor-backend","environment":"development","meta":{"version":"PostgreSQL 15.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit","poolStatus":{"totalCount":1,"idleCount":0,"waitingCount":0}}}
+{"timestamp":"2025-07-13 14:30:50","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":68}}
+{"timestamp":"2025-07-13 14:30:50","level":"info","message":"WebSocket server initialized","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:30:50","level":"info","message":"Starting reminder jobs...","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:30:50","level":"info","message":"Started job: appointment_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:30:50","level":"info","message":"Started job: subscription_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:30:50","level":"info","message":"Started job: validation_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:30:50","level":"info","message":"Started job: auto_close_tickets","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:30:50","level":"info","message":"Started job: escalate_tickets","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:30:50","level":"info","message":"Started job: cleanup_notifications","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:30:50","level":"info","message":"All reminder jobs started successfully","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 16:30:54","level":"debug","message":"Executing query","service":"mundoctor-backend","environment":"development","meta":{"queryId":"dqson041p","query":"SELECT user_id, license_number, dni FROM professionals WHERE license_number = $1 OR dni = $1 ORDER B...","paramCount":1}}
+{"timestamp":"2025-07-13 16:30:54","level":"debug","message":"New database client connected","service":"mundoctor-backend","environment":"development","meta":{"processID":70}}
+{"timestamp":"2025-07-13 16:30:54","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":70}}
+{"timestamp":"2025-07-13 16:30:54","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":70}}
+{"timestamp":"2025-07-13 16:30:54","level":"debug","message":"Query completed","service":"mundoctor-backend","environment":"development","meta":{"queryId":"dqson041p","duration":31,"rows":1}}
+{"timestamp":"2025-07-13 16:30:54","level":"debug","message":"Executing query","service":"mundoctor-backend","environment":"development","meta":{"queryId":"4tecfrli9","query":"UPDATE professionals SET license_number = $1, dni = $2 WHERE user_id = $3","paramCount":3}}
+{"timestamp":"2025-07-13 16:30:54","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":70}}
+{"timestamp":"2025-07-13 16:30:54","level":"error","message":"value too long for type character varying(20)","service":"mundoctor-backend","environment":"development","meta":{"event":"pool_release_error","processID":70,"error":{"name":"error","message":"value too long for type character varying(20)","stack":"error: value too long for type character varying(20)\n    at Parser.parseErrorMessage (/home/vers/Proyectos/mundoctor/backend/node_modules/pg-protocol/dist/parser.js:285:98)\n    at Parser.handlePacket (/home/vers/Proyectos/mundoctor/backend/node_modules/pg-protocol/dist/parser.js:122:29)\n    at Parser.parse (/home/vers/Proyectos/mundoctor/backend/node_modules/pg-protocol/dist/parser.js:35:38)\n    at Socket.<anonymous> (/home/vers/Proyectos/mundoctor/backend/node_modules/pg-protocol/dist/index.js:11:42)\n    at Socket.emit (node:events:517:28)\n    at addChunk (node:internal/streams/readable:368:12)\n    at readableAddChunk (node:internal/streams/readable:341:9)\n    at Readable.push (node:internal/streams/readable:278:10)\n    at TCP.onStreamRead (node:internal/stream_base_commons:190:23)","code":"22001"}}}
+{"timestamp":"2025-07-13 14:31:09","level":"warn","message":"No SMTP configuration found. Using test mode.","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:09","level":"info","message":"Email service initialized","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:09","level":"warn","message":"Twilio credentials not configured. SMS service disabled.","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:09","level":"debug","message":"New database client connected","service":"mundoctor-backend","environment":"development","meta":{"processID":71}}
+{"timestamp":"2025-07-13 14:31:09","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":71}}
+{"timestamp":"2025-07-13 14:31:09","level":"info","message":"Database connected successfully","service":"mundoctor-backend","environment":"development","meta":{"version":"PostgreSQL 15.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit","poolStatus":{"totalCount":1,"idleCount":0,"waitingCount":0}}}
+{"timestamp":"2025-07-13 14:31:09","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":71}}
+{"timestamp":"2025-07-13 14:31:09","level":"info","message":"WebSocket server initialized","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:09","level":"info","message":"Starting reminder jobs...","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:09","level":"info","message":"Started job: appointment_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:09","level":"info","message":"Started job: subscription_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:09","level":"info","message":"Started job: validation_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:09","level":"info","message":"Started job: auto_close_tickets","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:09","level":"info","message":"Started job: escalate_tickets","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:09","level":"info","message":"Started job: cleanup_notifications","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:09","level":"info","message":"All reminder jobs started successfully","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 16:31:13","level":"debug","message":"Executing query","service":"mundoctor-backend","environment":"development","meta":{"queryId":"7oejcouis","query":"SELECT user_id, license_number, dni FROM professionals WHERE license_number = $1 OR dni = $1 ORDER B...","paramCount":1}}
+{"timestamp":"2025-07-13 16:31:13","level":"debug","message":"New database client connected","service":"mundoctor-backend","environment":"development","meta":{"processID":72}}
+{"timestamp":"2025-07-13 16:31:13","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":72}}
+{"timestamp":"2025-07-13 16:31:13","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":72}}
+{"timestamp":"2025-07-13 16:31:13","level":"debug","message":"Query completed","service":"mundoctor-backend","environment":"development","meta":{"queryId":"7oejcouis","duration":36,"rows":1}}
+{"timestamp":"2025-07-13 16:31:13","level":"debug","message":"Executing query","service":"mundoctor-backend","environment":"development","meta":{"queryId":"quppqkjdv","query":"UPDATE professionals SET license_number = $1, dni = $2 WHERE user_id = $3","paramCount":3}}
+{"timestamp":"2025-07-13 16:31:13","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":72}}
+{"timestamp":"2025-07-13 16:31:13","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":72}}
+{"timestamp":"2025-07-13 14:31:24","level":"warn","message":"No SMTP configuration found. Using test mode.","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:24","level":"info","message":"Email service initialized","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:24","level":"warn","message":"Twilio credentials not configured. SMS service disabled.","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:24","level":"debug","message":"New database client connected","service":"mundoctor-backend","environment":"development","meta":{"processID":73}}
+{"timestamp":"2025-07-13 14:31:24","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":73}}
+{"timestamp":"2025-07-13 14:31:24","level":"info","message":"Database connected successfully","service":"mundoctor-backend","environment":"development","meta":{"version":"PostgreSQL 15.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit","poolStatus":{"totalCount":1,"idleCount":0,"waitingCount":0}}}
+{"timestamp":"2025-07-13 14:31:24","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":73}}
+{"timestamp":"2025-07-13 14:31:25","level":"info","message":"WebSocket server initialized","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:25","level":"info","message":"Starting reminder jobs...","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:25","level":"info","message":"Started job: appointment_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:25","level":"info","message":"Started job: subscription_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:25","level":"info","message":"Started job: validation_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:25","level":"info","message":"Started job: auto_close_tickets","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:25","level":"info","message":"Started job: escalate_tickets","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:25","level":"info","message":"Started job: cleanup_notifications","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:25","level":"info","message":"All reminder jobs started successfully","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:34","level":"warn","message":"No SMTP configuration found. Using test mode.","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:34","level":"info","message":"Email service initialized","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:34","level":"warn","message":"Twilio credentials not configured. SMS service disabled.","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:34","level":"debug","message":"New database client connected","service":"mundoctor-backend","environment":"development","meta":{"processID":76}}
+{"timestamp":"2025-07-13 14:31:34","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":76}}
+{"timestamp":"2025-07-13 14:31:34","level":"info","message":"Database connected successfully","service":"mundoctor-backend","environment":"development","meta":{"version":"PostgreSQL 15.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit","poolStatus":{"totalCount":1,"idleCount":0,"waitingCount":0}}}
+{"timestamp":"2025-07-13 14:31:34","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":76}}
+{"timestamp":"2025-07-13 14:31:34","level":"info","message":"WebSocket server initialized","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:34","level":"info","message":"Starting reminder jobs...","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:34","level":"info","message":"Started job: appointment_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:34","level":"info","message":"Started job: subscription_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:34","level":"info","message":"Started job: validation_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:34","level":"info","message":"Started job: auto_close_tickets","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:34","level":"info","message":"Started job: escalate_tickets","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:34","level":"info","message":"Started job: cleanup_notifications","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:34","level":"info","message":"All reminder jobs started successfully","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:45","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/profile","method":"GET","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:31:45","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zp6b59vKGpgqwdVQ4Q9vKKTsaC","meta":{"url":"/api/users/profile","ip":"172.18.0.1","duration":1}}
+{"timestamp":"2025-07-13 14:31:45","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":76}}
+{"timestamp":"2025-07-13 14:31:45","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":76}}
+{"timestamp":"2025-07-13 14:31:45","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":76}}
+{"timestamp":"2025-07-13 14:31:45","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":76}}
+{"timestamp":"2025-07-13 14:31:49","level":"warn","message":"No SMTP configuration found. Using test mode.","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:49","level":"info","message":"Email service initialized","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:49","level":"warn","message":"Twilio credentials not configured. SMS service disabled.","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:50","level":"debug","message":"New database client connected","service":"mundoctor-backend","environment":"development","meta":{"processID":79}}
+{"timestamp":"2025-07-13 14:31:50","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":79}}
+{"timestamp":"2025-07-13 14:31:50","level":"info","message":"Database connected successfully","service":"mundoctor-backend","environment":"development","meta":{"version":"PostgreSQL 15.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit","poolStatus":{"totalCount":1,"idleCount":0,"waitingCount":0}}}
+{"timestamp":"2025-07-13 14:31:50","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":79}}
+{"timestamp":"2025-07-13 14:31:50","level":"info","message":"WebSocket server initialized","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:50","level":"info","message":"Starting reminder jobs...","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:50","level":"info","message":"Started job: appointment_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:50","level":"info","message":"Started job: subscription_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:50","level":"info","message":"Started job: validation_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:50","level":"info","message":"Started job: auto_close_tickets","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:50","level":"info","message":"Started job: escalate_tickets","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:50","level":"info","message":"Started job: cleanup_notifications","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:31:50","level":"info","message":"All reminder jobs started successfully","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 16:31:54","level":"debug","message":"New database client connected","service":"mundoctor-backend","environment":"development","meta":{"processID":81}}
+{"timestamp":"2025-07-13 16:31:54","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":81}}
+{"timestamp":"2025-07-13 16:31:54","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":81}}
+{"timestamp":"2025-07-13 16:31:54","level":"debug","message":"Executing query","service":"mundoctor-backend","environment":"development","meta":{"queryId":"wofdt1vlt","query":"DELETE FROM professionals WHERE user_id LIKE $1","paramCount":1}}
+{"timestamp":"2025-07-13 16:31:54","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":81}}
+{"timestamp":"2025-07-13 16:31:54","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":81}}
+{"timestamp":"2025-07-13 14:32:01","level":"warn","message":"No SMTP configuration found. Using test mode.","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:32:01","level":"info","message":"Email service initialized","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:32:01","level":"warn","message":"Twilio credentials not configured. SMS service disabled.","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:32:01","level":"debug","message":"New database client connected","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:32:01","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:32:01","level":"info","message":"Database connected successfully","service":"mundoctor-backend","environment":"development","meta":{"version":"PostgreSQL 15.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit","poolStatus":{"totalCount":1,"idleCount":0,"waitingCount":0}}}
+{"timestamp":"2025-07-13 14:32:01","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:32:01","level":"info","message":"WebSocket server initialized","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:32:01","level":"info","message":"Starting reminder jobs...","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:32:01","level":"info","message":"Started job: appointment_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:32:01","level":"info","message":"Started job: subscription_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:32:01","level":"info","message":"Started job: validation_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:32:01","level":"info","message":"Started job: auto_close_tickets","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:32:01","level":"info","message":"Started job: escalate_tickets","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:32:01","level":"info","message":"Started job: cleanup_notifications","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:32:01","level":"info","message":"All reminder jobs started successfully","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-13 14:32:27","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/profile","method":"GET","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:32:27","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zp6b59vKGpgqwdVQ4Q9vKKTsaC","meta":{"url":"/api/users/profile","ip":"172.18.0.1","duration":3}}
+{"timestamp":"2025-07-13 14:32:27","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:32:27","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:32:27","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:32:27","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:32:28","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/select-role","method":"POST","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:32:28","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zp6b59vKGpgqwdVQ4Q9vKKTsaC","meta":{"url":"/api/users/select-role","ip":"172.18.0.1","duration":1}}
+{"timestamp":"2025-07-13 14:32:28","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:32:28","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:32:31","level":"debug","message":"Database pool status","service":"mundoctor-backend","environment":"development","meta":{"totalCount":1,"idleCount":1,"waitingCount":0}}
+{"timestamp":"2025-07-13 14:32:40","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/profile","method":"GET","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:32:40","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zp6b59vKGpgqwdVQ4Q9vKKTsaC","meta":{"url":"/api/users/profile","ip":"172.18.0.1","duration":0}}
+{"timestamp":"2025-07-13 14:32:40","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:32:40","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:32:40","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:32:40","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:32:56","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/profile","method":"GET","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:32:56","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zp6b59vKGpgqwdVQ4Q9vKKTsaC","meta":{"url":"/api/users/profile","ip":"172.18.0.1","duration":1}}
+{"timestamp":"2025-07-13 14:32:56","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:32:56","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:32:56","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:32:56","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:32:56","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/profile","method":"GET","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:32:56","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zp6b59vKGpgqwdVQ4Q9vKKTsaC","meta":{"url":"/api/users/profile","ip":"172.18.0.1","duration":1}}
+{"timestamp":"2025-07-13 14:32:56","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:32:56","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:32:56","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:32:56","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:32:58","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/profile","method":"GET","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:32:58","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zp6b59vKGpgqwdVQ4Q9vKKTsaC","meta":{"url":"/api/users/profile","ip":"172.18.0.1","duration":1}}
+{"timestamp":"2025-07-13 14:32:58","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:32:58","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:32:58","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:32:58","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:32:58","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/select-role","method":"POST","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:32:58","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zp6b59vKGpgqwdVQ4Q9vKKTsaC","meta":{"url":"/api/users/select-role","ip":"172.18.0.1","duration":1}}
+{"timestamp":"2025-07-13 14:32:58","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:32:58","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:32:58","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/uploads/professional-documents","method":"POST","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:32:58","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zp6b59vKGpgqwdVQ4Q9vKKTsaC","meta":{"url":"/api/uploads/professional-documents","ip":"172.18.0.1","duration":1}}
+{"timestamp":"2025-07-13 14:32:58","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/professional-validation","method":"POST","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:32:58","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zp6b59vKGpgqwdVQ4Q9vKKTsaC","meta":{"url":"/api/users/professional-validation","ip":"172.18.0.1","duration":1}}
+{"timestamp":"2025-07-13 14:32:58","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/professional-validation","method":"POST","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:32:58","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zp6b59vKGpgqwdVQ4Q9vKKTsaC","meta":{"url":"/api/users/professional-validation","ip":"172.18.0.1","duration":0}}
+{"timestamp":"2025-07-13 14:32:58","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:32:58","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:33:00","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/professional-validation","method":"POST","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:33:00","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zp6b59vKGpgqwdVQ4Q9vKKTsaC","meta":{"url":"/api/users/professional-validation","ip":"172.18.0.1","duration":2}}
+{"timestamp":"2025-07-13 14:33:00","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/professional-validation","method":"POST","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:33:00","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zp6b59vKGpgqwdVQ4Q9vKKTsaC","meta":{"url":"/api/users/professional-validation","ip":"172.18.0.1","duration":3}}
+{"timestamp":"2025-07-13 14:33:00","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:33:00","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:33:00","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/profile","method":"GET","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:33:00","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zp6b59vKGpgqwdVQ4Q9vKKTsaC","meta":{"url":"/api/users/profile","ip":"172.18.0.1","duration":1}}
+{"timestamp":"2025-07-13 14:33:00","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:33:00","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:33:00","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:33:00","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":82}}
+{"timestamp":"2025-07-13 14:33:01","level":"debug","message":"Database pool status","service":"mundoctor-backend","environment":"development","meta":{"totalCount":1,"idleCount":1,"waitingCount":0}}
+{"timestamp":"2025-07-13 14:33:47","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/profile","method":"GET","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:33:47","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zj1JcEd0fOiYJCMEKrEKPm43AO","meta":{"url":"/api/users/profile","ip":"172.18.0.1","duration":0}}
+{"timestamp":"2025-07-13 14:33:47","level":"debug","message":"New database client connected","service":"mundoctor-backend","environment":"development","meta":{"processID":86}}
+{"timestamp":"2025-07-13 14:33:47","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":86}}
+{"timestamp":"2025-07-13 14:33:47","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":86}}
+{"timestamp":"2025-07-13 14:33:47","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":86}}
+{"timestamp":"2025-07-13 14:33:47","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":86}}
+{"timestamp":"2025-07-13 14:33:49","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/dashboard-stats","method":"GET","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:33:49","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zj1JcEd0fOiYJCMEKrEKPm43AO","meta":{"url":"/api/users/dashboard-stats","ip":"172.18.0.1","duration":2}}
+{"timestamp":"2025-07-13 14:33:49","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":86}}
+{"timestamp":"2025-07-13 14:33:49","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":86}}
+{"timestamp":"2025-07-13 14:33:49","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/dashboard-stats","method":"GET","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:33:49","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zj1JcEd0fOiYJCMEKrEKPm43AO","meta":{"url":"/api/users/dashboard-stats","ip":"172.18.0.1","duration":1}}
+{"timestamp":"2025-07-13 14:33:49","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":86}}
+{"timestamp":"2025-07-13 14:33:49","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":86}}
+{"timestamp":"2025-07-13 14:33:53","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/profile","method":"GET","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:33:53","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zj1JcEd0fOiYJCMEKrEKPm43AO","meta":{"url":"/api/users/profile","ip":"172.18.0.1","duration":6}}
+{"timestamp":"2025-07-13 14:33:53","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":86}}
+{"timestamp":"2025-07-13 14:33:53","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":86}}
+{"timestamp":"2025-07-13 14:33:53","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":86}}
+{"timestamp":"2025-07-13 14:33:53","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":86}}
+{"timestamp":"2025-07-13 14:33:57","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/dashboard-stats","method":"GET","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:33:57","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zj1JcEd0fOiYJCMEKrEKPm43AO","meta":{"url":"/api/users/dashboard-stats","ip":"172.18.0.1","duration":0}}
+{"timestamp":"2025-07-13 14:33:57","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":86}}
+{"timestamp":"2025-07-13 14:33:57","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":86}}
+{"timestamp":"2025-07-13 14:33:57","level":"info","message":"Authentication attempt","service":"mundoctor-backend","environment":"development","meta":{"url":"/api/users/dashboard-stats","method":"GET","ip":"172.18.0.1","userAgent":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0","hasToken":true}}
+{"timestamp":"2025-07-13 14:33:57","level":"info","message":"Authentication successful","service":"mundoctor-backend","environment":"development","userId":"user_2zj1JcEd0fOiYJCMEKrEKPm43AO","meta":{"url":"/api/users/dashboard-stats","ip":"172.18.0.1","duration":0}}
+{"timestamp":"2025-07-13 14:33:57","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":86}}
+{"timestamp":"2025-07-13 14:33:57","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":86}}
+{"timestamp":"2025-07-13 14:34:01","level":"debug","message":"Database pool status","service":"mundoctor-backend","environment":"development","meta":{"totalCount":1,"idleCount":1,"waitingCount":0}}

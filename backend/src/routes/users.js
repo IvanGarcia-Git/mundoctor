@@ -675,13 +675,19 @@ router.post('/select-role', async (req, res) => {
         const { license_number, dni, specialty } = profileData;
         
         // Create professional profile (without specialty initially - will be set during profile completion)
+        // Use unique temporary values to avoid constraint violations
+        // Use timestamp to ensure uniqueness while keeping within field length limits
+        const uniqueId = Date.now();
+        const tempLicenseNumber = license_number || `PEND_${uniqueId}`;
+        const tempDni = dni || `PEND_${uniqueId}`;
+        
         await client.query(`
           INSERT INTO professionals (user_id, license_number, dni, profile_completed, verified)
           VALUES ($1, $2, $3, FALSE, FALSE)
           ON CONFLICT (user_id) DO UPDATE SET
             license_number = EXCLUDED.license_number,
             dni = EXCLUDED.dni
-        `, [userId, license_number || 'PENDING', dni || 'PENDING']);
+        `, [userId, tempLicenseNumber, tempDni]);
       }
 
       return user;
