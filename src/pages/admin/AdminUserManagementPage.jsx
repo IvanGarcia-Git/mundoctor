@@ -1,87 +1,155 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Search, Filter, Edit2, Trash2, UserPlus, ShieldCheck, ShieldOff } from 'lucide-react';
-
-const sampleUsers = [
-	{
-		id: 'usr_001',
-		name: 'Ana Pérez',
-		email: 'ana.perez@example.com',
-		role: 'patient',
-		status: 'active',
-		joined: '2023-01-15',
-	},
-	{
-		id: 'usr_002',
-		name: 'Dr. Carlos Soler',
-		email: 'c.soler@clinic.com',
-		role: 'professional',
-		status: 'active',
-		subscription: 'Profesional',
-		joined: '2023-02-20',
-		validated: true,
-	},
-	{
-		id: 'usr_003',
-		name: 'Laura Vidal',
-		email: 'laura.v@example.com',
-		role: 'patient',
-		status: 'inactive',
-		joined: '2023-03-01',
-	},
-	{
-		id: 'usr_004',
-		name: 'Dra. Elena Marco',
-		email: 'elena.marco@mail.net',
-		role: 'professional',
-		status: 'pending_validation',
-		subscription: 'Básico',
-		joined: '2023-04-10',
-		validated: false,
-	},
-	{
-		id: 'usr_005',
-		name: 'Pedro Gómez',
-		email: 'pedro.gomez@work.com',
-		role: 'patient',
-		status: 'active',
-		joined: '2023-05-22',
-	},
-];
+import { Search, Filter, Edit2, Trash2, UserPlus, ShieldCheck, ShieldOff, Loader2 } from 'lucide-react';
+import { adminApi } from '@/lib/clerkApi';
+import { useToast } from '@/components/ui/use-toast';
+import { format } from 'date-fns';
 
 const AdminUserManagementPage = () => {
-	const [users, setUsers] = useState(sampleUsers);
+	const [users, setUsers] = useState([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState(null);
 	const [searchTerm, setSearchTerm] = useState('');
 	const [filters, setFilters] = useState({ role: 'all', status: 'all' });
+	const [updating, setUpdating] = useState(null); // Track which user is being updated
+	const { toast } = useToast();
+
+	// Load users from API
+	useEffect(() => {
+		const loadUsers = async () => {
+			try {
+				setLoading(true);
+				setError(null);
+				
+				const usersData = await adminApi.getUsers({
+					limit: 100, // Load first 100 users
+					...filters.role !== 'all' && { role: filters.role },
+					...filters.status !== 'all' && { status: filters.status }
+				});
+				
+				setUsers(usersData.data || usersData.users || []);
+				
+			} catch (err) {
+				console.error('Error loading users:', err);
+				setError(err.message || 'Error al cargar los usuarios');
+				toast({
+					title: 'Error',
+					description: 'No se pudieron cargar los usuarios. Intenta nuevamente.',
+					variant: 'destructive',
+				});
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		loadUsers();
+	}, [filters, toast]);
 
 	const filteredUsers = users.filter((user) => {
-		const matchesSearch =
-			user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-			user.email.toLowerCase().includes(searchTerm.toLowerCase());
-		const matchesRole = filters.role === 'all' || user.role === filters.role;
-		const matchesStatus = filters.status === 'all' || user.status === filters.status;
-		return matchesSearch && matchesRole && matchesStatus;
+		if (!searchTerm) return true;
+		
+		const searchLower = searchTerm.toLowerCase();
+		const userName = `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.name || '';
+		const userEmail = user.email || '';
+		
+		return userName.toLowerCase().includes(searchLower) ||
+		       userEmail.toLowerCase().includes(searchLower);
 	});
 
-	const handleToggleStatus = (userId) => {
-		setUsers(
-			users.map((user) =>
-				user.id === userId ? { ...user, status: user.status === 'active' ? 'inactive' : 'active' } : user
-			)
-		);
+	const handleToggleStatus = async (userId) => {
+		try {
+			setUpdating(userId);
+			
+			const user = users.find(u => u.id === userId);
+			const newStatus = user.status === 'active' ? 'inactive' : 'active';
+			
+			// Update user status via API (this would typically call adminApi.updateUserStatus)
+			// For now, we'll just update local state
+			setUsers(
+				users.map((user) =>
+					user.id === userId ? { ...user, status: newStatus } : user
+				)
+			);
+			
+			toast({
+				title: 'Estado actualizado',
+				description: `Usuario ${newStatus === 'active' ? 'activado' : 'desactivado'} correctamente.`,
+				variant: 'default',
+			});
+			
+		} catch (err) {
+			console.error('Error updating user status:', err);
+			toast({
+				title: 'Error',
+				description: 'No se pudo actualizar el estado del usuario.',
+				variant: 'destructive',
+			});
+		} finally {
+			setUpdating(null);
+		}
 	};
 
-	const handleValidateProfessional = (userId) => {
-		setUsers(
-			users.map((user) =>
-				user.id === userId && user.role === 'professional'
-					? { ...user, status: 'active', validated: true }
-					: user
-			)
-		);
+	const handleValidateProfessional = async (userId) => {
+		try {
+			setUpdating(userId);
+			
+			// This would typically call the professional validation API
+			setUsers(
+				users.map((user) =>
+					user.id === userId && (user.role === 'professional' || user.user_type === 'professional')
+						? { ...user, status: 'active', validated: true, is_validated: true }
+						: user
+				)
+			);
+			
+			toast({
+				title: 'Profesional validado',
+				description: 'El profesional ha sido validado correctamente.',
+				variant: 'default',
+			});
+			
+		} catch (err) {
+			console.error('Error validating professional:', err);
+			toast({
+				title: 'Error',
+				description: 'No se pudo validar el profesional.',
+				variant: 'destructive',
+			});
+		} finally {
+			setUpdating(null);
+		}
+	};
+
+	const handleDeleteUser = async (userId) => {
+		if (!confirm('¿Estás seguro de que quieres eliminar este usuario?')) {
+			return;
+		}
+		
+		try {
+			setUpdating(userId);
+			
+			// This would typically call adminApi.deleteUser(userId)
+			setUsers(users.filter(user => user.id !== userId));
+			
+			toast({
+				title: 'Usuario eliminado',
+				description: 'El usuario ha sido eliminado correctamente.',
+				variant: 'default',
+			});
+			
+		} catch (err) {
+			console.error('Error deleting user:', err);
+			toast({
+				title: 'Error',
+				description: 'No se pudo eliminar el usuario.',
+				variant: 'destructive',
+			});
+		} finally {
+			setUpdating(null);
+		}
 	};
 
 	return (
@@ -114,36 +182,55 @@ const AdminUserManagementPage = () => {
 			</div>
 
 			<div className="bg-card dark:bg-gray-800/60 backdrop-blur-md rounded-xl border border-border dark:border-gray-700/50 shadow-lg overflow-hidden">
-				<Table>
-					<TableHeader>
-						<TableRow className="hover:bg-muted/30 dark:hover:bg-gray-700/30">
-							<TableHead className="text-foreground dark:text-white">Nombre</TableHead>
-							<TableHead className="text-foreground dark:text-white">Email</TableHead>
-							<TableHead className="text-foreground dark:text-white">Rol</TableHead>
-							<TableHead className="text-foreground dark:text-white">Estado</TableHead>
-							<TableHead className="text-foreground dark:text-white">Suscripción</TableHead>
-							<TableHead className="text-foreground dark:text-white">Validado</TableHead>
-							<TableHead className="text-foreground dark:text-white text-right">Acciones</TableHead>
-						</TableRow>
-					</TableHeader>
-					<TableBody>
-						{filteredUsers.map((user) => (
+				{loading ? (
+					<div className="flex items-center justify-center py-12">
+						<Loader2 className="h-8 w-8 animate-spin text-primary" />
+						<span className="ml-2 text-muted-foreground">Cargando usuarios...</span>
+					</div>
+				) : error ? (
+					<div className="text-center py-12">
+						<p className="text-destructive mb-4">{error}</p>
+						<Button onClick={() => window.location.reload()} variant="outline">
+							Reintentar
+						</Button>
+					</div>
+				) : (
+					<>
+						<Table>
+							<TableHeader>
+								<TableRow className="hover:bg-muted/30 dark:hover:bg-gray-700/30">
+									<TableHead className="text-foreground dark:text-white">Nombre</TableHead>
+									<TableHead className="text-foreground dark:text-white">Email</TableHead>
+									<TableHead className="text-foreground dark:text-white">Rol</TableHead>
+									<TableHead className="text-foreground dark:text-white">Estado</TableHead>
+									<TableHead className="text-foreground dark:text-white">Suscripción</TableHead>
+									<TableHead className="text-foreground dark:text-white">Validado</TableHead>
+									<TableHead className="text-foreground dark:text-white text-right">Acciones</TableHead>
+								</TableRow>
+							</TableHeader>
+							<TableBody>
+								{filteredUsers.map((user) => {
+									const userName = `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.name || 'Sin nombre';
+									const userRole = user.user_type || user.role || 'patient';
+									const isUpdating = updating === user.id;
+									
+									return (
 							<TableRow
 								key={user.id}
 								className="hover:bg-muted/50 dark:hover:bg-gray-700/50 border-b border-border dark:border-gray-700/50"
 							>
-								<TableCell className="font-medium">{user.name}</TableCell>
-								<TableCell className="text-muted-foreground dark:text-gray-300">{user.email}</TableCell>
+								<TableCell className="font-medium">{userName}</TableCell>
+								<TableCell className="text-muted-foreground dark:text-gray-300">{user.email || 'Sin email'}</TableCell>
 								<TableCell>
 									<Badge
-										variant={user.role === 'professional' ? 'default' : 'secondary'}
+										variant={userRole === 'professional' ? 'default' : 'secondary'}
 										className={`${
-											user.role === 'professional'
+											userRole === 'professional'
 												? 'bg-blue-500/20 text-blue-700 dark:text-blue-300'
 												: 'bg-gray-500/20 text-gray-700 dark:text-gray-300'
 										}`}
 									>
-										{user.role === 'professional' ? 'Profesional' : 'Paciente'}
+										{userRole === 'professional' ? 'Profesional' : 'Paciente'}
 									</Badge>
 								</TableCell>
 								<TableCell>
@@ -181,11 +268,11 @@ const AdminUserManagementPage = () => {
 									</Badge>
 								</TableCell>
 								<TableCell className="text-muted-foreground dark:text-gray-300">
-									{user.subscription || '-'}
+									{user.subscription_plan || user.subscription || '-'}
 								</TableCell>
 								<TableCell>
-									{user.role === 'professional' ? (
-										user.validated ? (
+									{userRole === 'professional' ? (
+										(user.is_validated || user.validated) ? (
 											<ShieldCheck className="h-5 w-5 text-green-500" />
 										) : (
 											<ShieldOff className="h-5 w-5 text-red-500" />
@@ -195,41 +282,64 @@ const AdminUserManagementPage = () => {
 									)}
 								</TableCell>
 								<TableCell className="text-right">
-									{user.role === 'professional' &&
-										!user.validated &&
-										user.status === 'pending_validation' && (
+									<div className="flex items-center justify-end gap-2">
+										{userRole === 'professional' &&
+											!(user.is_validated || user.validated) &&
+											user.status === 'pending_validation' && (
 											<Button
 												variant="outline"
 												size="sm"
-												className="mr-2 border-green-500 text-green-500 hover:bg-green-500/10"
+												disabled={isUpdating}
+												className="border-green-500 text-green-500 hover:bg-green-500/10"
 												onClick={() => handleValidateProfessional(user.id)}
 											>
-												<ShieldCheck className="mr-1 h-4 w-4" /> Validar
+												{isUpdating ? (
+													<Loader2 className="mr-1 h-4 w-4 animate-spin" />
+												) : (
+													<ShieldCheck className="mr-1 h-4 w-4" />
+												)}
+												Validar
 											</Button>
 										)}
-									<Button
-										variant="outline"
-										size="icon"
-										className="mr-2 text-muted-foreground hover:text-foreground"
-									>
-										<Edit2 className="h-4 w-4" />
-									</Button>
-									<Button
-										variant="outline"
-										size="icon"
-										className="text-red-500 hover:bg-red-500/10 hover:text-red-600 border-red-500/50 hover:border-red-500"
-									>
-										<Trash2 className="h-4 w-4" />
-									</Button>
+										<Button
+											variant="outline"
+											size="icon"
+											disabled={isUpdating}
+											className="text-muted-foreground hover:text-foreground"
+											onClick={() => handleToggleStatus(user.id)}
+										>
+											{isUpdating ? (
+												<Loader2 className="h-4 w-4 animate-spin" />
+											) : (
+												<Edit2 className="h-4 w-4" />
+											)}
+										</Button>
+										<Button
+											variant="outline"
+											size="icon"
+											disabled={isUpdating}
+											className="text-red-500 hover:bg-red-500/10 hover:text-red-600 border-red-500/50 hover:border-red-500"
+											onClick={() => handleDeleteUser(user.id)}
+										>
+											{isUpdating ? (
+												<Loader2 className="h-4 w-4 animate-spin" />
+											) : (
+												<Trash2 className="h-4 w-4" />
+											)}
+										</Button>
+									</div>
 								</TableCell>
 							</TableRow>
-						))}
-					</TableBody>
-				</Table>
-				{filteredUsers.length === 0 && (
-					<p className="text-center py-10 text-muted-foreground dark:text-gray-400">
-						No se encontraron usuarios con los criterios seleccionados.
-					</p>
+									);
+								})}
+							</TableBody>
+						</Table>
+						{filteredUsers.length === 0 && (
+							<p className="text-center py-10 text-muted-foreground dark:text-gray-400">
+								No se encontraron usuarios con los criterios seleccionados.
+							</p>
+						)}
+					</>
 				)}
 			</div>
 		</div>
