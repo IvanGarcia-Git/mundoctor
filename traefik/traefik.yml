@@ -1,0 +1,46 @@
+api:
+  dashboard: true
+  debug: true
+
+entryPoints:
+  web:
+    address: ":80"
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+          permanent: true
+
+  websecure:
+    address: ":443"
+
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+    watch: true
+  file:
+    directory: /etc/traefik/dynamic
+    watch: true
+
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      tlsChallenge: {}
+      email: admin@mundoctor.todostore.es
+      storage: /etc/traefik/acme/acme.json
+      # Use staging for testing
+      # caServer: https://acme-staging-v02.api.letsencrypt.org/directory
+
+log:
+  level: INFO
+
+accessLog: {}
+
+# Global redirect to https
+# http:
+#   redirections:
+#     entrypoint:
+#       to: websecure
+#       scheme: https

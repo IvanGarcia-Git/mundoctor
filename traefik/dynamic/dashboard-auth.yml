@@ -1,0 +1,7 @@
+http:
+  middlewares:
+    dashboard-auth:
+      basicAuth:
+        users:
+          # admin:admin (use htpasswd to generate)
+          - "admin:$apr1$H6uskkkW$IgXLP6ewTrSuBkTrqE8wj/"
