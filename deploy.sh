@@ -42,20 +42,26 @@ chmod 600 letsencrypt 2>/dev/null || true
 chmod 755 traefik-logs
 chmod 755 backend/uploads
 
-# Create external network if it doesn't exist
-echo -e "${YELLOW}🌐 Creating external network 'web'...${NC}"
-docker network create web 2>/dev/null || echo "Network 'web' already exists"
-
-# Check if .env.prod exists
-if [ ! -f .env.prod ]; then
-    echo -e "${RED}❌ .env.prod file not found. Please create it from .env.prod.example${NC}"
-    exit 1
-fi
+# Create network if it doesn't exist
+echo -e "${YELLOW}🌐 Creating network 'app-network'...${NC}"
+docker network create app-network 2>/dev/null || echo "Network 'app-network' already exists"
 
 # Load environment variables
-set -a
-source .env.prod
-set +a
+if [ -f .env.prod ]; then
+    set -a
+    source .env.prod
+    set +a
+    echo -e "${GREEN}✅ Variables de entorno cargadas desde .env.prod${NC}"
+else
+    echo -e "${YELLOW}⚠️ Archivo .env.prod no encontrado, usando valores por defecto${NC}"
+    export DATABASE_URL="postgresql://postgres:postgres@postgres:5432/mundoctor"
+    export POSTGRES_USER="postgres"
+    export POSTGRES_PASSWORD="postgres"
+    export POSTGRES_DB="mundoctor"
+    export REDIS_PASSWORD="defaultredispassword"
+    export VITE_CLERK_PUBLISHABLE_KEY="pk_test_c2FjcmVkLXBhcnJvdC03Mi5jbGVyay5hY2NvdW50cy5kZXYk"
+    export CLERK_SECRET_KEY="sk_test_NxM4E97lcL0aSnq0ffLQ7zZjf36215bFhvPYN7OkHG"
+fi
 
 # Validate required environment variables
 required_vars=(
@@ -63,14 +69,15 @@ required_vars=(
     "POSTGRES_USER"
     "POSTGRES_PASSWORD"
     "POSTGRES_DB"
-    "CLERK_SECRET_KEY"
-    "VITE_CLERK_PUBLISHABLE_KEY"
 )
 
+echo -e "${YELLOW}🔍 Validando variables de entorno...${NC}"
 for var in "${required_vars[@]}"; do
     if [ -z "${!var}" ]; then
-        echo -e "${RED}❌ Required environment variable $var is not set${NC}"
+        echo -e "${RED}❌ Variable de entorno requerida $var no está configurada${NC}"
         exit 1
+    else
+        echo -e "${GREEN}✅ $var configurada${NC}"
     fi
 done
 

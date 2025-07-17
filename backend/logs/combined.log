@@ -4545,3 +4545,20 @@
 {"timestamp":"2025-07-17 17:59:18","level":"info","message":"Started job: escalate_tickets","service":"mundoctor-backend","environment":"development"}
 {"timestamp":"2025-07-17 17:59:18","level":"info","message":"Started job: cleanup_notifications","service":"mundoctor-backend","environment":"development"}
 {"timestamp":"2025-07-17 17:59:18","level":"info","message":"All reminder jobs started successfully","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-17 18:05:42","level":"warn","message":"No SMTP configuration found. Using test mode.","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-17 18:05:42","level":"info","message":"Email service initialized","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-17 18:05:42","level":"warn","message":"Twilio credentials not configured. SMS service disabled.","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-17 18:05:42","level":"debug","message":"New database client connected","service":"mundoctor-backend","environment":"development","meta":{"processID":45}}
+{"timestamp":"2025-07-17 18:05:42","level":"debug","message":"Client acquired from pool","service":"mundoctor-backend","environment":"development","meta":{"processID":45}}
+{"timestamp":"2025-07-17 18:05:42","level":"info","message":"Database connected successfully","service":"mundoctor-backend","environment":"development","meta":{"version":"PostgreSQL 15.13 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit","poolStatus":{"totalCount":1,"idleCount":0,"waitingCount":0}}}
+{"timestamp":"2025-07-17 18:05:42","level":"debug","message":"Client released to pool","service":"mundoctor-backend","environment":"development","meta":{"processID":45}}
+{"timestamp":"2025-07-17 18:05:42","level":"info","message":"WebSocket server initialized","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-17 18:05:42","level":"info","message":"Starting reminder jobs...","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-17 18:05:42","level":"info","message":"Started job: appointment_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-17 18:05:42","level":"info","message":"Started job: subscription_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-17 18:05:42","level":"info","message":"Started job: validation_reminders","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-17 18:05:42","level":"info","message":"Started job: auto_close_tickets","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-17 18:05:42","level":"info","message":"Started job: escalate_tickets","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-17 18:05:42","level":"info","message":"Started job: cleanup_notifications","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-17 18:05:42","level":"info","message":"All reminder jobs started successfully","service":"mundoctor-backend","environment":"development"}
+{"timestamp":"2025-07-17 18:06:11","level":"debug","message":"Database pool status","service":"mundoctor-backend","environment":"development","meta":{"totalCount":1,"idleCount":1,"waitingCount":0}}

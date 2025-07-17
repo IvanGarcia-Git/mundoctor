@@ -13,7 +13,7 @@ services:
       # Enable Docker provider
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
-      - "--providers.docker.network=web"
+      - "--providers.docker.network=app-network"
       # Entry points
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
@@ -49,7 +49,7 @@ services:
       # Basic Auth for dashboard (user: admin, pass: admin123)
       - "traefik.http.middlewares.auth.basicauth.users=admin:$$apr1$$H6uskkkW$$IgXLP6ewTrSuBkTrqE8wj/"
     networks:
-      - web
+      - app-network
 
   # Frontend service
   frontend:
@@ -60,7 +60,7 @@ services:
     restart: unless-stopped
     environment:
       - NODE_ENV=production
-      - VITE_CLERK_PUBLISHABLE_KEY=${VITE_CLERK_PUBLISHABLE_KEY}
+      - VITE_CLERK_PUBLISHABLE_KEY=${VITE_CLERK_PUBLISHABLE_KEY:-pk_test_c2FjcmVkLXBhcnJvdC03Mi5jbGVyay5hY2NvdW50cy5kZXYk}
       - VITE_API_URL=https://api.pre-mundoctor.garaywebs.com
     labels:
       - "traefik.enable=true"
@@ -81,7 +81,6 @@ services:
       - "traefik.http.middlewares.secure-headers.headers.browserxssfilter=true"
       - "traefik.http.middlewares.secure-headers.headers.referrerpolicy=strict-origin-when-cross-origin"
     networks:
-      - web
       - app-network
 
   # Backend service
@@ -93,8 +92,8 @@ services:
     restart: unless-stopped
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=${DATABASE_URL}
-      - CLERK_SECRET_KEY=${CLERK_SECRET_KEY}
+      - DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@postgres:5432/mundoctor}
+      - CLERK_SECRET_KEY=${CLERK_SECRET_KEY:-sk_test_NxM4E97lcL0aSnq0ffLQ7zZjf36215bFhvPYN7OkHG}
       - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
       - EMAIL_HOST=${EMAIL_HOST}
       - EMAIL_PORT=${EMAIL_PORT}
@@ -117,7 +116,6 @@ services:
       - "traefik.http.middlewares.cors-headers.headers.accesscontrolallowheaders=Origin,Content-Type,Authorization,X-Requested-With"
       - "traefik.http.middlewares.cors-headers.headers.accesscontrolmaxage=86400"
     networks:
-      - web
       - app-network
     depends_on:
       - postgres
@@ -128,9 +126,9 @@ services:
     container_name: mundoctor-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-mundoctor}
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./backend/migrations-consolidated:/docker-entrypoint-initdb.d
@@ -145,7 +143,7 @@ services:
     image: redis:7-alpine
     container_name: mundoctor-redis
     restart: unless-stopped
-    command: redis-server --requirepass ${REDIS_PASSWORD}
+    command: redis-server --requirepass ${REDIS_PASSWORD:-defaultredispassword}
     volumes:
       - redis_data:/data
     networks:
@@ -166,7 +164,6 @@ services:
       - "traefik.http.routers.adminer.middlewares=db-auth"
       - "traefik.http.middlewares.db-auth.basicauth.users=admin:$$apr1$$H6uskkkW$$IgXLP6ewTrSuBkTrqE8wj/"
     networks:
-      - web
       - app-network
     depends_on:
       - postgres
@@ -176,9 +173,6 @@ volumes:
   redis_data:
 
 networks:
-  web:
-    name: web
-    external: true
   app-network:
     name: app-network
     driver: bridge
