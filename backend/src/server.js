@@ -5,8 +5,13 @@ import compression from 'compression';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
+import { createServer } from 'http';
 import { clerkMiddleware } from '@clerk/express';
 import { testConnection } from './config/database.js';
+
+// Import WebSocket and notification services
+import webSocketManager from './utils/websocket.js';
+import reminderJobsService from './jobs/reminderJobs.js';
 
 // Import routes
 import authRoutes from './routes/auth.js';
@@ -14,15 +19,25 @@ import webhookRoutes from './routes/webhooks.js';
 import userRoutes from './routes/users.js';
 import userValidationRoutes from './routes/userValidation.js';
 import uploadRoutes from './routes/uploads.js';
-// import professionalRoutes from './routes/professionals.js';
-// import appointmentRoutes from './routes/appointments.js';
-// import ratingRoutes from './routes/ratings.js';
-// import adminRoutes from './routes/admin.js';
+import appointmentRoutes from './routes/appointments.js';
+import scheduleRoutes from './routes/schedules.js';
+import serviceRoutes from './routes/services.js';
+import validationRoutes from './routes/validation.js';
+import patientRoutes from './routes/patients.js';
+import reviewRoutes from './routes/reviews.js';
+import adminRoutes from './routes/admin.js';
+import ticketRoutes from './routes/tickets.js';
+import notificationRoutes from './routes/notifications.js';
+import paymentRoutes from './routes/payments.js';
+import professionalRoutes from './routes/professionals.js';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 8000;
+
+// Create HTTP server for WebSocket integration
+const server = createServer(app);
 
 // Security middleware
 app.use(helmet({
@@ -80,7 +95,7 @@ const corsOptions = {
     'svix-timestamp', 
     'svix-signature'
   ],
-  exposedHeaders: ['Content-Length'],
+  exposedHeaders: ['Content-Length', 'Authorization'],
   preflightContinue: false,
   optionsSuccessStatus: 200 // Some legacy browsers (IE11, various SmartTVs) choke on 204
 };
@@ -195,10 +210,14 @@ app.get('/api', (req, res) => {
       auth: '/api/auth',
       webhooks: '/api/webhooks',
       users: '/api/users',
+      patients: '/api/patients',
+      reviews: '/api/reviews',
+      admin: '/api/admin',
+      tickets: '/api/tickets',
+      notifications: '/api/notifications',
+      payments: '/api/payments',
       professionals: '/api/professionals',
-      appointments: '/api/appointments',
-      ratings: '/api/ratings',
-      admin: '/api/admin'
+      appointments: '/api/appointments'
     }
   });
 });
@@ -209,10 +228,17 @@ app.use('/api/webhooks', webhookRoutes);
 app.use('/api/users', clerkAuth, userRoutes);
 app.use('/api/users', clerkAuth, userValidationRoutes);
 app.use('/api/uploads', clerkAuth, uploadRoutes);
-// app.use('/api/professionals', professionalRoutes);
-// app.use('/api/appointments', appointmentRoutes);
-// app.use('/api/ratings', ratingRoutes);
-// app.use('/api/admin', adminRoutes);
+app.use('/api/appointments', clerkAuth, appointmentRoutes);
+app.use('/api/schedules', clerkAuth, scheduleRoutes);
+app.use('/api/services', clerkAuth, serviceRoutes);
+app.use('/api/validation', clerkAuth, validationRoutes);
+app.use('/api/patients', clerkAuth, patientRoutes);
+app.use('/api/reviews', clerkAuth, reviewRoutes);
+app.use('/api/admin', clerkAuth, adminRoutes);
+app.use('/api/tickets', clerkAuth, ticketRoutes);
+app.use('/api/notifications', clerkAuth, notificationRoutes);
+app.use('/api/payments', paymentRoutes); // Webhooks need to be processed without auth
+app.use('/api/professionals', professionalRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -268,12 +294,22 @@ const startServer = async () => {
       process.exit(1);
     }
 
-    app.listen(PORT, '0.0.0.0', () => {
+    // Initialize WebSocket server
+    webSocketManager.initialize(server);
+
+    // Start reminder jobs
+    if (process.env.NODE_ENV !== 'test') {
+      reminderJobsService.start();
+    }
+
+    server.listen(PORT, '0.0.0.0', () => {
       console.log(`
 🚀 Mundoctor API Server running on port ${PORT}
 📊 Environment: ${process.env.NODE_ENV || 'development'}
 🔗 Health check: http://localhost:${PORT}/health
 📖 API docs: http://localhost:${PORT}/api
+🔔 WebSocket server: Active
+⏰ Reminder jobs: ${process.env.NODE_ENV !== 'test' ? 'Active' : 'Disabled (test mode)'}
       `);
     });
   } catch (error) {
@@ -285,11 +321,13 @@ const startServer = async () => {
 // Graceful shutdown
 process.on('SIGTERM', () => {
   console.log('SIGTERM received. Shutting down gracefully...');
+  reminderJobsService.stop();
   process.exit(0);
 });
 
 process.on('SIGINT', () => {
   console.log('SIGINT received. Shutting down gracefully...');
+  reminderJobsService.stop();
   process.exit(0);
 });
 

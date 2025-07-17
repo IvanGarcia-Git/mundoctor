@@ -43,11 +43,30 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
+// File filter for avatar images only
+const avatarFileFilter = (req, file, cb) => {
+  const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+  
+  if (allowedTypes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error('Solo se permiten imágenes JPG o PNG para el avatar'), false);
+  }
+};
+
 const upload = multer({
   storage,
   fileFilter,
   limits: {
     fileSize: 5 * 1024 * 1024, // 5MB limit
+  }
+});
+
+const avatarUpload = multer({
+  storage,
+  fileFilter: avatarFileFilter,
+  limits: {
+    fileSize: 2 * 1024 * 1024, // 2MB limit for avatars
   }
 });
 
@@ -114,6 +133,61 @@ router.post('/professional-documents',
       res.status(500).json({
         success: false,
         message: error.message || 'Error uploading files'
+      });
+    }
+  }
+);
+
+/**
+ * POST /api/uploads/avatar
+ * Upload user avatar image
+ */
+router.post('/avatar', 
+  avatarUpload.single('avatar'),
+  async (req, res) => {
+    try {
+      const { userId } = req.auth;
+      
+      if (!req.file) {
+        return res.status(400).json({
+          success: false,
+          message: 'No avatar image uploaded'
+        });
+      }
+
+      const file = req.file;
+      const fileUrl = `/api/uploads/${file.filename}`;
+      
+      // Update user's avatar_url in database
+      const { query } = await import('../config/database.js');
+      
+      await query(
+        'UPDATE users SET avatar_url = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2',
+        [fileUrl, userId]
+      );
+
+      res.json({
+        success: true,
+        data: {
+          originalName: file.originalname,
+          filename: file.filename,
+          url: fileUrl,
+          size: file.size,
+          mimetype: file.mimetype
+        },
+        message: 'Avatar uploaded successfully'
+      });
+    } catch (error) {
+      console.error('Error uploading avatar:', error);
+      
+      // Clean up uploaded file if there was an error
+      if (req.file && fs.existsSync(req.file.path)) {
+        fs.unlinkSync(req.file.path);
+      }
+      
+      res.status(500).json({
+        success: false,
+        message: error.message || 'Error uploading avatar'
       });
     }
   }

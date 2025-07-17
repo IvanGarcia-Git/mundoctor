@@ -1,37 +1,56 @@
 import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/clerk-react';
-
-// Simulamos una base de datos local para demostración
-// En producción, esto vendría del backend
-let professionalDatabase = [];
+import clerkApi from '@/lib/clerkApi';
 
 export const useProfessionalValidations = () => {
   const [professionals, setProfessionals] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useUser();
 
-  // Simular carga de datos desde el backend
-  useEffect(() => {
-    const loadProfessionals = async () => {
-      setLoading(true);
-      try {
-        // En una implementación real, esto sería una llamada al backend
-        // que obtendría todos los usuarios con rol 'professional'
-        
-        // Por ahora usamos datos locales simulados
-        const storedData = localStorage.getItem('mundoctor_professionals');
-        if (storedData) {
-          professionalDatabase = JSON.parse(storedData);
+  // Cargar datos desde el backend
+  const loadProfessionals = async () => {
+    setLoading(true);
+    try {
+      // Hacer llamada al backend para obtener las validaciones
+      const response = await clerkApi.get('/validation/requests');
+      
+      // Transformar la respuesta para mantener compatibilidad con el formato existente
+      const transformedProfessionals = response.requests?.map(request => ({
+        id: request.id,
+        clerkId: request.user_id,
+        email: request.professional_email,
+        fullName: request.professional_name || 'Profesional',
+        professionalName: request.professional_name,
+        collegiateNumber: request.college_number || 'N/A',
+        dni: request.dni || 'N/A',
+        status: request.validation_status,
+        notes: request.validation_notes,
+        submittedAt: request.created_at,
+        verifiedAt: request.reviewed_at,
+        verifiedBy: request.reviewed_by,
+        documentsSubmitted: {
+          dniImage: request.dni_document_url || 'dni_document.pdf',
+          universityDegree: request.degree_document_url || 'degree_document.pdf',
+          collegiationCertificate: request.certification_document_url || 'certificate_document.pdf'
         }
-        
-        setProfessionals(professionalDatabase);
-      } catch (error) {
-        console.error('Error loading professionals:', error);
-      } finally {
-        setLoading(false);
+      })) || [];
+      
+      setProfessionals(transformedProfessionals);
+    } catch (error) {
+      console.error('Error loading professionals from backend:', error);
+      
+      // Fallback a localStorage para compatibilidad durante la transición
+      const storedData = localStorage.getItem('mundoctor_professionals');
+      if (storedData) {
+        const localProfessionals = JSON.parse(storedData);
+        setProfessionals(localProfessionals);
       }
-    };
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     loadProfessionals();
   }, []);
 
@@ -54,30 +73,50 @@ export const useProfessionalValidations = () => {
   // Función para actualizar el estado de verificación
   const updateVerificationStatus = async (professionalId, status, notes = '') => {
     try {
-      const updatedProfessionals = professionalDatabase.map(prof => {
-        if (prof.id === professionalId) {
-          return {
-            ...prof,
-            status,
-            notes,
-            verifiedAt: status === 'approved' ? new Date().toISOString() : null,
-            verifiedBy: user?.id || 'admin'
-          };
-        }
-        return prof;
-      });
+      // Hacer llamada al backend para actualizar el estado
+      const endpoint = status === 'approved' 
+        ? `/validation/${professionalId}/approve`
+        : `/validation/${professionalId}/reject`;
+      
+      const payload = {
+        reviewNotes: notes
+      };
 
-      professionalDatabase = updatedProfessionals;
-      localStorage.setItem('mundoctor_professionals', JSON.stringify(professionalDatabase));
-      setProfessionals([...professionalDatabase]);
-
-      // En una implementación real, también actualizarías el metadata del usuario en Clerk
-      // Para demostración, no lo haremos aquí ya que requeriría backend
+      const response = await clerkApi.post(endpoint, payload);
+      
+      // Recargar la lista después de la actualización exitosa
+      await loadProfessionals();
       
       return true;
     } catch (error) {
-      console.error('Error updating verification status:', error);
-      return false;
+      console.error('Error updating verification status in backend:', error);
+      
+      // Fallback a localStorage para compatibilidad durante transición
+      try {
+        const storedData = localStorage.getItem('mundoctor_professionals');
+        let professionalDatabase = storedData ? JSON.parse(storedData) : [];
+        
+        const updatedProfessionals = professionalDatabase.map(prof => {
+          if (prof.id === professionalId) {
+            return {
+              ...prof,
+              status,
+              notes,
+              verifiedAt: status === 'approved' ? new Date().toISOString() : null,
+              verifiedBy: user?.id || 'admin'
+            };
+          }
+          return prof;
+        });
+
+        localStorage.setItem('mundoctor_professionals', JSON.stringify(updatedProfessionals));
+        setProfessionals([...updatedProfessionals]);
+        
+        return true;
+      } catch (fallbackError) {
+        console.error('Error in localStorage fallback:', fallbackError);
+        return false;
+      }
     }
   };
 
@@ -102,12 +141,7 @@ export const useProfessionalValidations = () => {
     updateVerificationStatus,
     getProfessionalsByStatus,
     getStats,
-    refetch: () => {
-      const storedData = localStorage.getItem('mundoctor_professionals');
-      if (storedData) {
-        setProfessionals(JSON.parse(storedData));
-      }
-    }
+    refetch: loadProfessionals
   };
 };
 

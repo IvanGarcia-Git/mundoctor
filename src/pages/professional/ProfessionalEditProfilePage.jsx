@@ -10,6 +10,7 @@ import { useAuth } from '@/contexts/ClerkAuthContext';
 import { useToast } from "@/components/ui/use-toast";
 import ProfessionalInfo from '@/components/professional/ProfessionalInfo';
 import { Badge } from '@/components/ui/badge';
+import AvatarUpload from '@/components/ui/avatar-upload';
 
 const ProfessionalEditProfilePage = () => {
   const { user } = useAuth();
@@ -26,7 +27,7 @@ const ProfessionalEditProfilePage = () => {
     officeHours: 'L-V: 9:00-14:00, 16:00-20:00',
     website: 'https://www.drejemplo.com',
     languages: 'Español, Inglés',
-    profileImage: '',
+    profileImage: user?.avatarUrl || '',
     bannerImage: '',
   });
 
@@ -43,6 +44,10 @@ const ProfessionalEditProfilePage = () => {
       };
       reader.readAsDataURL(e.target.files[0]);
     }
+  };
+
+  const handleAvatarUpdate = (newAvatarUrl) => {
+    setProfileData(prev => ({ ...prev, profileImage: newAvatarUrl }));
   };
 
   const handleSubmit = (e) => {
@@ -136,8 +141,34 @@ const ProfessionalEditProfilePage = () => {
               
               <TabsContent value="media">
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <ImageUploadField id="profileImage" label="Foto de Perfil" currentImage={profileData.profileImage} onChange={handleImageChange} />
-                    <ImageUploadField id="bannerImage" label="Imagen de Cabecera (Opcional)" currentImage={profileData.bannerImage} onChange={handleImageChange} />
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-lg">Foto de Perfil</CardTitle>
+                        <CardDescription>
+                          Esta imagen aparecerá en tu perfil público y en los resultados de búsqueda
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <AvatarUpload
+                          currentAvatarUrl={profileData.profileImage}
+                          userName={profileData.fullName}
+                          onAvatarUpdate={handleAvatarUpdate}
+                          size="xl"
+                          className="w-full"
+                        />
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-lg">Imagen de Cabecera</CardTitle>
+                        <CardDescription>
+                          Imagen opcional para personalizar tu perfil
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <ImageUploadField id="bannerImage" label="Imagen de Cabecera (Opcional)" currentImage={profileData.bannerImage} onChange={handleImageChange} />
+                      </CardContent>
+                    </Card>
                  </div>
               </TabsContent>
 

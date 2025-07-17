@@ -69,12 +69,17 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     return <Navigate to="/" state={{ from: location }} replace />; 
   }
 
-  // Check if professional is verified for professional routes
+  // Check if professional is verified for professional dashboard routes only
   if (userRole === 'professional' && allowedRoles?.includes('professional')) {
     const verificationStatus = user?.unsafeMetadata?.professionalData?.verificationStatus;
+    const isVerified = user?.unsafeMetadata?.verified || verificationStatus === 'approved';
     
-    // If professional is not verified, redirect to verification pending page
-    if (verificationStatus !== 'approved') {
+    // Only redirect to verification pending for professional dashboard routes
+    // Allow access to public pages (Homepage, search, etc.) during verification
+    const currentPath = window.location.pathname;
+    const isProfessionalDashboardRoute = currentPath.startsWith('/profesionales/');
+    
+    if (!isVerified && isProfessionalDashboardRoute) {
       return <Navigate to="/profesional/verificacion-pendiente" replace />;
     }
   }

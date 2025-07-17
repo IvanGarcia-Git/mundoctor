@@ -14,12 +14,16 @@ export default function ProfessionalVerificationPendingPage() {
 
   // Check verification status from user metadata
   useEffect(() => {
-    if (user?.unsafeMetadata?.professionalData) {
-      const status = user.unsafeMetadata.professionalData.verificationStatus || 'pending';
+    if (user?.unsafeMetadata) {
+      // Check both the main verified field and professionalData verificationStatus
+      const isVerified = user.unsafeMetadata.verified;
+      const professionalStatus = user.unsafeMetadata.professionalData?.verificationStatus;
+      const status = professionalStatus || (isVerified ? 'approved' : 'pending');
+      
       setVerificationStatus(status);
 
-      // If approved, redirect to dashboard
-      if (status === 'approved') {
+      // If approved (either through main verified field or professionalData), redirect to dashboard
+      if (status === 'approved' || isVerified) {
         navigate('/profesionales/dashboard');
       }
     }
