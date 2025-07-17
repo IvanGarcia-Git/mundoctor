@@ -1,55 +1,31 @@
-version: '3.8'
-
 services:
-  # Traefik reverse proxy
   traefik:
-    image: traefik:v3.5
+    image: traefik:v3.0
     container_name: traefik
     restart: unless-stopped
-    command:
-      # Enable API and Dashboard
-      - "--api.dashboard=true"
-      - "--api.insecure=false"
-      # Enable Docker provider
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--providers.docker.network=app-network"
-      # Entry points
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
-      # HTTP to HTTPS redirect
-      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
-      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
-      - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
-      # Let's Encrypt configuration
-      - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
-      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
-      - "--certificatesresolvers.letsencrypt.acme.email=admin@garaywebs.com"
-      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
-      # Optional: Enable for staging/testing
-      #- "--certificatesresolvers.letsencrypt.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
-      # Logging
-      - "--log.level=INFO"
-      - "--accesslog=true"
+    security_opt:
+      - no-new-privileges:true
     ports:
       - "80:80"
       - "443:443"
     volumes:
+      - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./letsencrypt:/letsencrypt
-      - ./traefik-logs:/var/log/traefik
+      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./traefik/dynamic:/etc/traefik/dynamic:ro
+      - ./traefik/acme:/etc/traefik/acme
+    environment:
+      - TZ=Europe/Madrid
     labels:
-      # Dashboard
       - "traefik.enable=true"
-      - "traefik.http.routers.traefik.rule=Host(`traefik.pre-mundoctor.garaywebs.com`)"
-      - "traefik.http.routers.traefik.entrypoints=websecure"
-      - "traefik.http.routers.traefik.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.traefik.service=api@internal"
-      - "traefik.http.routers.traefik.middlewares=auth"
-      # Basic Auth for dashboard (user: admin, pass: admin123)
-      - "traefik.http.middlewares.auth.basicauth.users=admin:$$apr1$$H6uskkkW$$IgXLP6ewTrSuBkTrqE8wj/"
+      # Dashboard
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.futurprive.com`)"
+      - "traefik.http.routers.dashboard.service=api@internal"
+      - "traefik.http.routers.dashboard.entrypoints=websecure"
+      - "traefik.http.routers.dashboard.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.dashboard.middlewares=dashboard-auth@file"
     networks:
-      - app-network
+      - proxy
 
   # Frontend service
   frontend:
@@ -81,7 +57,7 @@ services:
       - "traefik.http.middlewares.secure-headers.headers.browserxssfilter=true"
       - "traefik.http.middlewares.secure-headers.headers.referrerpolicy=strict-origin-when-cross-origin"
     networks:
-      - app-network
+      - proxy
 
   # Backend service
   backend:
@@ -116,7 +92,7 @@ services:
       - "traefik.http.middlewares.cors-headers.headers.accesscontrolallowheaders=Origin,Content-Type,Authorization,X-Requested-With"
       - "traefik.http.middlewares.cors-headers.headers.accesscontrolmaxage=86400"
     networks:
-      - app-network
+      - proxy
     depends_on:
       - postgres
 
@@ -133,7 +109,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./backend/migrations-consolidated:/docker-entrypoint-initdb.d
     networks:
-      - app-network
+      - proxy
     # Only expose to internal network for security
     # ports:
     #   - "5432:5432"
@@ -147,7 +123,7 @@ services:
     volumes:
       - redis_data:/data
     networks:
-      - app-network
+      - proxy
 
   # Database administration (optional, for staging/development)
   adminer:
@@ -164,7 +140,7 @@ services:
       - "traefik.http.routers.adminer.middlewares=db-auth"
       - "traefik.http.middlewares.db-auth.basicauth.users=admin:$$apr1$$H6uskkkW$$IgXLP6ewTrSuBkTrqE8wj/"
     networks:
-      - app-network
+      - proxy
     depends_on:
       - postgres
 
@@ -173,6 +149,5 @@ volumes:
   redis_data:
 
 networks:
-  app-network:
-    name: app-network
-    driver: bridge
+  proxy:
+    external: false
