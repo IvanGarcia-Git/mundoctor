@@ -57,7 +57,8 @@
       "Bash(PORT=8002 npm run dev)",
       "Bash(sudo netstat:*)",
       "Bash(sudo docker ps:*)",
-      "Bash(docker container:*)"
+      "Bash(docker container:*)",
+      "Bash(cp:*)"
     ],
     "deny": []
   },

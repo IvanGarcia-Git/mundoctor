@@ -6,8 +6,8 @@ services:
     security_opt:
       - no-new-privileges:true
     ports:
-      - "8080:80"
-      - "8443:443"
+      - "80:80"
+      - "443:443"
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -19,7 +19,7 @@ services:
     labels:
       - "traefik.enable=true"
       # Dashboard
-      - "traefik.http.routers.dashboard.rule=Host(`mundoctor.todostore.es`)"
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.todostore.es`)"
       - "traefik.http.routers.dashboard.service=api@internal"
       - "traefik.http.routers.dashboard.entrypoints=websecure"
       - "traefik.http.routers.dashboard.tls.certresolver=letsencrypt"
@@ -37,11 +37,11 @@ services:
     environment:
       - NODE_ENV=production
       - VITE_CLERK_PUBLISHABLE_KEY=${VITE_CLERK_PUBLISHABLE_KEY:-pk_test_c2FjcmVkLXBhcnJvdC03Mi5jbGVyay5hY2NvdW50cy5kZXYk}
-      - VITE_API_URL=https://api.mundoctor.todostore.es
+      - VITE_API_URL=https://api.todostore.es
     labels:
       - "traefik.enable=true"
       # Main domain
-      - "traefik.http.routers.frontend.rule=Host(`mundoctor.todostore.es`)"
+      - "traefik.http.routers.frontend.rule=Host(`todostore.es`)"
       - "traefik.http.routers.frontend.entrypoints=websecure"
       - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
       - "traefik.http.services.frontend.loadbalancer.server.port=80"
@@ -81,14 +81,14 @@ services:
     labels:
       - "traefik.enable=true"
       # API subdomain
-      - "traefik.http.routers.backend.rule=Host(`api.mundoctor.todostore.es`)"
+      - "traefik.http.routers.backend.rule=Host(`api.todostore.es`)"
       - "traefik.http.routers.backend.entrypoints=websecure"
       - "traefik.http.routers.backend.tls.certresolver=letsencrypt"
       - "traefik.http.services.backend.loadbalancer.server.port=8000"
       # CORS and security
       - "traefik.http.routers.backend.middlewares=cors-headers"
       - "traefik.http.middlewares.cors-headers.headers.accesscontrolallowmethods=GET,POST,PUT,DELETE,PATCH,OPTIONS"
-      - "traefik.http.middlewares.cors-headers.headers.accesscontrolalloworigin=https://mundoctor.todostore.es"
+      - "traefik.http.middlewares.cors-headers.headers.accesscontrolalloworigin=https://todostore.es"
       - "traefik.http.middlewares.cors-headers.headers.accesscontrolallowheaders=Origin,Content-Type,Authorization,X-Requested-With"
       - "traefik.http.middlewares.cors-headers.headers.accesscontrolmaxage=86400"
     networks:
@@ -132,7 +132,7 @@ services:
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.adminer.rule=Host(`db.mundoctor.todostore.es`)"
+      - "traefik.http.routers.adminer.rule=Host(`db.todostore.es`)"
       - "traefik.http.routers.adminer.entrypoints=websecure"
       - "traefik.http.routers.adminer.tls.certresolver=letsencrypt"
       - "traefik.http.services.adminer.loadbalancer.server.port=8080"

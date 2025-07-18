@@ -28,7 +28,7 @@ certificatesResolvers:
   letsencrypt:
     acme:
       tlsChallenge: {}
-      email: admin@mundoctor.todostore.es
+      email: admin@todostore.es
       storage: /etc/traefik/acme/acme.json
       # Use staging for testing
       # caServer: https://acme-staging-v02.api.letsencrypt.org/directory
