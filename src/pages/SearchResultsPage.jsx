@@ -11,7 +11,7 @@ import InteractiveMap from '@/components/search/InteractiveMap';
 import ProfessionalAvatar from '@/components/ui/professional-avatar';
 
 // API Configuration  
-const API_BASE_URL = 'http://localhost:8001/api';
+const API_BASE_URL = 'http://localhost:8000/api';
 
 // API functions
 const searchProfessionals = async (params = {}) => {
@@ -41,34 +41,39 @@ const getSpecialties = async () => {
 };
 
 // Transform API data to match component expectations
-const transformProfessional = (prof) => ({
-  id: prof.id,
-  name: prof.name,
-  avatar_url: prof.avatar_url, // Foto de perfil del usuario asociado al profesional
-  specialty: prof.specialty?.name || prof.specialty_name || 'Medicina General',
-  specialty_id: prof.specialty?.id || prof.specialty_id,
-  city: prof.city || 'No especificada',
-  rating: prof.rating || 0,
-  reviews: prof.total_reviews || 0,
-  availability: 'Consultar', // API doesn't have this field, using default
-  imageAlt: `${prof.name}`,
-  imageDesc: `${prof.specialty?.name || 'Profesional médico'}`,
-  priceRange: [prof.consultation_fee || 50, prof.consultation_fee ? prof.consultation_fee + 30 : 80],
-  online: true, // Assume all professionals can do online consultations
-  presencial: true, // Assume all can do in-person consultations
-  lat: prof.latitude || 40.416775, // Default to Madrid if no location
-  lng: prof.longitude || -3.703790,
-  services: prof.services || [],
-  biography: prof.about || 'Profesional de la salud comprometido con la atención de calidad.',
-  consultationTypes: ['Consulta presencial', 'Videoconsulta'],
-  contact: {
-    phone: prof.phone || 'No disponible',
-    email: prof.email || 'No disponible'
-  },
-  officeHours: prof.office_hours?.display || 'Consultar horarios',
-  verified: prof.verified || false,
-  experience_years: prof.experience_years || 0
-});
+const transformProfessional = (prof) => {
+  // Default consultation fee if not set
+  const consultationFee = prof.consultation_fee && prof.consultation_fee > 0 ? prof.consultation_fee : 50;
+  
+  return {
+    id: prof.id,
+    name: prof.name || 'Profesional',
+    avatar_url: prof.avatar_url,
+    specialty: prof.specialty?.name || prof.specialty_name || 'Medicina General',
+    specialty_id: prof.specialty?.id || prof.specialty_id,
+    city: prof.city || 'Madrid',
+    rating: prof.rating || 0,
+    reviews: prof.total_reviews || 0,
+    availability: 'Consultar disponibilidad',
+    imageAlt: `${prof.name || 'Profesional'}`,
+    imageDesc: `${prof.specialty?.name || prof.specialty_name || 'Profesional médico'}`,
+    priceRange: [consultationFee, consultationFee + 20],
+    online: true,
+    presencial: true,
+    lat: prof.latitude || 40.416775, // Default to Madrid if no location
+    lng: prof.longitude || -3.703790,
+    services: prof.services || [],
+    biography: prof.about || 'Profesional de la salud comprometido con la atención de calidad.',
+    consultationTypes: ['Consulta presencial', 'Videoconsulta'],
+    contact: {
+      phone: prof.phone || 'Consultar',
+      email: prof.email || 'Consultar'
+    },
+    officeHours: prof.office_hours?.display || 'Consultar horarios',
+    verified: prof.verified || false,
+    experience_years: prof.experience_years || 0
+  };
+};
 
 const SearchResultsPage = () => {
   const location = useLocation();
