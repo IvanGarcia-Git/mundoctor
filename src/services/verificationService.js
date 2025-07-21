@@ -1,6 +1,6 @@
 // Servicio para consultar el estado de verificación real desde la base de datos
 
-const API_BASE_URL = 'http://localhost:8001/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
 // Función para obtener el estado de verificación desde la base de datos
 export const getVerificationStatusFromDB = async (clerkId) => {

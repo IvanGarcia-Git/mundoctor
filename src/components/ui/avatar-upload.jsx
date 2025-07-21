@@ -68,7 +68,7 @@ const AvatarUpload = ({
         throw new Error('No se pudo obtener el token de autenticación');
       }
 
-      const response = await fetch('http://localhost:8001/api/uploads/avatar', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000/api'}/uploads/avatar`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
