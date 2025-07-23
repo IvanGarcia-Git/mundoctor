@@ -1,0 +1,7 @@
+npm ERR! Missing script: "dev:backend"
+npm ERR! 
+npm ERR! To see a list of scripts, run:
+npm ERR!   npm run
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     /home/vers/.npm/_logs/2025-07-23T18_13_57_062Z-debug-0.log
