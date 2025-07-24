@@ -6,6 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Search, Filter, Edit2, Trash2, UserPlus, ShieldCheck, ShieldOff, Loader2 } from 'lucide-react';
 import { adminApi } from '@/lib/clerkApi';
 import { useToast } from '@/components/ui/use-toast';
+import { useClerkAuth } from '@/contexts/ClerkAuthContext';
+import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 
 const AdminUserManagementPage = () => {
@@ -16,13 +18,42 @@ const AdminUserManagementPage = () => {
 	const [filters, setFilters] = useState({ role: 'all', status: 'all' });
 	const [updating, setUpdating] = useState(null); // Track which user is being updated
 	const { toast } = useToast();
+	const { user, isSignedIn, hasRole, loading: authLoading } = useClerkAuth();
+	const navigate = useNavigate();
+
+	// Authentication and role checking
+	useEffect(() => {
+		if (authLoading) return; // Wait for auth to load
+		
+		if (!isSignedIn) {
+			console.log('User not signed in, redirecting to login');
+			navigate('/login');
+			return;
+		}
+		
+		if (!hasRole('admin')) {
+			console.log('User does not have admin role, redirecting to dashboard');
+			navigate('/');
+			return;
+		}
+	}, [authLoading, isSignedIn, hasRole, navigate]);
 
 	// Load users from API
 	useEffect(() => {
+		// Don't load if still checking auth or user doesn't have admin role
+		if (authLoading || !isSignedIn || !hasRole('admin')) {
+			return;
+		}
+
 		const loadUsers = async () => {
 			try {
 				setLoading(true);
 				setError(null);
+				
+				// Ensure Clerk is ready and user is authenticated
+				if (!window.Clerk || !window.Clerk.session) {
+					throw new Error('Usuario no autenticado. Por favor, inicia sesión.');
+				}
 				
 				const usersData = await adminApi.getUsers({
 					limit: 100, // Load first 100 users
@@ -34,10 +65,22 @@ const AdminUserManagementPage = () => {
 				
 			} catch (err) {
 				console.error('Error loading users:', err);
-				setError(err.message || 'Error al cargar los usuarios');
+				setError(err.message || err.userMessage || 'Error al cargar los usuarios');
+				
+				// Handle authentication errors specifically
+				if (err.message?.includes('no autenticado') || err.status === 401) {
+					toast({
+						title: 'Sesión expirada',
+						description: 'Por favor, inicia sesión nuevamente.',
+						variant: 'destructive',
+					});
+					navigate('/login');
+					return;
+				}
+				
 				toast({
 					title: 'Error',
-					description: 'No se pudieron cargar los usuarios. Intenta nuevamente.',
+					description: err.userMessage || 'No se pudieron cargar los usuarios. Intenta nuevamente.',
 					variant: 'destructive',
 				});
 			} finally {
@@ -46,7 +89,7 @@ const AdminUserManagementPage = () => {
 		};
 
 		loadUsers();
-	}, [filters, toast]);
+	}, [filters, toast, authLoading, isSignedIn, hasRole, navigate]);
 
 	const filteredUsers = users.filter((user) => {
 		if (!searchTerm) return true;
@@ -151,6 +194,29 @@ const AdminUserManagementPage = () => {
 			setUpdating(null);
 		}
 	};
+
+	// Show loading while authentication is being checked
+	if (authLoading) {
+		return (
+			<div className="flex items-center justify-center min-h-screen">
+				<div className="text-center">
+					<Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
+					<p className="text-muted-foreground">Verificando autenticación...</p>
+				</div>
+			</div>
+		);
+	}
+
+	// Show error if user is not authenticated or doesn't have admin role
+	if (!isSignedIn || !hasRole('admin')) {
+		return (
+			<div className="flex items-center justify-center min-h-screen">
+				<div className="text-center">
+					<p className="text-muted-foreground">Redirigiendo...</p>
+				</div>
+			</div>
+		);
+	}
 
 	return (
 		<div className="space-y-6">
