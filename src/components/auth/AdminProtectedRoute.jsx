@@ -18,11 +18,26 @@ const AdminProtectedRoute = ({ children }) => {
     );
   }
 
-  // Get user role from metadata
-  const userRole = user?.unsafeMetadata?.role || 'patient';
+  // Debug logging
+  console.log('AdminProtectedRoute - User data:', {
+    user: user ? {
+      id: user.id,
+      publicMetadata: user.publicMetadata,
+      unsafeMetadata: user.unsafeMetadata
+    } : null,
+    isLoaded
+  });
+
+  // Get user role from metadata - handle both publicMetadata and unsafeMetadata
+  const userRole = user?.publicMetadata?.role || user?.unsafeMetadata?.role || 'patient';
+  
+  // Ensure userRole is a string
+  const safeUserRole = typeof userRole === 'string' ? userRole : String(userRole || 'patient');
+  
+  console.log('AdminProtectedRoute - Role info:', { userRole, safeUserRole });
 
   // Check if user is admin
-  if (userRole !== 'admin') {
+  if (safeUserRole !== 'admin') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-red-50 to-gray-100 dark:from-slate-900 dark:to-slate-800 flex items-center justify-center p-4">
         <div className="max-w-md mx-auto">
@@ -33,7 +48,7 @@ const AdminProtectedRoute = ({ children }) => {
                 <div>
                   <h3 className="font-semibold">Acceso Denegado</h3>
                   <p className="text-sm mt-1">
-                    Esta página requiere permisos de administrador. Tu rol actual es: <span className="font-medium">{userRole}</span>
+                    Esta página requiere permisos de administrador. Tu rol actual es: <span className="font-medium">{safeUserRole}</span>
                   </p>
                 </div>
                 

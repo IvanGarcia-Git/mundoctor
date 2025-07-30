@@ -85,7 +85,7 @@ const HeroSection = () => {
             <img  
               className="relative z-10 w-full max-w-md lg:max-w-lg object-contain"
               alt="Ilustración de dos profesionales sanitarios con un icono de corazón y electrocardiograma"
-             src="https://storage.googleapis.com/hostinger-horizons-assets-prod/55e12e24-9367-49fa-b191-6f66dd749696/8c5a3841bc382f2f40aa405a60904fb6.png" />
+             src="/undraw_medicine_hqqg_1.png" />
           </div>
         </div>
       </div>

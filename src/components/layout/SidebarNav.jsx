@@ -2,17 +2,39 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Menu, X, Search, Home, Stethoscope, Phone, LogIn, UserPlus, LayoutDashboard } from 'lucide-react';
+import { Menu, X, Search, Home, Stethoscope, Phone, LogIn, UserPlus, LayoutDashboard, Calendar, Users, Settings, BarChart2, Star, DollarSign, FileText, ClipboardList, MessageSquare, ShieldCheck, Bell } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/contexts/ClerkAuthContext';
 import { UserButton } from '@clerk/clerk-react';
 import { cn } from '@/lib/utils';
 
-const navLinks = [
-  { name: 'Inicio', path: '/', icon: <Home size={20} />, exact: true },
-  { name: 'Profesionales', path: '/profesionales', icon: <Stethoscope size={20} />, exact: true },
-  { name: 'Buscar', path: '/buscar', icon: <Search size={20} />, exact: false },
-  { name: 'Contacto', path: '/contacto', icon: <Phone size={20} />, exact: true },
+const navLinks = [];
+
+// Sub-navigation links for authenticated users
+const adminNavLinks = [
+  { name: 'Dashboard', path: '/admin/dashboard', icon: <LayoutDashboard size={20}/>, exact: true },
+  { name: 'Usuarios', path: '/admin/usuarios', icon: <Users size={20}/>, exact: false },
+  { name: 'Validaciones', path: '/admin/validaciones', icon: <ShieldCheck size={20}/>, exact: false },
+  { name: 'Suscripciones', path: '/admin/suscripciones', icon: <DollarSign size={20}/>, exact: false },
+  { name: 'Tickets', path: '/admin/tickets', icon: <MessageSquare size={20}/>, exact: false },
+  { name: 'Ajustes', path: '/admin/ajustes', icon: <Settings size={20}/>, exact: false },
+];
+
+const professionalNavLinks = [
+  { name: 'Mi Panel', path: '/profesionales/dashboard', icon: <LayoutDashboard size={20}/>, exact: true },
+  { name: 'Citas', path: '/profesionales/citas', icon: <Calendar size={20}/>, exact: false },
+  { name: 'Pacientes', path: '/profesionales/pacientes', icon: <Users size={20}/>, exact: false },
+  { name: 'Servicios', path: '/profesionales/servicios', icon: <ClipboardList size={20}/>, exact: false },
+  { name: 'Valoraciones', path: '/profesionales/valoraciones', icon: <Star size={20}/>, exact: false },
+  { name: 'Analíticas', path: '/profesionales/analiticas', icon: <BarChart2 size={20}/>, exact: false },
+  { name: 'Suscripción', path: '/profesionales/suscripcion', icon: <DollarSign size={20}/>, exact: false },
+  { name: 'Ajustes', path: '/profesionales/ajustes', icon: <Settings size={20}/>, exact: false },
+];
+
+const patientNavLinks = [
+  { name: 'Mi Panel', path: '/paciente/dashboard', icon: <LayoutDashboard size={20}/>, exact: true },
+  { name: 'Mis Citas', path: '/paciente/citas', icon: <Calendar size={20}/>, exact: false },
+  { name: 'Mis Reseñas', path: '/paciente/resenas', icon: <Star size={20}/>, exact: true },
 ];
 
 const SidebarNav = () => {
@@ -150,23 +172,6 @@ const SidebarNav = () => {
         {/* Contenido del sidebar */}
         <ScrollArea className="flex-1 py-6">
           <nav className="space-y-2">
-            {/* Enlaces principales */}
-            <div className="space-y-2">
-              {(isOpen && !isMobile) || isMobile ? (
-                <motion.h3 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="px-4 text-sm font-medium text-muted-foreground dark:text-gray-400 mb-3"
-                >
-                  Principal
-                </motion.h3>
-              ) : null}
-              
-              {navLinks.map(link => (
-                <NavItem key={link.name} {...link} onClick={closeSidebar} />
-              ))}
-            </div>
-
             {/* Enlaces de usuario autenticado */}
             {user && (
               <div className="pt-6 mt-6 border-t border-border dark:border-gray-700/50 space-y-2">
@@ -181,36 +186,27 @@ const SidebarNav = () => {
                 ) : null}
 
                 {user.role === 'admin' && (
-                  <NavItem 
-                    key="admin-dashboard" 
-                    path="/admin/dashboard" 
-                    name="Panel Admin" 
-                    icon={<LayoutDashboard size={20}/>} 
-                    onClick={closeSidebar}
-                    exact={false} 
-                  />
+                  <>
+                    {adminNavLinks.map(link => (
+                      <NavItem key={link.name} {...link} onClick={closeSidebar} />
+                    ))}
+                  </>
                 )}
                 
                 {user.role === 'professional' && (
-                  <NavItem 
-                    key="prof-dashboard" 
-                    path="/profesionales/dashboard" 
-                    name="Mi Panel" 
-                    icon={<LayoutDashboard size={20}/>} 
-                    onClick={closeSidebar}
-                    exact={false} 
-                  />
+                  <>
+                    {professionalNavLinks.map(link => (
+                      <NavItem key={link.name} {...link} onClick={closeSidebar} />
+                    ))}
+                  </>
                 )}
                 
                 {user.role === 'patient' && (
-                  <NavItem 
-                    key="patient-dashboard" 
-                    path="/paciente/dashboard" 
-                    name="Mi Panel" 
-                    icon={<LayoutDashboard size={20}/>} 
-                    onClick={closeSidebar}
-                    exact={false} 
-                  />
+                  <>
+                    {patientNavLinks.map(link => (
+                      <NavItem key={link.name} {...link} onClick={closeSidebar} />
+                    ))}
+                  </>
                 )}
               </div>
             )}

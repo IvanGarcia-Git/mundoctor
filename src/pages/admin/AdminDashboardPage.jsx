@@ -24,10 +24,10 @@ const AdminDashboardPage = () => {
           
           // Format stats for display
           const formattedStats = [
-            { title: "Usuarios Registrados", value: data.total_users?.toLocaleString() || "0", icon: <Users className="text-blue-500" />, color: "blue" },
-            { title: "Profesionales Activos", value: data.total_professionals?.toLocaleString() || "0", icon: <Briefcase className="text-green-500" />, color: "green" },
-            { title: "Suscripciones Activas", value: "280", icon: <BarChart2 className="text-purple-500" />, color: "purple" },
-            { title: "Validaciones Pendientes", value: data.pendingValidations?.toString() || "0", icon: <ShieldCheck className="text-red-500" />, color: "red" },
+            { title: "Usuarios Registrados", value: String(data.total_users?.toLocaleString() || "0"), icon: <Users className="text-blue-500" />, color: "blue" },
+            { title: "Profesionales Activos", value: String(data.total_professionals?.toLocaleString() || "0"), icon: <Briefcase className="text-green-500" />, color: "green" },
+            { title: "Suscripciones Activas", value: String(data.total_active_subscriptions?.toLocaleString() || "0"), icon: <BarChart2 className="text-purple-500" />, color: "purple" },
+            { title: "Validaciones Pendientes", value: String(data.pendingValidations?.toString() || "0"), icon: <ShieldCheck className="text-red-500" />, color: "red" },
           ];
           
           setStats(formattedStats);
@@ -66,14 +66,6 @@ const AdminDashboardPage = () => {
 
     loadAdminData();
   }, [toast]);
-
-  const quickLinks = [
-    { name: 'Gestionar Usuarios', path: '/admin/usuarios', icon: <Users size={20}/> },
-    { name: 'Validar Profesionales', path: '/admin/validaciones', icon: <ShieldCheck size={20}/> },
-    { name: 'Ver Suscripciones', path: '/admin/suscripciones', icon: <Briefcase size={20}/> },
-    { name: 'Gestionar Tickets', path: '/admin/tickets', icon: <Ticket size={20}/> },
-    { name: 'Gestionar Descuentos', path: '/admin/descuentos', icon: <Percent size={20}/> },
-  ];
 
   if (isLoading) {
     return (
@@ -146,23 +138,6 @@ const AdminDashboardPage = () => {
           </CardContent>
         </Card>
       </section>
-
-      {/* Quick Links */}
-      <section className="mb-10">
-        <h2 className="text-2xl font-semibold mb-6">Accesos Rápidos</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {quickLinks.map(link => (
-            <Link 
-              key={link.name} 
-              to={link.path} 
-              className="bg-card dark:bg-gray-800/60 backdrop-blur-md p-5 rounded-lg border border-border dark:border-gray-700/50 shadow-md hover:border-primary dark:hover:border-blue-500 transition-colors flex items-center space-x-3"
-            >
-              {React.cloneElement(link.icon, { className: 'text-primary dark:text-blue-400' })}
-              <span className="text-foreground dark:text-white font-medium">{link.name}</span>
-            </Link>
-          ))}
-        </div>
-      </section>
       
       {/* Activity Section */}
       <section>
@@ -177,5 +152,3 @@ const AdminDashboardPage = () => {
     </>
   );
 };
-
-export default AdminDashboardPage;

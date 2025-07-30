@@ -1,13 +1,14 @@
 
 import React from 'react';
-import { Stethoscope } from 'lucide-react';
+import { useTheme } from '@/components/ThemeProvider';
 
 const Logo = () => {
+  const { theme } = useTheme();
+
+  const logoSrc = theme === 'dark' ? '/logo_dark.png' : '/logo_light.png';
+
   return (
-    <div className="flex items-center">
-      <Stethoscope className="h-8 w-8 text-blue-500 mr-2" />
-      <span className="text-2xl font-bold text-white">Mundoctor</span>
-    </div>
+    <img src={logoSrc} alt="Mundoctor Logo" className="h-8 w-auto" />
   );
 };
 

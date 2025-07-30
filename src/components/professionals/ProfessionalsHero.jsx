@@ -72,7 +72,7 @@ const ProfessionalsHero = () => {
             <img
               className="relative z-10 w-full max-w-md lg:max-w-lg object-contain"
               alt="Doctor revisando a una paciente joven con estetoscopio"
-              src="https://storage.googleapis.com/hostinger-horizons-assets-prod/55e12e24-9367-49fa-b191-6f66dd749696/dc0f2025cfae3e1bfeac0cb959baf219.png" 
+              src="/undraw_doctor_aum1_1.png" 
             />
             </div>
           </motion.div>

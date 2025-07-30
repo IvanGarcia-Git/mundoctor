@@ -15,6 +15,7 @@ import SelectUserTypePage from '@/pages/SelectUserTypePage';
 import ProfessionalDataPage from '@/pages/ProfessionalDataPage';
 import ProfessionalVerificationPendingPage from '@/pages/ProfessionalVerificationPendingPage';
 import DevControlsPage from '@/pages/DevControlsPage';
+import UserProfilePage from '@/pages/UserProfilePage';
 
 // Lazy load dashboard pages for better performance
 const AdminDashboardPage = React.lazy(() => import('@/pages/admin/AdminDashboardPage'));
@@ -138,6 +139,24 @@ const AppRoutes = () => {
       <Route path="/buscar" element={<SearchResultsPage />} />
       <Route path="/blog" element={<BlogPage />} />
       <Route path="/completar-perfil" element={<CompletarPerfilPage />} />
+      
+      {/* User Profile Management */}
+      <Route 
+        path="/perfil" 
+        element={
+          <ProtectedRoute>
+            <UserProfilePage />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/perfil/*" 
+        element={
+          <ProtectedRoute>
+            <UserProfilePage />
+          </ProtectedRoute>
+        } 
+      />
 
       {/* Patient Area Routes */}
       <Route path="/paciente" element={<ProtectedRoute allowedRoles={['patient']}><Navigate to="/paciente/dashboard" replace /></ProtectedRoute>} />

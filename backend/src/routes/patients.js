@@ -76,7 +76,7 @@ router.get('/appointments', async (req, res) => {
       endDate
     };
 
-    const appointments = await patientService.getPatientAppointments(filters, { limit, offset });
+    const appointments = await patientService.getPatientAppointments(userId, filters, { limit, offset });
     
     await auditLog(userId, 'patient_appointments_accessed', { 
       action: 'view_appointments',
@@ -87,6 +87,26 @@ router.get('/appointments', async (req, res) => {
     successResponse(res, appointments, 'Citas obtenidas correctamente');
   } catch (error) {
     console.error('Error al obtener citas:', error);
+    errorResponse(res, 500, 'Error interno del servidor');
+  }
+});
+
+// GET /api/patients/reviews - Obtener reseñas del paciente
+router.get('/reviews', async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { limit = 10, offset = 0 } = req.query;
+
+    const reviews = await patientService.getPatientReviews(userId, { limit, offset });
+
+    await auditLog(userId, 'patient_reviews_accessed', {
+      action: 'view_reviews',
+      ip: req.ip
+    });
+
+    successResponse(res, reviews, 'Reseñas obtenidas correctamente');
+  } catch (error) {
+    console.error('Error al obtener reseñas:', error);
     errorResponse(res, 500, 'Error interno del servidor');
   }
 });

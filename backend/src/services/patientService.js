@@ -147,7 +147,7 @@ class PatientService {
   // Obtener citas del paciente
   async getPatientAppointments(userId, filters = {}, pagination = {}) {
     try {
-      const { status, dateFrom, dateTo } = filters;
+      const { status, startDate, endDate } = filters;
       const { limit = 10, offset = 0 } = pagination;
       
       let whereConditions = ['a.patient_id = $1'];
@@ -160,35 +160,62 @@ class PatientService {
         paramIndex++;
       }
       
-      if (dateFrom) {
-        whereConditions.push(`a.appointment_date >= $${paramIndex}`);
-        queryParams.push(dateFrom);
+      if (startDate) {
+        whereConditions.push(`a.scheduled_date >= $${paramIndex}`);
+        queryParams.push(startDate);
         paramIndex++;
       }
       
-      if (dateTo) {
-        whereConditions.push(`a.appointment_date <= $${paramIndex}`);
-        queryParams.push(dateTo);
+      if (endDate) {
+        whereConditions.push(`a.scheduled_date <= $${paramIndex}`);
+        queryParams.push(endDate);
         paramIndex++;
       }
       
       const appointmentsQuery = `
         SELECT 
-          a.*,
-          u.first_name || ' ' || u.last_name as professional_name,
+          a.id,
+          a.patient_id,
+          a.professional_id,
+          a.service_id,
+          a.title,
+          a.description,
+          a.appointment_type,
+          a.status,
+          a.scheduled_date,
+          a.start_time,
+          a.end_time,
+          a.duration_minutes,
+          a.is_virtual,
+          a.location_address,
+          a.meeting_url,
+          a.patient_symptoms,
+          a.diagnosis,
+          a.treatment_plan,
+          a.prescriptions,
+          a.fee,
+          a.currency,
+          a.payment_status,
+          a.notes,
+          a.created_at,
+          a.updated_at,
+          (u.first_name || ' ' || u.last_name) as professional_name,
           u.profile_image as professional_image,
           pp.specialty,
-          pp.office_address,
-          pp.office_phone,
-          s.name as service_name,
-          s.price as service_price,
-          s.duration as service_duration
+          pp.office_address as professional_office_address,
+          ps.name as service_name,
+          ps.price as service_price,
+          ps.duration_minutes as service_duration,
+          CASE 
+            WHEN a.is_virtual = true THEN 'virtual'
+            ELSE 'in_person'
+          END as consultation_type
         FROM appointments a
         JOIN users u ON a.professional_id = u.id
         LEFT JOIN professional_profiles pp ON u.id = pp.user_id
-        LEFT JOIN services s ON a.service_id = s.id
+        LEFT JOIN professional_services ps ON a.service_id = ps.id
         WHERE ${whereConditions.join(' AND ')}
-        ORDER BY a.appointment_date DESC
+        ORDER BY a.scheduled_date DESC, a.start_time DESC
         LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
       `;
       
@@ -196,8 +223,24 @@ class PatientService {
       
       const result = await query(appointmentsQuery, queryParams);
       
+      // Mapear los resultados para que coincidan con lo que espera el frontend
+      const mappedAppointments = result.rows.map(appointment => ({
+        ...appointment,
+        // Mapear campos para compatibilidad con el frontend
+        appointment_date: appointment.scheduled_date,
+        appointment_time: appointment.start_time,
+        date: appointment.scheduled_date,
+        time: appointment.start_time,
+        type: appointment.consultation_type,
+        professional: {
+          name: appointment.professional_name,
+          image: appointment.professional_image
+        }
+      }));
+      
       return {
-        appointments: result.rows,
+        data: mappedAppointments,
+        appointments: mappedAppointments, // Para compatibilidad
         total: result.rows.length,
         limit: parseInt(limit),
         offset: parseInt(offset)
@@ -209,31 +252,100 @@ class PatientService {
     }
   }
 
-  // Obtener historial médico del paciente
-  async getPatientHistory(userId) {
+  // Obtener reseñas del paciente
+  async getPatientReviews(userId, pagination = {}) {
     try {
+      const { limit = 10, offset = 0 } = pagination;
+
+      const reviewsQuery = `
+        SELECT 
+          r.id,
+          r.professional_id,
+          (u.first_name || ' ' || u.last_name) as professional_name,
+          pp.specialty,
+          r.rating,
+          r.comment,
+          r.created_at as date
+        FROM reviews r
+        JOIN users u ON r.professional_id = u.id
+        LEFT JOIN professional_profiles pp ON u.id = pp.user_id
+        WHERE r.patient_id = $1
+        ORDER BY r.created_at DESC
+        LIMIT $2 OFFSET $3
+      `;
+
+      const result = await query(reviewsQuery, [userId, limit, offset]);
+
+      return {
+        data: result.rows,
+        total: result.rows.length,
+        limit: parseInt(limit),
+        offset: parseInt(offset)
+      };
+    } catch (error) {
+      logError('Error al obtener reseñas del paciente:', error);
+      throw error;
+    }
+  }
+
+  // Obtener historial médico del paciente
+  async getPatientHistory(filters = {}, pagination = {}) {
+    try {
+      const { patientId, startDate, endDate } = filters;
+      const { limit = 20, offset = 0 } = pagination;
+      
+      let whereConditions = ['a.patient_id = $1', "a.status = 'completed'"];
+      let queryParams = [patientId];
+      let paramIndex = 2;
+      
+      if (startDate) {
+        whereConditions.push(`a.scheduled_date >= $${paramIndex}`);
+        queryParams.push(startDate);
+        paramIndex++;
+      }
+      
+      if (endDate) {
+        whereConditions.push(`a.scheduled_date <= $${paramIndex}`);
+        queryParams.push(endDate);
+        paramIndex++;
+      }
+      
       const historyQuery = `
         SELECT 
           a.id,
-          a.appointment_date,
+          a.scheduled_date as appointment_date,
+          a.start_time,
+          a.end_time,
           a.status,
           a.notes as appointment_notes,
           a.diagnosis,
-          a.treatment,
-          a.prescription,
-          u.first_name || ' ' || u.last_name as professional_name,
+          a.treatment_plan as treatment,
+          a.prescriptions as prescription,
+          a.appointment_type,
+          a.is_virtual,
+          u.name as professional_name,
           pp.specialty,
-          s.name as service_name
+          ps.name as service_name,
+          ps.price as service_price
         FROM appointments a
         JOIN users u ON a.professional_id = u.id
         LEFT JOIN professional_profiles pp ON u.id = pp.user_id
-        LEFT JOIN services s ON a.service_id = s.id
-        WHERE a.patient_id = $1 AND a.status = 'completed'
-        ORDER BY a.appointment_date DESC
+        LEFT JOIN professional_services ps ON a.service_id = ps.id
+        WHERE ${whereConditions.join(' AND ')}
+        ORDER BY a.scheduled_date DESC, a.start_time DESC
+        LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
       `;
       
-      const result = await query(historyQuery, [userId]);
-      return result.rows;
+      queryParams.push(limit, offset);
+      
+      const result = await query(historyQuery, queryParams);
+      
+      return {
+        data: result.rows,
+        total: result.rows.length,
+        limit: parseInt(limit),
+        offset: parseInt(offset)
+      };
       
     } catch (error) {
       logError('Error al obtener historial médico:', error);

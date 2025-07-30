@@ -16,9 +16,9 @@ export const createAppointment = async (appointmentData, createdBy) => {
     const result = await withTransaction(async (client) => {
       // Validate professional exists and is active
       const professionalResult = await client.query(`
-        SELECT u.*, p.verified, p.profile_completed 
+        SELECT u.*, pp.specialty, pp.verified, pp.profile_completed
         FROM users u
-        JOIN professionals p ON u.id = p.user_id
+        LEFT JOIN professional_profiles pp ON u.id = pp.user_id
         WHERE u.id = $1 AND u.role = 'professional' AND u.status = 'active'
       `, [appointmentData.professionalId]);
 
@@ -27,14 +27,15 @@ export const createAppointment = async (appointmentData, createdBy) => {
       }
 
       const professional = professionalResult.rows[0];
-      if (!professional.verified) {
+      if (professional.verified === false) {
         throw new ValidationError('Professional is not verified');
       }
 
-      // Validate patient exists
+      // Validate patient exists - get patient ID from the authenticated user
       const patientResult = await client.query(`
-        SELECT * FROM users 
-        WHERE id = $1 AND role = 'patient' AND status = 'active'
+        SELECT u.id, u.name, u.email, u.role, u.status
+        FROM users u
+        WHERE u.id = $1 AND u.role = 'patient' AND u.status = 'active'
       `, [appointmentData.patientId]);
 
       if (patientResult.rows.length === 0) {
@@ -57,42 +58,61 @@ export const createAppointment = async (appointmentData, createdBy) => {
 
       // Calculate end time if not provided
       let endTime = appointmentData.endTime;
-      if (!endTime && service) {
-        const startTime = appointmentData.startTime;
-        const duration = service.duration_minutes;
-        endTime = addMinutesToTime(startTime, duration);
-      } else if (!endTime) {
-        endTime = addMinutesToTime(appointmentData.startTime, 30); // Default 30 minutes
+      if (!endTime) {
+        const [hours, minutes] = appointmentData.startTime.split(':').map(Number);
+        const startDate = new Date();
+        startDate.setHours(hours, minutes, 0, 0);
+        const duration = appointmentData.durationMinutes || service?.duration_minutes || 30;
+        const endDate = new Date(startDate.getTime() + duration * 60000);
+        endTime = `${endDate.getHours().toString().padStart(2, '0')}:${endDate.getMinutes().toString().padStart(2, '0')}`;
       }
 
-      // Check availability
-      const isAvailable = await checkAppointmentAvailability(
-        client,
-        appointmentData.professionalId,
-        appointmentData.scheduledDate,
-        appointmentData.startTime,
-        endTime
-      );
+      // Check for appointment conflicts
+      const conflictResult = await client.query(`
+        SELECT id FROM appointments 
+        WHERE professional_id = $1 
+        AND scheduled_date = $2 
+        AND status NOT IN ('cancelled', 'no_show')
+        AND (
+          (start_time <= $3 AND end_time > $3) OR
+          (start_time < $4 AND end_time >= $4) OR
+          (start_time >= $3 AND end_time <= $4)
+        )
+      `, [appointmentData.professionalId, appointmentData.scheduledDate, appointmentData.startTime, endTime]);
 
-      if (!isAvailable) {
+      if (conflictResult.rows.length > 0) {
         throw new ConflictError('Time slot is not available');
       }
 
-      // Create the appointment
+      // Create the appointment using the correct schema
       const insertResult = await client.query(`
         INSERT INTO appointments (
-          professional_id, patient_id, service_id, title, description,
-          appointment_type, status, scheduled_date, start_time, end_time,
-          duration_minutes, is_virtual, location_address, meeting_url,
-          fee, currency, notes, created_by
+          professional_id, 
+          patient_id, 
+          service_id,
+          title,
+          description,
+          appointment_type,
+          status,
+          scheduled_date,
+          start_time,
+          end_time,
+          duration_minutes,
+          is_virtual,
+          location_address,
+          meeting_url,
+          notes,
+          fee,
+          currency,
+          created_by
         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
         RETURNING *
       `, [
         appointmentData.professionalId,
         appointmentData.patientId,
-        appointmentData.serviceId,
-        appointmentData.title || 'Medical Appointment',
-        appointmentData.description,
+        appointmentData.serviceId || null,
+        appointmentData.title || 'Consulta Medica',
+        appointmentData.description || null,
         appointmentData.appointmentType || 'consultation',
         appointmentData.status || 'scheduled',
         appointmentData.scheduledDate,
@@ -100,11 +120,11 @@ export const createAppointment = async (appointmentData, createdBy) => {
         endTime,
         appointmentData.durationMinutes || service?.duration_minutes || 30,
         appointmentData.isVirtual || false,
-        appointmentData.locationAddress,
-        appointmentData.meetingUrl,
-        appointmentData.fee || service?.base_fee || 0,
+        appointmentData.locationAddress || null,
+        appointmentData.isVirtual ? appointmentData.meetingUrl : null,
+        appointmentData.notes || null,
+        appointmentData.fee || service?.price || 0,
         appointmentData.currency || 'EUR',
-        appointmentData.notes,
         createdBy
       ]);
 
@@ -123,8 +143,8 @@ export const createAppointment = async (appointmentData, createdBy) => {
           startTime: appointment.start_time,
           endTime: appointment.end_time,
           appointmentType: appointment.appointment_type,
-          isVirtual: appointment.is_virtual,
-          fee: appointment.fee
+          fee: appointment.fee,
+          status: appointment.status
         },
         riskLevel: RiskLevels.LOW,
       });
@@ -174,145 +194,144 @@ export const getAppointments = async (filters = {}, pagination = {}) => {
 
     const offset = (page - 1) * limit;
 
+    // Build WHERE conditions
     let whereConditions = [];
-    let params = [];
+    let queryParams = [];
     let paramIndex = 1;
 
-    // Build WHERE conditions
     if (professionalId) {
-      whereConditions.push(`a.professional_id = $${paramIndex++}`);
-      params.push(professionalId);
+      whereConditions.push(`a.professional_id = $${paramIndex}`);
+      queryParams.push(professionalId);
+      paramIndex++;
     }
 
     if (patientId) {
-      whereConditions.push(`a.patient_id = $${paramIndex++}`);
-      params.push(patientId);
+      whereConditions.push(`a.patient_id = $${paramIndex}`);
+      queryParams.push(patientId);
+      paramIndex++;
     }
 
     if (status) {
       if (Array.isArray(status)) {
-        whereConditions.push(`a.status = ANY($${paramIndex++})`);
-        params.push(status);
+        const statusPlaceholders = status.map(() => `$${paramIndex++}`).join(',');
+        whereConditions.push(`a.status IN (${statusPlaceholders})`);
+        queryParams.push(...status);
       } else {
-        whereConditions.push(`a.status = $${paramIndex++}`);
-        params.push(status);
+        whereConditions.push(`a.status = $${paramIndex}`);
+        queryParams.push(status);
+        paramIndex++;
       }
     }
 
     if (dateFrom) {
-      whereConditions.push(`a.scheduled_date >= $${paramIndex++}`);
-      params.push(dateFrom);
+      whereConditions.push(`a.scheduled_date >= $${paramIndex}`);
+      queryParams.push(dateFrom);
+      paramIndex++;
     }
 
     if (dateTo) {
-      whereConditions.push(`a.scheduled_date <= $${paramIndex++}`);
-      params.push(dateTo);
+      whereConditions.push(`a.scheduled_date <= $${paramIndex}`);
+      queryParams.push(dateTo);
+      paramIndex++;
     }
 
     if (appointmentType) {
-      whereConditions.push(`a.appointment_type = $${paramIndex++}`);
-      params.push(appointmentType);
+      whereConditions.push(`a.appointment_type = $${paramIndex}`);
+      queryParams.push(appointmentType);
+      paramIndex++;
     }
 
     if (isVirtual !== undefined) {
-      whereConditions.push(`a.is_virtual = $${paramIndex++}`);
-      params.push(isVirtual);
+      whereConditions.push(`a.is_virtual = $${paramIndex}`);
+      queryParams.push(isVirtual);
+      paramIndex++;
     }
 
-    const whereClause = whereConditions.length > 0 
-      ? `WHERE ${whereConditions.join(' AND ')}`
-      : '';
+    const whereClause = whereConditions.length > 0 ? `WHERE ${whereConditions.join(' AND ')}` : '';
 
-    // Valid sort columns
-    const validSortColumns = [
-      'scheduled_date', 'start_time', 'end_time', 'created_at', 
-      'status', 'appointment_type', 'fee'
-    ];
-    const sortColumn = validSortColumns.includes(sortBy) ? sortBy : 'scheduled_date';
-    const order = sortOrder.toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
+    // Main query
+    const appointmentsQuery = `
+      SELECT 
+        a.*,
+        u_prof.name as professional_name,
+        u_prof.avatar_url as professional_image,
+        u_patient.name as patient_name,
+        u_patient.avatar_url as patient_image,
+        pp.specialty,
+        pp.office_address,
+        pp.office_phone,
+        ps.name as service_name,
+        ps.price as service_price,
+        ps.duration_minutes as service_duration
+      FROM appointments a
+      JOIN users u_prof ON a.professional_id = u_prof.id
+      JOIN users u_patient ON a.patient_id = u_patient.id
+      LEFT JOIN professional_profiles pp ON u_prof.id = pp.user_id
+      LEFT JOIN professional_services ps ON a.service_id = ps.id
+      ${whereClause}
+      ORDER BY a.${sortBy} ${sortOrder}, a.start_time ${sortOrder}
+      LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
+    `;
 
-    // Get total count
-    const countResult = await query(`
+    queryParams.push(limit, offset);
+
+    const result = await query(appointmentsQuery, queryParams);
+
+    // Count total records
+    const countQuery = `
       SELECT COUNT(*) as total
       FROM appointments a
       ${whereClause}
-    `, params);
+    `;
 
+    const countResult = await query(countQuery, queryParams.slice(0, -2)); // Remove limit and offset
     const total = parseInt(countResult.rows[0].total);
 
-    // Get appointments with details
-    const appointmentsResult = await query(`
-      SELECT 
-        a.*,
-        pp.name as professional_name,
-        pp.email as professional_email,
-        pt.name as patient_name,
-        pt.email as patient_email,
-        ps.name as service_name,
-        ps.category as service_category,
-        ps.description as service_description
-      FROM appointments a
-      LEFT JOIN users pp ON a.professional_id = pp.id
-      LEFT JOIN users pt ON a.patient_id = pt.id
-      LEFT JOIN professional_services ps ON a.service_id = ps.id
-      ${whereClause}
-      ORDER BY a.${sortColumn} ${order}
-      LIMIT $${paramIndex++} OFFSET $${paramIndex++}
-    `, [...params, limit, offset]);
-
-    logInfo('Appointments retrieved', {
-      total,
-      returned: appointmentsResult.rows.length,
-      page,
-      limit,
-      filters
-    });
-
     return {
-      appointments: appointmentsResult.rows,
+      appointments: result.rows,
       pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
         total,
-        page,
-        limit,
         totalPages: Math.ceil(total / limit),
-        hasNext: page < Math.ceil(total / limit),
+        hasNext: page * limit < total,
         hasPrev: page > 1
       }
     };
 
   } catch (error) {
-    logError(error, {
-      event: 'get_appointments_failed',
-      filters,
-      pagination
-    });
+    logError('Error fetching appointments:', error);
     throw error;
   }
 };
 
-// Get single appointment by ID
+// Get appointment by ID
 export const getAppointmentById = async (appointmentId, userId = null) => {
   try {
-    const result = await query(`
+    const appointmentQuery = `
       SELECT 
         a.*,
-        pp.name as professional_name,
-        pp.email as professional_email,
-        pp.phone as professional_phone,
-        pt.name as patient_name,
-        pt.email as patient_email,
-        pt.phone as patient_phone,
+        u_prof.name as professional_name,
+        u_prof.avatar_url as professional_image,
+        u_prof.email as professional_email,
+        u_patient.name as patient_name,
+        u_patient.avatar_url as patient_image,
+        u_patient.email as patient_email,
+        pp.specialty,
+        pp.office_address,
+        pp.office_phone,
         ps.name as service_name,
-        ps.category as service_category,
-        ps.description as service_description,
-        ps.duration_minutes as service_duration,
-        ps.base_fee as service_base_fee
+        ps.price as service_price,
+        ps.duration_minutes as service_duration
       FROM appointments a
-      LEFT JOIN users pp ON a.professional_id = pp.id
-      LEFT JOIN users pt ON a.patient_id = pt.id
+      JOIN users u_prof ON a.professional_id = u_prof.id
+      JOIN users u_patient ON a.patient_id = u_patient.id
+      LEFT JOIN professional_profiles pp ON u_prof.id = pp.user_id
       LEFT JOIN professional_services ps ON a.service_id = ps.id
       WHERE a.id = $1
-    `, [appointmentId]);
+    `;
+
+    const result = await query(appointmentQuery, [appointmentId]);
 
     if (result.rows.length === 0) {
       throw new NotFoundError('Appointment not found');
@@ -320,7 +339,7 @@ export const getAppointmentById = async (appointmentId, userId = null) => {
 
     const appointment = result.rows[0];
 
-    // Create audit log for sensitive data access
+    // Create audit log if userId is provided
     if (userId) {
       await createAuditLog({
         userId,
@@ -330,30 +349,16 @@ export const getAppointmentById = async (appointmentId, userId = null) => {
         details: {
           appointmentId,
           professionalId: appointment.professional_id,
-          patientId: appointment.patient_id,
-          accessType: 'view'
+          patientId: appointment.patient_id
         },
-        riskLevel: userId === appointment.professional_id || userId === appointment.patient_id 
-          ? RiskLevels.LOW 
-          : RiskLevels.MEDIUM,
+        riskLevel: RiskLevels.LOW
       });
     }
-
-    logInfo('Appointment retrieved', {
-      appointmentId,
-      userId,
-      professionalId: appointment.professional_id,
-      patientId: appointment.patient_id
-    });
 
     return appointment;
 
   } catch (error) {
-    logError(error, {
-      event: 'get_appointment_failed',
-      appointmentId,
-      userId
-    });
+    logError('Error fetching appointment by ID:', error);
     throw error;
   }
 };
@@ -361,61 +366,33 @@ export const getAppointmentById = async (appointmentId, userId = null) => {
 // Update appointment
 export const updateAppointment = async (appointmentId, updateData, updatedBy) => {
   try {
-    logInfo('Updating appointment', {
-      appointmentId,
-      updatedBy,
-      hasScheduleChange: !!(updateData.scheduledDate || updateData.startTime || updateData.endTime)
-    });
-
     const result = await withTransaction(async (client) => {
       // Get current appointment
-      const currentResult = await client.query(
-        'SELECT * FROM appointments WHERE id = $1',
-        [appointmentId]
-      );
-
+      const currentResult = await client.query('SELECT * FROM appointments WHERE id = $1', [appointmentId]);
+      
       if (currentResult.rows.length === 0) {
         throw new NotFoundError('Appointment not found');
       }
 
       const currentAppointment = currentResult.rows[0];
 
-      // Check if schedule is changing and validate availability
-      if (updateData.scheduledDate || updateData.startTime || updateData.endTime) {
-        const newDate = updateData.scheduledDate || currentAppointment.scheduled_date;
-        const newStartTime = updateData.startTime || currentAppointment.start_time;
-        const newEndTime = updateData.endTime || currentAppointment.end_time;
-
-        const isAvailable = await checkAppointmentAvailability(
-          client,
-          currentAppointment.professional_id,
-          newDate,
-          newStartTime,
-          newEndTime,
-          appointmentId // Exclude current appointment
-        );
-
-        if (!isAvailable) {
-          throw new ConflictError('New time slot is not available');
-        }
-      }
-
       // Build update query
       const updateFields = [];
-      const params = [];
-      let paramIndex = 1;
+      const queryParams = [appointmentId];
+      let paramIndex = 2;
 
       const allowedFields = [
-        'title', 'description', 'appointment_type', 'status', 'scheduled_date',
-        'start_time', 'end_time', 'duration_minutes', 'is_virtual', 
-        'location_address', 'meeting_url', 'fee', 'notes', 'internal_notes',
-        'cancellation_reason'
+        'title', 'description', 'appointment_type', 'scheduled_date', 'start_time', 
+        'end_time', 'duration_minutes', 'status', 'is_virtual', 'location_address', 
+        'meeting_url', 'notes', 'internal_notes', 'cancellation_reason', 'fee',
+        'patient_symptoms', 'diagnosis', 'treatment_plan', 'prescriptions'
       ];
 
-      for (const field of allowedFields) {
-        if (updateData[field] !== undefined) {
-          updateFields.push(`${field} = $${paramIndex++}`);
-          params.push(updateData[field]);
+      for (const [key, value] of Object.entries(updateData)) {
+        if (allowedFields.includes(key) && value !== undefined) {
+          updateFields.push(`${key} = $${paramIndex}`);
+          queryParams.push(value);
+          paramIndex++;
         }
       }
 
@@ -423,56 +400,32 @@ export const updateAppointment = async (appointmentId, updateData, updatedBy) =>
         throw new ValidationError('No valid fields to update');
       }
 
+      // Add updated_at
       updateFields.push(`updated_at = CURRENT_TIMESTAMP`);
-      params.push(appointmentId);
 
-      const updateResult = await client.query(`
+      const updateQuery = `
         UPDATE appointments 
         SET ${updateFields.join(', ')}
-        WHERE id = $${paramIndex}
+        WHERE id = $1
         RETURNING *
-      `, params);
+      `;
 
+      const updateResult = await client.query(updateQuery, queryParams);
       const updatedAppointment = updateResult.rows[0];
-
-      // Determine change type for audit
-      let changeType = AuditActions.APPOINTMENT_UPDATED;
-      if (updateData.status === 'cancelled') {
-        changeType = AuditActions.APPOINTMENT_CANCELLED;
-      } else if (updateData.scheduledDate || updateData.startTime) {
-        changeType = AuditActions.APPOINTMENT_UPDATED; // Could be RESCHEDULED
-      }
 
       // Create audit log
       await createAuditLog({
         userId: updatedBy,
-        action: changeType,
+        action: AuditActions.APPOINTMENT_UPDATED,
         resource: 'appointment',
         resourceId: appointmentId,
         details: {
           appointmentId,
           changes: updateData,
-          oldValues: {
-            status: currentAppointment.status,
-            scheduledDate: currentAppointment.scheduled_date,
-            startTime: currentAppointment.start_time,
-            endTime: currentAppointment.end_time
-          },
-          newValues: {
-            status: updatedAppointment.status,
-            scheduledDate: updatedAppointment.scheduled_date,
-            startTime: updatedAppointment.start_time,
-            endTime: updatedAppointment.end_time
-          }
+          previousStatus: currentAppointment.status,
+          newStatus: updatedAppointment.status
         },
-        riskLevel: updateData.status === 'cancelled' ? RiskLevels.MEDIUM : RiskLevels.LOW,
-      });
-
-      logInfo('Appointment updated successfully', {
-        appointmentId,
-        updatedBy,
-        changeType,
-        status: updatedAppointment.status
+        riskLevel: RiskLevels.MEDIUM
       });
 
       return updatedAppointment;
@@ -481,322 +434,90 @@ export const updateAppointment = async (appointmentId, updateData, updatedBy) =>
     return result;
 
   } catch (error) {
-    logError(error, {
-      event: 'appointment_update_failed',
-      appointmentId,
-      updatedBy,
-      updateData
-    });
+    logError('Error updating appointment:', error);
     throw error;
   }
 };
 
 // Cancel appointment
-export const cancelAppointment = async (appointmentId, cancellationReason, cancelledBy) => {
+export const cancelAppointment = async (appointmentId, reason, cancelledBy) => {
   try {
-    logInfo('Cancelling appointment', {
-      appointmentId,
-      cancelledBy,
-      reason: cancellationReason
+    const updateData = {
+      status: 'cancelled',
+      cancellation_reason: reason
+    };
+
+    const cancelledAppointment = await updateAppointment(appointmentId, updateData, cancelledBy);
+
+    // Additional audit log for cancellation
+    await createAuditLog({
+      userId: cancelledBy,
+      action: AuditActions.APPOINTMENT_CANCELLED,
+      resource: 'appointment',
+      resourceId: appointmentId,
+      details: {
+        appointmentId,
+        reason,
+        cancelledAt: new Date().toISOString()
+      },
+      riskLevel: RiskLevels.MEDIUM
     });
 
-    const result = await updateAppointment(
-      appointmentId,
-      {
-        status: 'cancelled',
-        cancellation_reason: cancellationReason
-      },
-      cancelledBy
-    );
-
-    return result;
+    return cancelledAppointment;
 
   } catch (error) {
-    logError(error, {
-      event: 'appointment_cancellation_failed',
-      appointmentId,
-      cancelledBy
-    });
+    logError('Error cancelling appointment:', error);
     throw error;
   }
 };
 
-// Check appointment availability
-export const checkAppointmentAvailability = async (
-  client, 
-  professionalId, 
-  date, 
-  startTime, 
-  endTime, 
-  excludeAppointmentId = null
-) => {
-  try {
-    // Check for conflicting appointments
-    let conflictQuery = `
-      SELECT COUNT(*) as conflicts
-      FROM appointments
-      WHERE professional_id = $1
-        AND scheduled_date = $2
-        AND status IN ('scheduled', 'confirmed', 'in_progress')
-        AND (
-          ($3 >= start_time AND $3 < end_time) OR
-          ($4 > start_time AND $4 <= end_time) OR
-          ($3 <= start_time AND $4 >= end_time)
-        )
-    `;
-    
-    let params = [professionalId, date, startTime, endTime];
-    
-    if (excludeAppointmentId) {
-      conflictQuery += ` AND id != $5`;
-      params.push(excludeAppointmentId);
-    }
-
-    const conflictResult = await client.query(conflictQuery, params);
-    const hasConflicts = parseInt(conflictResult.rows[0].conflicts) > 0;
-
-    if (hasConflicts) {
-      return false;
-    }
-
-    // Check professional schedule
-    const dayOfWeek = getDayOfWeek(date);
-    const scheduleResult = await client.query(`
-      SELECT * FROM professional_schedules
-      WHERE professional_id = $1
-        AND day_of_week = $2
-        AND is_available = true
-        AND (effective_until IS NULL OR effective_until >= $3)
-        AND effective_from <= $3
-    `, [professionalId, dayOfWeek, date]);
-
-    if (scheduleResult.rows.length === 0) {
-      return false; // No schedule found for this day
-    }
-
-    const schedule = scheduleResult.rows[0];
-    
-    // Check if appointment time is within schedule
-    if (startTime < schedule.start_time || endTime > schedule.end_time) {
-      return false;
-    }
-
-    // Check if appointment conflicts with break time
-    if (schedule.break_start_time && schedule.break_end_time) {
-      if (
-        (startTime >= schedule.break_start_time && startTime < schedule.break_end_time) ||
-        (endTime > schedule.break_start_time && endTime <= schedule.break_end_time) ||
-        (startTime <= schedule.break_start_time && endTime >= schedule.break_end_time)
-      ) {
-        return false;
-      }
-    }
-
-    // Check for schedule exceptions
-    const exceptionResult = await client.query(`
-      SELECT * FROM schedule_exceptions
-      WHERE professional_id = $1
-        AND exception_date = $2
-    `, [professionalId, date]);
-
-    if (exceptionResult.rows.length > 0) {
-      const exception = exceptionResult.rows[0];
-      
-      if (!exception.is_available) {
-        return false; // Professional is not available this day
-      }
-      
-      // If there are special hours, check them
-      if (exception.start_time && exception.end_time) {
-        if (startTime < exception.start_time || endTime > exception.end_time) {
-          return false;
-        }
-      }
-    }
-
-    return true;
-
-  } catch (error) {
-    logError(error, {
-      event: 'availability_check_failed',
-      professionalId,
-      date,
-      startTime,
-      endTime
-    });
-    return false;
-  }
-};
-
-// Get professional availability for a date range
+// Get professional availability
 export const getProfessionalAvailability = async (professionalId, dateFrom, dateTo) => {
   try {
-    logInfo('Getting professional availability', {
-      professionalId,
-      dateFrom,
-      dateTo
-    });
+    // Get professional schedule
+    const scheduleQuery = `
+      SELECT * FROM professional_schedules 
+      WHERE professional_id = $1 
+      AND (effective_until IS NULL OR effective_until >= $2)
+      AND effective_from <= $3
+      ORDER BY day_of_week, start_time
+    `;
 
-    const availability = {};
-    const currentDate = new Date(dateFrom);
-    const endDate = new Date(dateTo);
+    const scheduleResult = await query(scheduleQuery, [professionalId, dateFrom, dateTo]);
 
-    while (currentDate <= endDate) {
-      const dateStr = currentDate.toISOString().split('T')[0];
-      const dayOfWeek = getDayOfWeek(dateStr);
+    // Get existing appointments
+    const appointmentsQuery = `
+      SELECT scheduled_date, start_time, end_time, status
+      FROM appointments 
+      WHERE professional_id = $1 
+      AND scheduled_date BETWEEN $2 AND $3
+      AND status NOT IN ('cancelled', 'no_show')
+      ORDER BY scheduled_date, start_time
+    `;
 
-      // Get schedule for this day
-      const scheduleResult = await query(`
-        SELECT * FROM professional_schedules
-        WHERE professional_id = $1
-          AND day_of_week = $2
-          AND is_available = true
-          AND (effective_until IS NULL OR effective_until >= $3)
-          AND effective_from <= $3
-      `, [professionalId, dayOfWeek, dateStr]);
+    const appointmentsResult = await query(appointmentsQuery, [professionalId, dateFrom, dateTo]);
 
-      if (scheduleResult.rows.length > 0) {
-        const schedule = scheduleResult.rows[0];
-        
-        // Check for exceptions
-        const exceptionResult = await query(`
-          SELECT * FROM schedule_exceptions
-          WHERE professional_id = $1
-            AND exception_date = $2
-        `, [professionalId, dateStr]);
+    // Get schedule exceptions
+    const exceptionsQuery = `
+      SELECT exception_date, is_available, start_time, end_time
+      FROM schedule_exceptions 
+      WHERE professional_id = $1 
+      AND exception_date BETWEEN $2 AND $3
+      ORDER BY exception_date
+    `;
 
-        let dayAvailability = {
-          date: dateStr,
-          isAvailable: true,
-          startTime: schedule.start_time,
-          endTime: schedule.end_time,
-          breakStartTime: schedule.break_start_time,
-          breakEndTime: schedule.break_end_time,
-          slots: []
-        };
+    const exceptionsResult = await query(exceptionsQuery, [professionalId, dateFrom, dateTo]);
 
-        if (exceptionResult.rows.length > 0) {
-          const exception = exceptionResult.rows[0];
-          if (!exception.is_available) {
-            dayAvailability.isAvailable = false;
-            dayAvailability.reason = exception.title;
-          } else if (exception.start_time && exception.end_time) {
-            dayAvailability.startTime = exception.start_time;
-            dayAvailability.endTime = exception.end_time;
-          }
-        }
-
-        if (dayAvailability.isAvailable) {
-          // Get existing appointments for this day
-          const appointmentsResult = await query(`
-            SELECT start_time, end_time FROM appointments
-            WHERE professional_id = $1
-              AND scheduled_date = $2
-              AND status IN ('scheduled', 'confirmed', 'in_progress')
-            ORDER BY start_time
-          `, [professionalId, dateStr]);
-
-          // Generate available time slots (30-minute intervals)
-          dayAvailability.slots = generateTimeSlots(
-            dayAvailability.startTime,
-            dayAvailability.endTime,
-            dayAvailability.breakStartTime,
-            dayAvailability.breakEndTime,
-            appointmentsResult.rows,
-            30 // Default slot duration
-          );
-        }
-
-        availability[dateStr] = dayAvailability;
-      } else {
-        availability[dateStr] = {
-          date: dateStr,
-          isAvailable: false,
-          reason: 'No schedule configured'
-        };
-      }
-
-      currentDate.setDate(currentDate.getDate() + 1);
-    }
-
-    logInfo('Professional availability retrieved', {
-      professionalId,
-      daysReturned: Object.keys(availability).length
-    });
-
-    return availability;
+    return {
+      schedule: scheduleResult.rows,
+      appointments: appointmentsResult.rows,
+      exceptions: exceptionsResult.rows
+    };
 
   } catch (error) {
-    logError(error, {
-      event: 'get_availability_failed',
-      professionalId,
-      dateFrom,
-      dateTo
-    });
+    logError('Error fetching professional availability:', error);
     throw error;
   }
-};
-
-// Helper functions
-const addMinutesToTime = (timeString, minutes) => {
-  const [hours, mins] = timeString.split(':').map(Number);
-  const totalMinutes = hours * 60 + mins + minutes;
-  const newHours = Math.floor(totalMinutes / 60) % 24;
-  const newMins = totalMinutes % 60;
-  return `${newHours.toString().padStart(2, '0')}:${newMins.toString().padStart(2, '0')}`;
-};
-
-const getDayOfWeek = (dateString) => {
-  const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-  const date = new Date(dateString);
-  return days[date.getDay()];
-};
-
-const generateTimeSlots = (startTime, endTime, breakStart, breakEnd, existingAppointments, slotDuration) => {
-  const slots = [];
-  const start = timeToMinutes(startTime);
-  const end = timeToMinutes(endTime);
-  const breakStartMin = breakStart ? timeToMinutes(breakStart) : null;
-  const breakEndMin = breakEnd ? timeToMinutes(breakEnd) : null;
-
-  for (let time = start; time < end; time += slotDuration) {
-    const slotStart = minutesToTime(time);
-    const slotEnd = minutesToTime(time + slotDuration);
-
-    // Skip if slot overlaps with break
-    if (breakStartMin && breakEndMin && 
-        time < breakEndMin && (time + slotDuration) > breakStartMin) {
-      continue;
-    }
-
-    // Check if slot conflicts with existing appointments
-    const hasConflict = existingAppointments.some(apt => {
-      const aptStart = timeToMinutes(apt.start_time);
-      const aptEnd = timeToMinutes(apt.end_time);
-      return time < aptEnd && (time + slotDuration) > aptStart;
-    });
-
-    if (!hasConflict) {
-      slots.push({
-        startTime: slotStart,
-        endTime: slotEnd,
-        available: true
-      });
-    }
-  }
-
-  return slots;
-};
-
-const timeToMinutes = (timeString) => {
-  const [hours, minutes] = timeString.split(':').map(Number);
-  return hours * 60 + minutes;
-};
-
-const minutesToTime = (minutes) => {
-  const hours = Math.floor(minutes / 60);
-  const mins = minutes % 60;
-  return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
 };
 
 export default {
@@ -805,6 +526,5 @@ export default {
   getAppointmentById,
   updateAppointment,
   cancelAppointment,
-  checkAppointmentAvailability,
-  getProfessionalAvailability,
+  getProfessionalAvailability
 };

@@ -7,6 +7,7 @@ import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import { createServer } from 'http';
 import { clerkMiddleware } from '@clerk/express';
+import { authenticateAdmin } from './middleware/clerkAuth.js';
 import { testConnection } from './config/database.js';
 
 // Import WebSocket and notification services
@@ -234,7 +235,7 @@ app.use('/api/services', clerkAuth, serviceRoutes);
 app.use('/api/validation', clerkAuth, validationRoutes);
 app.use('/api/patients', clerkAuth, patientRoutes);
 app.use('/api/reviews', clerkAuth, reviewRoutes);
-app.use('/api/admin', clerkAuth, adminRoutes);
+app.use('/api/admin', authenticateAdmin, adminRoutes);
 app.use('/api/tickets', clerkAuth, ticketRoutes);
 app.use('/api/notifications', clerkAuth, notificationRoutes);
 app.use('/api/payments', paymentRoutes); // Webhooks need to be processed without auth

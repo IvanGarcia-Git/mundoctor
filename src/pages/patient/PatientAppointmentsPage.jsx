@@ -65,26 +65,54 @@ const PatientAppointmentsPage = () => {
 
 	const getStatusBadge = (status) => {
 		switch (status) {
+			case 'confirmed':
 			case 'confirmada':
 				return (
 					<Badge className="bg-green-500/20 text-green-600 dark:text-green-400">
 						Confirmada
 					</Badge>
 				);
+			case 'scheduled':
 			case 'pendiente':
 				return (
 					<Badge className="bg-yellow-500/20 text-yellow-600 dark:text-yellow-400">
-						Pendiente
+						Programada
 					</Badge>
 				);
+			case 'in_progress':
+				return (
+					<Badge className="bg-blue-500/20 text-blue-600 dark:text-blue-400">
+						En Progreso
+					</Badge>
+				);
+			case 'completed':
+			case 'completada':
+				return (
+					<Badge className="bg-green-500/20 text-green-600 dark:text-green-400">
+						Completada
+					</Badge>
+				);
+			case 'cancelled':
 			case 'cancelada':
 				return (
 					<Badge className="bg-red-500/20 text-red-600 dark:text-red-400">
 						Cancelada
 					</Badge>
 				);
+			case 'no_show':
+				return (
+					<Badge className="bg-orange-500/20 text-orange-600 dark:text-orange-400">
+						No Asistió
+					</Badge>
+				);
+			case 'rescheduled':
+				return (
+					<Badge className="bg-purple-500/20 text-purple-600 dark:text-purple-400">
+						Reprogramada
+					</Badge>
+				);
 			default:
-				return <Badge variant="secondary">Desconocido</Badge>;
+				return <Badge variant="secondary">{status || 'Desconocido'}</Badge>;
 		}
 	};
 
@@ -158,7 +186,7 @@ const PatientAppointmentsPage = () => {
 							) : filteredAppointments.length === 0 ? (
 								<div className="text-center py-8">
 									<p className="text-muted-foreground">
-										{searchTerm ? 'No se encontraron citas que coincidan con la búsqueda.' : 'No tienes citas programadas.'}
+										{searchTerm ? 'No se encontraron citas que coincidan con la búsqueda.' : 'No hay citas agendadas en este momento.'}
 									</p>
 								</div>
 							) : (
@@ -198,13 +226,75 @@ const PatientAppointmentsPage = () => {
 															size={16}
 															className="mr-2 text-primary dark:text-blue-400"
 														/>
-														<span className="text-muted-foreground dark:text-gray-300">
-															{apt.appointment_date ? format(new Date(apt.appointment_date), 'dd/MM/yyyy') : apt.date || 'N/A'} - {apt.appointment_time || apt.time || 'N/A'}
-														</span>
+														<div className="text-muted-foreground dark:text-gray-300">
+															<div className="font-medium">
+																{(() => {
+																	const date = apt.scheduled_date || apt.appointment_date || apt.date;
+																	if (!date) return 'Fecha no disponible';
+																	try {
+																		return format(new Date(date), 'dd/MM/yyyy');
+																	} catch {
+																		return date;
+																	}
+																})()}
+															</div>
+															<div className="text-sm">
+																{(() => {
+																	const time = apt.start_time || apt.appointment_time || apt.time;
+																	if (!time) return 'Hora no disponible';
+																	try {
+																		// Si es un formato de tiempo completo (HH:MM:SS), extraer solo HH:MM
+																		const timeStr = time.toString();
+																		if (timeStr.includes(':')) {
+																			const parts = timeStr.split(':');
+																			return `${parts[0]}:${parts[1]}`;
+																		}
+																		return timeStr;
+																	} catch {
+																		return time;
+																	}
+																})()}
+															</div>
+														</div>
 													</div>
 												</TableCell>
 												<TableCell className="text-muted-foreground dark:text-gray-300">
-													{apt.consultation_type || apt.type || 'Presencial'}
+													{(() => {
+														const type = apt.consultation_type || apt.type || (apt.is_virtual ? 'virtual' : 'in_person');
+														switch (type) {
+															case 'virtual':
+																return (
+																	<div className="flex items-center">
+																		<span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+																		Virtual
+																	</div>
+																);
+															case 'in_person':
+															case 'presencial':
+																return (
+																	<div className="flex items-center">
+																		<span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+																		Presencial
+																	</div>
+																);
+															case 'teleconsultation':
+																return (
+																	<div className="flex items-center">
+																		<span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+																		Teleconsulta
+																	</div>
+																);
+															case 'home_visit':
+																return (
+																	<div className="flex items-center">
+																		<span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
+																		Domicilio
+																	</div>
+																);
+															default:
+																return type || 'Presencial';
+														}
+													})()}
 												</TableCell>
 												<TableCell>{getStatusBadge(apt.status)}</TableCell>
 											</TableRow>

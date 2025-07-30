@@ -48,7 +48,18 @@ export const usePatientApi = () => {
         console.error('Error canceling appointment:', error);
         throw error;
       }
-    }
+    },
+
+    // Get patient reviews
+    getReviews: async (params = {}) => {
+      try {
+        const result = await patientApi.getReviews(params);
+        return result;
+      } catch (error) {
+        console.error('Error fetching patient reviews:', error);
+        throw error;
+      }
+    },
   };
 };
 

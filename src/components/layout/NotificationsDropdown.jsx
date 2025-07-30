@@ -18,7 +18,7 @@ const sampleNotifications = [
   { id: 1, icon: <CalendarCheck className="h-4 w-4 text-green-500" />, title: "Nueva cita confirmada", description: "Ana Pérez ha confirmado su cita para mañana a las 10:00.", time: "Hace 5m", read: false, link: "/profesionales/citas" },
   { id: 2, icon: <MessageSquare className="h-4 w-4 text-blue-500" />, title: "Nuevo mensaje", description: "Carlos López te ha enviado un mensaje.", time: "Hace 30m", read: false, link: "/profesionales/mensajes" },
   { id: 3, icon: <UserPlus className="h-4 w-4 text-purple-500" />, title: "Nuevo paciente registrado", description: "Sofía Martín se ha registrado como nueva paciente.", time: "Hace 1h", read: true, link: "/profesionales/pacientes" },
-  { id: 4, icon: <AlertCircle className="h-4 w-4 text-yellow-500" />, title: "Recordatorio: Actualizar perfil", description: "Completa tu perfil para mayor visibilidad.", time: "Ayer", read: true, link: "/profesionales/perfil" },
+  { id: 4, icon: <AlertCircle className="h-4 w-4 text-yellow-500" />, title: "Recordatorio: Revisar reseñas", description: "Revisa las nuevas reseñas de tus pacientes.", time: "Ayer", read: true, link: "/profesionales/valoraciones" },
   { id: 5, icon: <CalendarCheck className="h-4 w-4 text-red-500" />, title: "Cita cancelada", description: "Luis Fernández ha cancelado su cita del Viernes.", time: "Hace 2 días", read: true, link: "/profesionales/citas" },
 ];
 

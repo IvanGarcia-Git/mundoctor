@@ -3,6 +3,10 @@ import { useParams, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, MapPin, Star, Phone, Mail, Calendar, Clock, Shield } from 'lucide-react';
 import ProfessionalAvatar from '@/components/ui/professional-avatar';
+import { Calendar as CalendarComponent } from '@/components/ui/calendar';
+import { es } from 'date-fns/locale';
+import { format, isBefore, startOfDay, isWeekend } from 'date-fns';
+import BookingModal from '@/components/patient/BookingModal';
 
 // API Configuration
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
@@ -12,6 +16,43 @@ const ProfessionalProfilePage = () => {
   const [professional, setProfessional] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedTime, setSelectedTime] = useState('');
+  const [showBookingModal, setShowBookingModal] = useState(false);
+  const [availableSlots, setAvailableSlots] = useState([]);
+
+  // Generate time slots for selected date
+  const generateTimeSlots = (date) => {
+    if (!date) {
+      setAvailableSlots([]);
+      return;
+    }
+
+    // Default available time slots
+    const morningSlots = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30'];
+    const afternoonSlots = ['16:00', '16:30', '17:00', '17:30', '18:00', '18:30'];
+    
+    // Simulate some booked slots
+    const today = new Date();
+    const isToday = date.toDateString() === today.toDateString();
+    const currentHour = today.getHours();
+    
+    let availableSlots = [...morningSlots, ...afternoonSlots];
+    
+    // If it's today, remove past time slots
+    if (isToday) {
+      availableSlots = availableSlots.filter(slot => {
+        const [hour] = slot.split(':').map(Number);
+        return hour > currentHour;
+      });
+    }
+    
+    // Simulate some random booked slots
+    const bookedSlots = ['10:00', '16:30']; // Some example booked slots
+    availableSlots = availableSlots.filter(slot => !bookedSlots.includes(slot));
+    
+    setAvailableSlots(availableSlots);
+  };
 
   useEffect(() => {
     const fetchProfessional = async () => {
@@ -79,6 +120,7 @@ const ProfessionalProfilePage = () => {
   }
 
   const defaultProfessional = {
+    id: professional.id || id, // Add the professional ID - use from API or URL param
     name: professional.name || 'Profesional',
     specialty_name: professional.specialty_name || 'Medicina General',
     city: professional.city || 'No especificado',
@@ -320,67 +362,111 @@ const ProfessionalProfilePage = () => {
                 <p className="text-center text-sm mb-6 text-muted-foreground">Horario no disponible</p>
               )}
 
-              {/* Calendar */}
+              {/* Full Calendar */}
               <div className="bg-secondary/30 rounded-lg p-4 mb-6">
-                <h3 className="text-center font-medium mb-3">July 2025</h3>
-                <div className="grid grid-cols-7 gap-1 text-xs text-center text-muted-foreground mb-2">
-                  <div>Su</div>
-                  <div>Mo</div>
-                  <div>Tu</div>
-                  <div>We</div>
-                  <div>Th</div>
-                  <div>Fr</div>
-                  <div>Sa</div>
-                </div>
-                <div className="grid grid-cols-7 gap-1 text-sm">
-                  {/* Calendar days */}
-                  {Array.from({length: 35}, (_, i) => {
-                    const day = i - 6; // Adjust for starting position
-                    const isCurrentMonth = day > 0 && day <= 31;
-                    const isHighlighted = [21, 22, 23, 24, 25, 28, 29, 30, 31].includes(day);
-                    
-                    return (
-                      <div 
-                        key={i} 
-                        className={`h-8 w-8 flex items-center justify-center rounded ${
-                          isCurrentMonth 
-                            ? isHighlighted 
-                              ? 'bg-primary text-primary-foreground cursor-pointer hover:bg-primary/80' 
-                              : 'text-muted-foreground'
-                            : 'text-transparent'
-                        }`}
-                      >
-                        {isCurrentMonth ? day : ''}
-                      </div>
-                    );
-                  })}
+                <h3 className="text-center font-medium mb-3">Seleccionar fecha</h3>
+                <CalendarComponent
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={(date) => {
+                    setSelectedDate(date);
+                    setSelectedTime(''); // Reset time when date changes
+                    generateTimeSlots(date);
+                  }}
+                  locale={es}
+                  disabled={(date) => {
+                    // Disable past dates
+                    if (isBefore(date, startOfDay(new Date()))) return true;
+                    // Disable weekends (simulate professional not available)
+                    if (isWeekend(date)) return true;
+                    // Simulate some random unavailable dates
+                    const day = date.getDate();
+                    if ([6, 13, 20, 27].includes(day)) return true;
+                    return false;
+                  }}
+                  className="w-full"
+                  modifiers={{
+                    available: (date) => {
+                      if (isBefore(date, startOfDay(new Date()))) return false;
+                      if (isWeekend(date)) return false;
+                      const day = date.getDate();
+                      return ![6, 13, 20, 27].includes(day);
+                    }
+                  }}
+                  modifiersStyles={{
+                    available: {
+                      backgroundColor: 'var(--primary)',
+                      color: 'white',
+                      fontWeight: '600'
+                    }
+                  }}
+                />
+                <div className="mt-3 text-xs text-muted-foreground text-center">
+                  <p>Los fines de semana y algunos días específicos no están disponibles</p>
                 </div>
               </div>
 
               {/* Time slots */}
-              <div className="mb-6">
-                <h3 className="font-medium mb-3">Horas disponibles para el 21/7/2025</h3>
-                <div className="grid grid-cols-3 gap-2">
-                  {['09:00', '10:00', '11:00', '12:00', '16:00', '17:00', '18:00', '19:00'].map((time, index) => (
-                    <Button
-                      key={time}
-                      variant="outline"
-                      size="sm"
-                      className={`text-xs ${index < 3 ? 'border-blue-300 text-blue-600' : ''}`}
-                    >
-                      {time}
-                    </Button>
-                  ))}
+              {selectedDate && (
+                <div className="mb-6">
+                  <h3 className="font-medium mb-3">
+                    Horarios para {format(selectedDate, 'EEEE, d MMMM', { locale: es })}
+                  </h3>
+                  <div className="grid grid-cols-3 gap-2">
+                    {availableSlots.map((time) => (
+                      <Button
+                        key={time}
+                        variant={selectedTime === time ? "default" : "outline"}
+                        size="sm"
+                        className="text-xs"
+                        onClick={() => setSelectedTime(time)}
+                      >
+                        {time}
+                      </Button>
+                    ))}
+                  </div>
+                  {availableSlots.length === 0 && (
+                    <p className="text-center text-sm text-muted-foreground py-4">
+                      No hay horarios disponibles para esta fecha
+                    </p>
+                  )}
                 </div>
-              </div>
+              )}
+              
+              {!selectedDate && (
+                <div className="mb-6 text-center text-sm text-muted-foreground py-4">
+                  Selecciona una fecha para ver los horarios disponibles
+                </div>
+              )}
 
-              <Button className="w-full" size="lg">
-                Reservar cita
+              <Button 
+                className="w-full" 
+                size="lg"
+                disabled={!selectedDate || !selectedTime}
+                onClick={() => setShowBookingModal(true)}
+              >
+                {selectedDate && selectedTime ? 'Reservar cita' : 'Selecciona fecha y hora'}
               </Button>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Simplified Booking Modal */}
+      {showBookingModal && (
+        <BookingModal
+          professional={defaultProfessional}
+          selectedDate={selectedDate}
+          selectedTime={selectedTime}
+          onBookingSuccess={(appointment) => {
+            setShowBookingModal(false);
+            setSelectedDate(null);
+            setSelectedTime('');
+            alert('¡Cita reservada exitosamente!');
+          }}
+          onCancel={() => setShowBookingModal(false)}
+        />
+      )}
     </div>
   );
 };

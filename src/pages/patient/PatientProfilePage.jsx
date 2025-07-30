@@ -134,7 +134,7 @@ const PatientProfilePage = () => {
   return (
     <>
       <header className="mb-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-foreground dark:text-white">Mi Perfil</h1>
+        <h1 className="text-3xl md:text-4xl font-bold text-foreground dark:text-white">Mis Reseñas</h1>
         <p className="text-muted-foreground dark:text-gray-400">Gestiona tu información personal y preferencias.</p>
       </header>
 

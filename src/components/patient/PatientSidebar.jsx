@@ -10,7 +10,7 @@ const PatientSidebar = () => {
   const menuItems = [
     { name: 'Panel', path: '/paciente/dashboard', icon: <LayoutDashboard size={20}/> },
     { name: 'Mis Citas', path: '/paciente/citas', icon: <CalendarClock size={20}/> },
-    { name: 'Mi Perfil', path: '/paciente/perfil', icon: <User size={20}/> },
+    
     { name: 'Mis Reseñas', path: '/paciente/resenas', icon: <Star size={20}/> },
   ];
 

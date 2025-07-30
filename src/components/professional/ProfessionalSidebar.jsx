@@ -25,13 +25,12 @@ const menuItems = [
       { icon: LayoutDashboard, label: 'Panel', path: '/profesionales/dashboard' },
       { icon: Calendar, label: 'Citas', path: '/profesionales/citas' },
       { icon: Users, label: 'Pacientes', path: '/profesionales/pacientes' },
-      { icon: Star, label: 'Valoraciones', path: '/profesionales/valoraciones' },
     ]
   },
   {
     label: 'Gestión',
     items: [
-      { icon: UserCircle, label: 'Mi Perfil', path: '/profesionales/perfil' },
+      { icon: Star, label: 'Mis Reseñas', path: '/profesionales/valoraciones' },
       { icon: Newspaper, label: 'Historia Clínica', path: '/profesionales/historias' },
       { icon: Stethoscope, label: 'Servicios', path: '/profesionales/servicios' },
     ]

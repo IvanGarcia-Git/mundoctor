@@ -1,0 +1,250 @@
+/* Custom Clerk Component Styling for Dark/Light Mode */
+
+/* Ensure Clerk components inherit app theme colors */
+.cl-internal-b3fm6y {
+  color: inherit;
+}
+
+/* Style the user profile navigation */
+.cl-userProfile-navbar {
+  background-color: var(--colorBackground);
+  border-color: var(--colorNeutral);
+}
+
+/* Style form inputs */
+.cl-formFieldInput {
+  background-color: var(--colorInputBackground);
+  border-color: var(--colorInputBorder);
+  color: var(--colorText);
+}
+
+.cl-formFieldInput:focus {
+  border-color: var(--colorPrimary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Style buttons */
+.cl-formButtonPrimary {
+  background-color: var(--colorPrimary);
+  color: var(--colorPrimaryForeground);
+}
+
+.cl-formButtonPrimary:hover {
+  opacity: 0.9;
+}
+
+/* Style cards and modals */
+.cl-card,
+.cl-modalContent {
+  background-color: var(--colorBackground);
+  border-color: var(--colorNeutral);
+}
+
+/* Style text elements */
+.cl-formFieldLabel {
+  color: var(--colorText);
+}
+
+.cl-profileSectionTitle {
+  color: var(--colorText);
+}
+
+.cl-profileSectionContent {
+  color: var(--colorTextSecondary);
+}
+
+/* Style identity preview */
+.cl-identityPreview {
+  background-color: var(--colorInputBackground);
+  border-color: var(--colorNeutral);
+}
+
+/* Style navbar buttons with better contrast */
+.cl-navbarButton {
+  color: var(--colorText) !important;
+  transition: all 0.2s ease;
+  opacity: 0.8;
+}
+
+.cl-navbarButton:hover {
+  background-color: var(--colorNeutral);
+  color: var(--colorText) !important;
+  opacity: 1;
+}
+
+.cl-navbarButtonActive {
+  background-color: var(--colorPrimary);
+  color: var(--colorPrimaryForeground) !important;
+  opacity: 1;
+}
+
+/* Style badges */
+.cl-badge {
+  background-color: var(--colorPrimary);
+  color: var(--colorPrimaryForeground);
+  opacity: 0.1;
+}
+
+/* Style dividers */
+.cl-dividerLine {
+  background-color: var(--colorNeutral);
+}
+
+.cl-dividerText {
+  color: var(--colorTextSecondary);
+  background-color: var(--colorBackground);
+}
+
+/* Style modal close button */
+.cl-modalCloseButton {
+  color: var(--colorTextSecondary);
+}
+
+.cl-modalCloseButton:hover {
+  color: var(--colorText);
+}
+
+/* Style accordion triggers */
+.cl-accordionTriggerButton {
+  color: var(--colorText);
+}
+
+.cl-accordionTriggerButton:hover {
+  background-color: var(--colorNeutral);
+}
+
+/* Ensure proper contrast for success/error states */
+.cl-formFieldSuccessText {
+  color: var(--colorSuccess);
+}
+
+.cl-formFieldErrorText {
+  color: var(--colorDanger);
+}
+
+.cl-formFieldWarningText {
+  color: var(--colorWarning);
+}
+
+/* Global CSS variables for better contrast */
+:root {
+  --colorBackground: #ffffff;
+  --colorText: #111827;
+  --colorTextSecondary: #374151;
+  --colorPrimary: #1e40af;
+  --colorPrimaryForeground: #ffffff;
+  --colorInputBackground: #ffffff;
+  --colorInputBorder: #d1d5db;
+  --colorNeutral: #e5e7eb;
+  --colorSuccess: #16a34a;
+  --colorDanger: #dc2626;
+  --colorWarning: #d97706;
+}
+
+[data-theme="dark"] {
+  --colorBackground: #0f172a;
+  --colorText: #ffffff;
+  --colorTextSecondary: #e5e7eb;
+  --colorPrimary: #3b82f6;
+  --colorPrimaryForeground: #ffffff;
+  --colorInputBackground: #1e293b;
+  --colorInputBorder: #475569;
+  --colorNeutral: #374151;
+  --colorSuccess: #22c55e;
+  --colorDanger: #ef4444;
+  --colorWarning: #f59e0b;
+}
+
+/* Dark mode specific adjustments */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --colorBackground: #0f172a;
+    --colorText: #ffffff;
+    --colorTextSecondary: #e5e7eb;
+    --colorPrimary: #3b82f6;
+    --colorPrimaryForeground: #ffffff;
+    --colorInputBackground: #1e293b;
+    --colorInputBorder: #475569;
+    --colorNeutral: #374151;
+    --colorSuccess: #22c55e;
+    --colorDanger: #ef4444;
+    --colorWarning: #f59e0b;
+  }
+}
+
+/* Force proper inheritance for nested elements */
+.cl-userProfile-page,
+.cl-userButton-popoverCard {
+  color: inherit;
+  background-color: inherit;
+}
+
+/* Specific UserButton dropdown styling for better contrast */
+.cl-userButtonPopoverCard {
+  background-color: var(--colorBackground) !important;
+}
+
+.cl-userButtonPopoverActionButton,
+.cl-userButtonPopoverActionButtonText {
+  color: var(--colorText) !important;
+  font-weight: 500;
+}
+
+.cl-userButtonPopoverActionButton:hover {
+  background-color: var(--colorNeutral) !important;
+  color: var(--colorText) !important;
+}
+
+/* Style the user info section */
+.cl-userButtonPopoverMain {
+  color: var(--colorText) !important;
+}
+
+.cl-userButtonPopoverMain .cl-userButtonPopoverMainIdentifier {
+  color: var(--colorText) !important;
+  font-weight: 600;
+}
+
+.cl-userButtonPopoverMain .cl-userButtonPopoverMainIdentifierText {
+  color: var(--colorTextSecondary) !important;
+}
+
+/* Ensure menu items have proper contrast */
+.cl-menuButton,
+.cl-menuItem {
+  color: var(--colorText) !important;
+}
+
+.cl-menuButton:hover,
+.cl-menuItem:hover {
+  background-color: var(--colorNeutral) !important;
+  color: var(--colorText) !important;
+}
+
+/* Additional specific targeting for UserButton dropdown items */
+.cl-userButtonPopoverFooter .cl-userButtonPopoverActionButton,
+[data-localization-key="userButton.action__manageAccount"],
+[data-localization-key="userButton.action__signOut"],
+.cl-userButtonPopoverActionButton[role="menuitem"] {
+  color: var(--colorText) !important;
+  font-weight: 500 !important;
+}
+
+.cl-userButtonPopoverFooter .cl-userButtonPopoverActionButton:hover,
+[data-localization-key="userButton.action__manageAccount"]:hover,
+[data-localization-key="userButton.action__signOut"]:hover,
+.cl-userButtonPopoverActionButton[role="menuitem"]:hover {
+  background-color: var(--colorNeutral) !important;
+  color: var(--colorText) !important;
+}
+
+/* Ensure all text within the popover has good contrast */
+.cl-userButtonPopover * {
+  color: inherit;
+}
+
+/* Target specific button text */
+.cl-userButtonPopoverActionButtonIcon + .cl-userButtonPopoverActionButtonText {
+  color: var(--colorText) !important;
+  font-weight: 500 !important;
+}

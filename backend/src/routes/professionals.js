@@ -227,32 +227,24 @@ router.get('/specialties', async (req, res) => {
 // Get featured professionals (public route)
 router.get('/featured', async (req, res) => {
   try {
-    const limit = parseInt(req.query.limit) || 8;
+    const limit = parseInt(req.query.limit) || 4; // Default to 4 featured professionals
 
     const featuredQuery = `
       SELECT 
-        p.id,
-        p.user_id,
+        p.user_id as id,
         u.name,
         u.avatar_url,
-        p.specialty_id,
         s.name as specialty_name,
-        s.icon as specialty_icon,
-        p.consultation_fee,
-        p.city,
         p.rating,
-        p.total_reviews,
-        p.about,
-        p.experience_years,
-        p.verified
+        p.total_reviews
       FROM professionals p
       JOIN users u ON p.user_id = u.id
       LEFT JOIN specialties s ON p.specialty_id = s.id
       WHERE u.role = 'professional' 
-        AND u.status IN ('active', 'pending_validation')
+        AND u.status = 'active'
         AND p.verified = true
         AND p.rating >= 4.0
-        AND p.total_reviews >= 5
+        AND p.total_reviews >= 10 -- Only show professionals with at least 10 reviews
       ORDER BY p.rating DESC, p.total_reviews DESC
       LIMIT $1
     `;
@@ -261,10 +253,8 @@ router.get('/featured', async (req, res) => {
     
     const featured = result.rows.map(prof => ({
       ...prof,
-      consultation_fee: parseFloat(prof.consultation_fee) || 0,
       rating: parseFloat(prof.rating) || 0,
       total_reviews: parseInt(prof.total_reviews) || 0,
-      experience_years: parseInt(prof.experience_years) || 0
     }));
 
     res.json({

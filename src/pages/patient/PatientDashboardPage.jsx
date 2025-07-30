@@ -21,27 +21,49 @@ const PatientDashboardPage = () => {
 				setIsLoading(true);
 
 				// Load data from API
-				const [statsResponse, appointmentsResponse] = await Promise.all([
+				const [statsResponse, appointmentsResponse, professionalsResponse] = await Promise.all([
 					userApi.getDashboardStats(),
-					userApi.getDashboardAppointments(5)
+					userApi.getDashboardAppointments(5),
+					userApi.getDashboardProfessionals(3)
 				]);
 
 				if (statsResponse.success) {
 					const data = statsResponse.data;
 					
+					// Format next appointment info
+					let nextAppointmentText = 'No hay citas programadas';
+					let nextAppointmentDescription = 'Programa tu próxima cita';
+					
+					if (data.nextAppointment) {
+						const nextDate = new Date(data.nextAppointment.date);
+						nextAppointmentText = nextDate.toLocaleDateString('es-ES', { 
+							day: 'numeric', 
+							month: 'long' 
+						});
+						nextAppointmentDescription = `${data.nextAppointment.professionalName} - ${data.nextAppointment.time}`;
+					}
+					
 					// Format stats for display
 					const formattedStats = [
 						{
 							title: 'Próxima Cita',
-							value: data.nextAppointment || '15 Junio',
-							description: 'Dr. Carlos Soler - Cardiología',
+							value: nextAppointmentText,
+							description: nextAppointmentDescription,
 							icon: <CalendarClock className="text-blue-500" />,
 							color: 'blue',
 							link: '/paciente/citas',
 						},
 						{
+							title: 'Total Citas',
+							value: data.total_appointments?.toString() || '0',
+							description: `${data.completed_appointments || 0} completadas`,
+							icon: <CalendarClock className="text-green-500" />,
+							color: 'green',
+							link: '/paciente/citas',
+						},
+						{
 							title: 'Reseñas Realizadas',
-							value: data.reviewsCount?.toString() || '5',
+							value: data.reviewsCount?.toString() || '0',
 							description: 'Valoraciones enviadas',
 							icon: <Star className="text-yellow-500" />,
 							color: 'yellow',
@@ -56,24 +78,16 @@ const PatientDashboardPage = () => {
 					setUpcomingAppointments(appointmentsResponse.data);
 				}
 
-				// Mock recent doctors data for now - this would be replaced with real API call
-				const mockRecentDoctors = [
-					{
-						id: 'doc1',
-						name: 'Dr. Carlos Soler',
-						specialty: 'Cardiología',
-						avatar: 'https://ui.shadcn.com/avatars/01.png',
-						lastVisit: '2025-05-20',
-					},
-					{
-						id: 'doc2',
-						name: 'Dra. Ana García',
-						specialty: 'Dermatología',
-						avatar: 'https://ui.shadcn.com/avatars/02.png',
-						lastVisit: '2025-05-15',
-					},
-				];
-				setRecentDoctors(mockRecentDoctors);
+				if (professionalsResponse.success) {
+					const professionals = professionalsResponse.data.map(prof => ({
+						id: prof.id,
+						name: prof.name,
+						specialty: prof.specialty,
+						avatar: prof.avatar || 'https://ui.shadcn.com/avatars/01.png',
+						lastVisit: prof.lastVisit,
+					}));
+					setRecentDoctors(professionals);
+				}
 
 			} catch (error) {
 				console.error('Error loading patient dashboard data:', error);
@@ -135,94 +149,6 @@ const PatientDashboardPage = () => {
 						</Card>
 					</Link>
 				))}
-			</div>
-
-			{/* Recent Doctors Grid */}
-			<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-				<Card className="bg-card dark:bg-gray-800/60 border-border dark:border-gray-700/50 shadow-lg">
-					<CardHeader>
-						<CardTitle className="text-foreground dark:text-white flex items-center">
-							<Users size={20} className="mr-2 text-primary dark:text-blue-400" />
-							Últimos Profesionales Visitados
-						</CardTitle>
-						<CardDescription className="text-muted-foreground dark:text-gray-400">
-							Profesionales con los que has tenido cita recientemente
-						</CardDescription>
-					</CardHeader>
-					<CardContent>
-						<div className="space-y-4">
-							{recentDoctors.map(doctor => (
-								<div
-									key={doctor.id}
-									className="flex items-center justify-between p-4 rounded-lg bg-muted/50 dark:bg-gray-700/30"
-								>
-									<div className="flex items-center space-x-4">
-										<Avatar>
-											<AvatarImage src={doctor.avatar} />
-											<AvatarFallback>DR</AvatarFallback>
-										</Avatar>
-										<div>
-											<p className="font-medium text-foreground dark:text-white">
-												{doctor.name}
-											</p>
-											<p className="text-sm text-muted-foreground dark:text-gray-400">
-												{doctor.specialty}
-											</p>
-										</div>
-									</div>
-									<p className="text-sm text-muted-foreground dark:text-gray-400">
-										Última visita: {doctor.lastVisit}
-									</p>
-								</div>
-							))}
-						</div>
-					</CardContent>
-				</Card>
-
-				<Card className="bg-card dark:bg-gray-800/60 border-border dark:border-gray-700/50 shadow-lg">
-					<CardHeader>
-						<CardTitle className="text-foreground dark:text-white flex items-center">
-							<CalendarClock size={20} className="mr-2 text-primary dark:text-blue-400" />
-							Próximas Citas
-						</CardTitle>
-						<CardDescription className="text-muted-foreground dark:text-gray-400">
-							Tus próximas citas programadas
-						</CardDescription>
-					</CardHeader>
-					<CardContent>
-						{upcomingAppointments.length > 0 ? (
-							<div className="space-y-4">
-								{upcomingAppointments.map(appointment => (
-									<div
-										key={appointment.id}
-										className="flex items-center justify-between p-4 rounded-lg bg-muted/50 dark:bg-gray-700/30"
-									>
-										<div>
-											<p className="font-medium text-foreground dark:text-white">
-												{appointment.professionalName || 'Dr. García'}
-											</p>
-											<p className="text-sm text-muted-foreground dark:text-gray-400">
-												{appointment.specialty || 'Cardiología'}
-											</p>
-										</div>
-										<div className="text-right">
-											<p className="text-sm font-medium text-foreground dark:text-white">
-												{appointment.time}
-											</p>
-											<p className="text-xs text-muted-foreground dark:text-gray-400">
-												{appointment.date}
-											</p>
-										</div>
-									</div>
-								))}
-							</div>
-						) : (
-							<div className="text-center text-muted-foreground dark:text-gray-400 py-8">
-								No tienes citas programadas
-							</div>
-						)}
-					</CardContent>
-				</Card>
 			</div>
 		</>
 	);

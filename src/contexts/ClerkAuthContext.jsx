@@ -80,7 +80,7 @@ export const ClerkAuthProvider = ({ children }) => {
         email: clerkUser?.emailAddresses?.[0]?.emailAddress,
         phone: clerkUser?.phoneNumbers?.[0]?.phoneNumber,
         avatar_url: clerkUser?.imageUrl,
-        role: clerkUser?.publicMetadata?.role || 'patient',
+        role: String(clerkUser?.publicMetadata?.role || clerkUser?.unsafeMetadata?.role || 'patient'),
         verified: clerkUser?.emailAddresses?.[0]?.verification?.status === 'verified'
       };
       
@@ -99,7 +99,7 @@ export const ClerkAuthProvider = ({ children }) => {
         email: clerkUser?.emailAddresses?.[0]?.emailAddress,
         phone: clerkUser?.phoneNumbers?.[0]?.phoneNumber,
         avatar_url: clerkUser?.imageUrl,
-        role: clerkUser?.publicMetadata?.role || 'patient',
+        role: String(clerkUser?.publicMetadata?.role || clerkUser?.unsafeMetadata?.role || 'patient'),
         verified: clerkUser?.emailAddresses?.[0]?.verification?.status === 'verified'
       };
       

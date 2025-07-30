@@ -90,17 +90,17 @@ router.post('/',
     riskLevel: RiskLevels.LOW
   }),
   asyncHandler(async (req, res) => {
-    const appointmentData = {
-      ...req.body,
-      patientId: req.user.role === 'patient' ? req.user.id : req.body.patientId
-    };
-
-    // Validate that patients can only create appointments for themselves
-    if (req.user.role === 'patient' && appointmentData.patientId !== req.user.id) {
-      return errorResponse(res, 'Patients can only create appointments for themselves', 403);
+    let appointmentData = { ...req.body };
+    
+    // If user is a patient, use their user ID directly
+    if (req.user.role === 'patient') {
+      appointmentData.patientId = req.user.id;
     }
 
-    // Validate that professionals can create appointments for any patient
+    // Validate that patients can only create appointments for themselves (already handled above)
+    // No additional validation needed since we set the patientId automatically
+
+    // Validate that professionals provide a patient ID  
     if (req.user.role === 'professional' && !appointmentData.patientId) {
       return errorResponse(res, 'Patient ID is required when creating appointments as a professional', 400);
     }

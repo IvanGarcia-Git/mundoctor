@@ -214,6 +214,7 @@ export const CACHE_STRATEGIES = {
   USER_PROFILE: 10 * 60 * 1000,   // 10 minutes
   APPOINTMENTS: 1 * 60 * 1000,    // 1 minute
   REVIEWS: 5 * 60 * 1000,         // 5 minutes
+  PROFESSIONALS: 5 * 60 * 1000,   // 5 minutes
   STATIC_DATA: 30 * 60 * 1000,    // 30 minutes
 };
 

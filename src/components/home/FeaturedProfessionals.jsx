@@ -1,47 +1,47 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-
-const professionals = [
-  {
-    name: "Dr. Elena Rodríguez",
-    specialty: "Cardiología",
-    rating: 4.9,
-    reviews: 120,
-    imageAlt: "Portrait of Dr. Elena Rodriguez, cardiologist",
-    imageDesc: "Female cardiologist smiling confidently",
-    imageSrc: "https://pixel-p2.s3.eu-central-1.amazonaws.com/doctor/avatar/c2737d07/c2737d07-a9e0-40f5-8b81-48faaad945fd_large.jpg"
-  },
-  {
-    name: "Dr. Carlos Vega",
-    specialty: "Pediatría",
-    rating: 4.8,
-    reviews: 95,
-    imageAlt: "Portrait of Dr. Carlos Vega, pediatrician",
-    imageDesc: "Male pediatrician with a friendly expression",
-    imageSrc: "https://s3-eu-west-1.amazonaws.com/doctoralia.es/doctor/38b1c6/38b1c6eaec9c73b573b11971565b078e_large.jpg"
-  },
-  {
-    name: "Dra. Sofía Navarro",
-    specialty: "Dermatología",
-    rating: 4.7,
-    reviews: 88,
-    imageAlt: "Portrait of Dra. Sofia Navarro, dermatologist",
-    imageDesc: "Female dermatologist in a modern clinic setting",
-    imageSrc: "https://pixel-p2.s3.eu-central-1.amazonaws.com/doctor/avatar/b349449c/b349449c-9774-45aa-b91f-663e9d1ec918_large.jpg"
-  },
-  {
-    name: "Dr. Javier Alonso",
-    specialty: "Fisioterapia",
-    rating: 4.9,
-    reviews: 150,
-    imageAlt: "Portrait of Dr. Javier Alonso, physiotherapist",
-    imageDesc: "Male physiotherapist demonstrating an exercise",
-    imageSrc: "https://pixel-p2.s3.eu-central-1.amazonaws.com/doctor/avatar/83ae545f/83ae545f-48cd-4463-b7f1-770eecc60cd5_large.jpg"
-  }
-];
+import { professionalApi } from '@/lib/clerkApi';
+import { useToast } from "@/components/ui/use-toast";
 
 const FeaturedProfessionals = () => {
+  const { toast } = useToast();
+  const [professionals, setProfessionals] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadFeaturedProfessionals = async () => {
+      try {
+        setIsLoading(true);
+        const response = await professionalApi.getFeaturedProfessionals();
+        if (response.success) {
+          setProfessionals(response.data);
+        } else {
+          throw new Error(response.message || 'Failed to load featured professionals');
+        }
+      } catch (error) {
+        console.error('Error loading featured professionals:', error);
+        toast({
+          title: "Error",
+          description: "No se pudieron cargar los profesionales destacados.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadFeaturedProfessionals();
+  }, [toast]);
+
+  if (isLoading) {
+    return (
+      <section className="py-16 md:py-20 bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary"></div>
+      </section>
+    );
+  }
+
   return (
     <section className="py-16 md:py-20 bg-gray-100 dark:bg-gray-900">
       <div className="container mx-auto px-4">
@@ -54,16 +54,16 @@ const FeaturedProfessionals = () => {
               <div className="aspect-[4/3] relative overflow-hidden">
                 <img 
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  alt={prof.imageAlt}
-                 src={prof.imageSrc} />
+                  alt={prof.name}
+                 src={prof.avatar_url || 'https://via.placeholder.com/300x225.png?text=No+Image'} />
               </div>
               <div className="p-5 md:p-6">
                 <h3 className="text-xl font-semibold mb-1 text-gray-900 dark:text-white">{prof.name}</h3>
-                <p className="text-sm text-blue-600 dark:text-blue-400 mb-3">{prof.specialty}</p>
+                <p className="text-sm text-blue-600 dark:text-blue-400 mb-3">{prof.specialty_name || 'Especialidad no definida'}</p>
                 <div className="flex items-center gap-2 mb-4">
                   <span className="text-yellow-400">★</span>
-                  <span className="text-gray-700 dark:text-gray-300 font-semibold">{prof.rating}</span>
-                  <span className="text-gray-500 dark:text-gray-400 text-xs">({prof.reviews} opiniones)</span>
+                  <span className="text-gray-700 dark:text-gray-300 font-semibold">{prof.rating ? prof.rating.toFixed(1) : 'N/A'}</span>
+                  <span className="text-gray-500 dark:text-gray-400 text-xs">({prof.total_reviews || 0} opiniones)</span>
                 </div>
                 <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white transition-colors">
                   Ver Profesional

@@ -255,6 +255,18 @@ class ClerkApiClient {
     return result;
   }
 
+  async getDashboardProfessionals(limit = 3) {
+    const cacheKey = `dashboard_professionals_${limit}`;
+    const cached = apiCache.get(cacheKey);
+    if (cached) {
+      return cached;
+    }
+    
+    const result = await this.get('/users/dashboard-professionals', { limit });
+    apiCache.set(cacheKey, result, CACHE_STRATEGIES.PROFESSIONALS);
+    return result;
+  }
+
   // Professional API endpoints
   async getProfessionalProfile() {
     return this.get('/professionals/profile');
@@ -319,6 +331,7 @@ export const userApi = {
   getDashboardStats: () => clerkApi.getDashboardStats(),
   getDashboardAppointments: (limit) => clerkApi.getDashboardAppointments(limit),
   getDashboardReviews: (limit) => clerkApi.getDashboardReviews(limit),
+  getDashboardProfessionals: (limit) => clerkApi.getDashboardProfessionals(limit),
 };
 
 export const professionalApi = {
@@ -326,6 +339,7 @@ export const professionalApi = {
   updateProfile: (data) => clerkApi.updateProfessionalProfile(data),
   getAppointments: (params) => clerkApi.getProfessionalAppointments(params),
   getPatients: (params) => clerkApi.getProfessionalPatients(params),
+  getFeaturedProfessionals: (limit = 4) => clerkApi.get(`/professionals/featured?limit=${limit}`),
 };
 
 export const adminApi = {
@@ -336,6 +350,7 @@ export const adminApi = {
 
 export const patientApi = {
   getAppointments: (params) => clerkApi.getPatientAppointments(params),
+  getReviews: (params) => clerkApi.get('/patients/reviews', params), // Nueva línea
   createAppointment: (data) => clerkApi.createAppointment(data),
   updateAppointment: (id, updates) => clerkApi.updateAppointment(id, updates),
   cancelAppointment: (id) => clerkApi.cancelAppointment(id),

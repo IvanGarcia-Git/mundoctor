@@ -298,75 +298,113 @@ router.get('/dashboard-stats', async (req, res) => {
       let stats = {};
       
       if (role === 'professional') {
-        // Professional dashboard stats - using mock data for now since appointments table might not exist
-        const currentMonth = new Date().getMonth() + 1;
-        const currentYear = new Date().getFullYear();
-        
-        // Mock data with realistic values
-        stats = {
-          totalPatients: 45,
-          monthlyAppointments: 28,
-          averageRating: 4.8,
-          monthlyIncome: 3500,
-          trends: {
-            patients: '+12.5%',
-            appointments: '+8.3%',
-            rating: '+0.2',
-            income: '+15.7%'
-          }
-        };
-        
-        // TODO: Replace with real queries when appointments table is available
-        /*
-        const appointmentsQuery = `
-          SELECT 
-            COUNT(*) as total_appointments,
-            COUNT(*) FILTER (WHERE status = 'scheduled') as scheduled_appointments,
-            COUNT(*) FILTER (WHERE status = 'completed') as completed_appointments,
-            COUNT(*) FILTER (WHERE date >= CURRENT_DATE) as upcoming_appointments
-          FROM appointments 
-          WHERE professional_id = $1
-        `;
-        const appointmentsResult = await client.query(appointmentsQuery, [dbUserId]);
-        
-        const patientsQuery = `
-          SELECT COUNT(DISTINCT patient_id) as total_patients
-          FROM appointments 
-          WHERE professional_id = $1
-        `;
-        const patientsResult = await client.query(patientsQuery, [dbUserId]);
-        
-        stats = {
-          ...appointmentsResult.rows[0],
-          ...patientsResult.rows[0]
-        };
-        */
+        // Get real professional stats from appointments table
+        try {
+          const appointmentsQuery = `
+            SELECT 
+              COUNT(*) as total_appointments,
+              COUNT(*) FILTER (WHERE status IN ('scheduled', 'confirmed')) as scheduled_appointments,
+              COUNT(*) FILTER (WHERE status = 'completed') as completed_appointments,
+              COUNT(*) FILTER (WHERE scheduled_date >= CURRENT_DATE AND status IN ('scheduled', 'confirmed')) as upcoming_appointments,
+              COUNT(DISTINCT patient_id) as total_patients
+            FROM appointments 
+            WHERE professional_id = $1
+          `;
+          const appointmentsResult = await client.query(appointmentsQuery, [dbUserId]);
+          
+          // Get average rating from reviews
+          const ratingsQuery = `
+            SELECT 
+              COALESCE(AVG(rating), 0) as average_rating,
+              COUNT(*) as reviews_count
+            FROM reviews 
+            WHERE professional_id = $1
+          `;
+          const ratingsResult = await client.query(ratingsQuery, [dbUserId]);
+          
+          stats = {
+            ...appointmentsResult.rows[0],
+            averageRating: parseFloat(ratingsResult.rows[0].average_rating).toFixed(1),
+            reviewsCount: parseInt(ratingsResult.rows[0].reviews_count),
+            monthlyIncome: 0 // TODO: Calculate from completed appointments with fees
+          };
+        } catch (error) {
+          console.log('Professional stats query failed, using fallback data:', error.message);
+          // Fallback to mock data if tables don't exist yet
+          stats = {
+            totalPatients: 0,
+            total_appointments: 0,
+            scheduled_appointments: 0,
+            completed_appointments: 0,
+            upcoming_appointments: 0,
+            averageRating: 0,
+            reviewsCount: 0,
+            monthlyIncome: 0
+          };
+        }
       } else if (role === 'patient') {
-        // Patient dashboard stats - using mock data for now
-        stats = {
-          nextAppointment: 'June 15',
-          reviewsCount: 5,
-          total_appointments: 8,
-          scheduled_appointments: 2,
-          completed_appointments: 6,
-          upcoming_appointments: 2
-        };
-        
-        // TODO: Replace with real queries when appointments table is available
-        /*
-        const appointmentsQuery = `
-          SELECT 
-            COUNT(*) as total_appointments,
-            COUNT(*) FILTER (WHERE status = 'scheduled') as scheduled_appointments,
-            COUNT(*) FILTER (WHERE status = 'completed') as completed_appointments,
-            COUNT(*) FILTER (WHERE date >= CURRENT_DATE) as upcoming_appointments
-          FROM appointments 
-          WHERE patient_id = $1
-        `;
-        const appointmentsResult = await client.query(appointmentsQuery, [dbUserId]);
-        
-        stats = appointmentsResult.rows[0];
-        */
+        // Get real patient stats from appointments table
+        try {
+          const appointmentsQuery = `
+            SELECT 
+              COUNT(*) as total_appointments,
+              COUNT(*) FILTER (WHERE status IN ('scheduled', 'confirmed')) as scheduled_appointments,
+              COUNT(*) FILTER (WHERE status = 'completed') as completed_appointments,
+              COUNT(*) FILTER (WHERE scheduled_date >= CURRENT_DATE AND status IN ('scheduled', 'confirmed')) as upcoming_appointments
+            FROM appointments 
+            WHERE patient_id = $1
+          `;
+          const appointmentsResult = await client.query(appointmentsQuery, [dbUserId]);
+          
+          // Get next appointment info
+          const nextAppointmentQuery = `
+            SELECT 
+              scheduled_date,
+              start_time,
+              pp.name as professional_name,
+              ps.name as service_name
+            FROM appointments a
+            LEFT JOIN users pp ON a.professional_id = pp.id  
+            LEFT JOIN professional_services ps ON a.service_id = ps.id
+            WHERE a.patient_id = $1 
+              AND a.scheduled_date >= CURRENT_DATE 
+              AND a.status IN ('scheduled', 'confirmed')
+            ORDER BY a.scheduled_date, a.start_time
+            LIMIT 1
+          `;
+          const nextAppointmentResult = await client.query(nextAppointmentQuery, [dbUserId]);
+          
+          // Get reviews count
+          const reviewsQuery = `
+            SELECT COUNT(*) as reviews_count
+            FROM reviews 
+            WHERE patient_id = $1
+          `;
+          const reviewsResult = await client.query(reviewsQuery, [dbUserId]);
+          
+          stats = {
+            ...appointmentsResult.rows[0],
+            reviewsCount: parseInt(reviewsResult.rows[0].reviews_count),
+            nextAppointment: nextAppointmentResult.rows.length > 0 ? 
+              {
+                date: nextAppointmentResult.rows[0].scheduled_date,
+                time: nextAppointmentResult.rows[0].start_time,
+                professionalName: nextAppointmentResult.rows[0].professional_name,
+                serviceName: nextAppointmentResult.rows[0].service_name
+              } : null
+          };
+        } catch (error) {
+          console.log('Patient stats query failed, using fallback data:', error.message);
+          // Fallback to mock data if tables don't exist yet
+          stats = {
+            total_appointments: 0,
+            scheduled_appointments: 0,
+            completed_appointments: 0,
+            upcoming_appointments: 0,
+            reviewsCount: 0,
+            nextAppointment: null
+          };
+        }
       } else if (role === 'admin') {
         // Admin dashboard stats - get real data from users table (optimized)
         const usersQuery = `
@@ -379,19 +417,76 @@ router.get('/dashboard-stats', async (req, res) => {
         `;
         const usersResult = await client.query(usersQuery);
         
-        // Mock appointments data for now
-        const appointmentsResult = { rows: [{ total_appointments: 850 }] };
+        // Try to get real appointments data
+        let appointmentsData = { total_appointments: 0 };
+        try {
+          const appointmentsQuery = `SELECT COUNT(*) as total_appointments FROM appointments`;
+          const appointmentsResult = await client.query(appointmentsQuery);
+          appointmentsData = appointmentsResult.rows[0];
+        } catch (error) {
+          console.log('Admin appointments query failed, using fallback data:', error.message);
+        }
         
-        // Add mock monthly data for charts
-        const monthlyUsers = [120, 145, 180, 195, 230, 280];
-        const monthlySubscriptions = [80, 95, 120, 140, 180, 220];
+        // Get pending professional validations
+        let pendingValidationsCount = 0;
+        try {
+          const validationsQuery = `
+            SELECT COUNT(*) as count
+            FROM professional_validations
+            WHERE status = 'pending'
+          `;
+          const validationsResult = await client.query(validationsQuery);
+          pendingValidationsCount = parseInt(validationsResult.rows[0].count);
+        } catch (error) {
+          console.log('Admin pending validations query failed, using fallback data:', error.message);
+        }
+
+        // Get monthly user registrations (last 6 months)
+        const usersByMonthQuery = `
+          SELECT
+            TO_CHAR(date_trunc('month', created_at), 'Mon') as month,
+            COUNT(*) as count
+          FROM users
+          WHERE created_at >= date_trunc('month', NOW()) - INTERVAL '5 months'
+          GROUP BY date_trunc('month', created_at)
+          ORDER BY date_trunc('month', created_at) ASC;
+        `;
+        const usersByMonthResult = await client.query(usersByMonthQuery);
+        const usersByMonth = usersByMonthResult.rows.map(row => parseInt(row.count));
+
+        // Temporarily commented out subscriptions queries for debugging
+        // let totalActiveSubscriptions = 0;
+        // try {
+        //   const activeSubscriptionsQuery = `
+        //     SELECT COUNT(*) as count
+        //     FROM subscriptions
+        //     WHERE status = 'active'
+        //   `;
+        //   const activeSubscriptionsResult = await client.query(activeSubscriptionsQuery);
+        //   totalActiveSubscriptions = parseInt(activeSubscriptionsResult.rows[0].count);
+        // } catch (error) {
+        //   console.log('Admin active subscriptions query failed, using fallback data:', error.message);
+        // }
+
+        // const subscriptionsByMonthQuery = `
+        //   SELECT
+        //     TO_CHAR(date_trunc('month', created_at), 'Mon') as month,
+        //     COUNT(*) as count
+        //   FROM subscriptions
+        //   WHERE status = 'active' AND created_at >= date_trunc('month', NOW()) - INTERVAL '5 months'
+        //   GROUP BY date_trunc('month', created_at)
+        //   ORDER BY date_trunc('month', created_at) ASC;
+        // `;
+        // const subscriptionsByMonthResult = await client.query(subscriptionsByMonthQuery);
+        // const subscriptionsByMonth = subscriptionsByMonthResult.rows.map(row => parseInt(row.count));
         
         stats = {
           ...usersResult.rows[0],
-          ...appointmentsResult.rows[0],
-          usersByMonth: monthlyUsers,
-          subscriptionsByMonth: monthlySubscriptions,
-          pendingValidations: 15
+          ...appointmentsData,
+          usersByMonth: usersByMonth,
+          subscriptionsByMonth: [], // Provide empty array as fallback
+          pendingValidations: pendingValidationsCount,
+          total_active_subscriptions: 0 // Provide 0 as fallback
         };
       }
       
@@ -430,54 +525,90 @@ router.get('/dashboard-appointments', async (req, res) => {
       }
       
       const { role } = userResult.rows[0];
-      
-      // Mock data for now - replace with real queries when appointments table is available
       let appointments = [];
       
-      if (role === 'professional') {
-        appointments = [
-          {
-            id: '1',
-            patientName: 'María González',
-            patientImage: null,
-            type: 'Consulta General',
-            time: '10:00',
-            date: new Date().toISOString().split('T')[0],
-            status: 'confirmed'
-          },
-          {
-            id: '2',
-            patientName: 'Carlos Rodriguez',
-            patientImage: null,
-            type: 'Seguimiento',
-            time: '11:30',
-            date: new Date().toISOString().split('T')[0],
-            status: 'confirmed'
-          },
-          {
-            id: '3',
-            patientName: 'Ana López',
-            patientImage: null,
-            type: 'Primera Consulta',
-            time: '14:00',
-            date: new Date().toISOString().split('T')[0],
-            status: 'pending'
-          }
-        ];
-      } else if (role === 'patient') {
-        appointments = [
-          {
-            id: '1',
-            professionalName: 'Dr. García',
-            specialty: 'Cardiología',
-            time: '15:00',
-            date: new Date(Date.now() + 86400000 * 3).toISOString().split('T')[0],
-            status: 'confirmed'
-          }
-        ];
+      try {
+        if (role === 'professional') {
+          // Get upcoming appointments for professional
+          const appointmentsQuery = `
+            SELECT 
+              a.id,
+              a.scheduled_date,
+              a.start_time,
+              a.end_time,
+              a.status,
+              a.appointment_type,
+              a.title,
+              a.notes,
+              pt.name as patient_name,
+              pt.avatar_url as patient_image,
+              ps.name as service_name
+            FROM appointments a
+            LEFT JOIN users pt ON a.patient_id = pt.id
+            LEFT JOIN professional_services ps ON a.service_id = ps.id
+            WHERE a.professional_id = $1 
+              AND a.scheduled_date >= CURRENT_DATE 
+              AND a.status IN ('scheduled', 'confirmed')
+            ORDER BY a.scheduled_date, a.start_time
+            LIMIT $2
+          `;
+          const appointmentsResult = await client.query(appointmentsQuery, [userId, parseInt(limit)]);
+          
+          appointments = appointmentsResult.rows.map(apt => ({
+            id: apt.id,
+            patientName: apt.patient_name || 'Paciente',
+            patientImage: apt.patient_image,
+            type: apt.service_name || apt.title || 'Consulta General',
+            time: apt.start_time.slice(0, 5), // Format to HH:MM
+            date: apt.scheduled_date,
+            status: apt.status,
+            appointmentType: apt.appointment_type
+          }));
+        } else if (role === 'patient') {
+          // Get upcoming appointments for patient
+          const appointmentsQuery = `
+            SELECT 
+              a.id,
+              a.scheduled_date,
+              a.start_time,
+              a.end_time,
+              a.status,
+              a.appointment_type,
+              a.title,
+              a.notes,
+              pp.name as professional_name,
+              prof.specialty,
+              ps.name as service_name
+            FROM appointments a
+            LEFT JOIN users pp ON a.professional_id = pp.id
+            LEFT JOIN professionals prof ON a.professional_id = prof.user_id
+            LEFT JOIN professional_services ps ON a.service_id = ps.id
+            WHERE a.patient_id = $1 
+              AND a.scheduled_date >= CURRENT_DATE 
+              AND a.status IN ('scheduled', 'confirmed')
+            ORDER BY a.scheduled_date, a.start_time
+            LIMIT $2
+          `;
+          const appointmentsResult = await client.query(appointmentsQuery, [userId, parseInt(limit)]);
+          
+          appointments = appointmentsResult.rows.map(apt => ({
+            id: apt.id,
+            professionalName: apt.professional_name || 'Dr. Profesional',
+            specialty: apt.specialty || 'Medicina General',
+            serviceName: apt.service_name || apt.title,
+            time: apt.start_time.slice(0, 5), // Format to HH:MM
+            date: apt.scheduled_date,
+            status: apt.status,
+            appointmentType: apt.appointment_type
+          }));
+        }
+      } catch (error) {
+        console.log('Dashboard appointments query failed, using fallback data:', error.message);
+        // Fallback to empty array if tables don't exist yet
+        appointments = [];
       }
       
-      return appointments.slice(0, parseInt(limit));
+      return appointments;
     });
     
     res.json({
@@ -518,35 +649,41 @@ router.get('/dashboard-reviews', async (req, res) => {
         return [];
       }
       
-      // Mock data for now - replace with real queries when reviews table is available
-      const reviews = [
-        {
-          id: '1',
-          patientName: 'Laura Martín',
-          patientImage: null,
-          rating: 5,
-          comment: 'Excelente profesional, muy atento y cuidadoso.',
-          date: new Date().toLocaleDateString('es-ES')
-        },
-        {
-          id: '2',
-          patientName: 'Pedro Sánchez',
-          patientImage: null,
-          rating: 4,
-          comment: 'Muy buen trato y explicaciones claras.',
-          date: new Date(Date.now() - 86400000).toLocaleDateString('es-ES')
-        },
-        {
-          id: '3',
-          patientName: 'Elena García',
-          patientImage: null,
-          rating: 5,
-          comment: 'Recomiendo totalmente, profesional de confianza.',
-          date: new Date(Date.now() - 172800000).toLocaleDateString('es-ES')
-        }
-      ];
+      let reviews = [];
       
-      return reviews.slice(0, parseInt(limit));
+      try {
+        // Get recent reviews from database
+        const reviewsQuery = `
+          SELECT 
+            r.id,
+            r.rating,
+            r.comment,
+            r.created_at,
+            pt.name as patient_name,
+            pt.avatar_url as patient_image
+          FROM reviews r
+          LEFT JOIN users pt ON r.patient_id = pt.id
+          WHERE r.professional_id = $1
+          ORDER BY r.created_at DESC
+          LIMIT $2
+        `;
+        const reviewsResult = await client.query(reviewsQuery, [userId, parseInt(limit)]);
+        
+        reviews = reviewsResult.rows.map(review => ({
+          id: review.id,
+          patientName: review.patient_name || 'Paciente Anónimo',
+          patientImage: review.patient_image,
+          rating: review.rating,
+          comment: review.comment,
+          date: new Date(review.created_at).toLocaleDateString('es-ES')
+        }));
+      } catch (error) {
+        console.log('Dashboard reviews query failed, using fallback data:', error.message);
+        // Fallback to empty array if tables don't exist yet
+        reviews = [];
+      }
+      
+      return reviews;
     });
     
     res.json({
@@ -558,6 +695,82 @@ router.get('/dashboard-reviews', async (req, res) => {
     res.status(500).json({
       success: false,
       message: error.message || 'Error fetching dashboard reviews'
+    });
+  }
+});
+
+/**
+ * GET /api/users/dashboard-professionals
+ * Get recent professionals for patient dashboard
+ */
+router.get('/dashboard-professionals', async (req, res) => {
+  try {
+    const { userId } = req.auth;
+    const { limit = 3 } = req.query;
+    
+    const result = await withTransaction(async (client) => {
+      // Get user role first
+      const userQuery = `SELECT id, role FROM users WHERE id = $1`;
+      const userResult = await client.query(userQuery, [userId]);
+      
+      if (userResult.rows.length === 0) {
+        throw new Error('User not found');
+      }
+      
+      const { role } = userResult.rows[0];
+      
+      // Only patients need this data
+      if (role !== 'patient') {
+        return [];
+      }
+      
+      let professionals = [];
+      
+      try {
+        // Get recent professionals from patient's appointments
+        const professionalsQuery = `
+          SELECT DISTINCT
+            pp.id,
+            pp.name as professional_name,
+            pp.avatar_url,
+            prof.specialty,
+            MAX(a.scheduled_date) as last_visit
+          FROM appointments a
+          LEFT JOIN users pp ON a.professional_id = pp.id
+          LEFT JOIN professionals prof ON a.professional_id = prof.user_id
+          WHERE a.patient_id = $1 
+            AND a.status = 'completed'
+          GROUP BY pp.id, pp.name, pp.avatar_url, prof.specialty
+          ORDER BY last_visit DESC
+          LIMIT $2
+        `;
+        const professionalsResult = await client.query(professionalsQuery, [userId, parseInt(limit)]);
+        
+        professionals = professionalsResult.rows.map(prof => ({
+          id: prof.id,
+          name: prof.professional_name || 'Dr. Profesional',
+          specialty: prof.specialty || 'Medicina General',
+          avatar: prof.avatar_url,
+          lastVisit: prof.last_visit
+        }));
+      } catch (error) {
+        console.log('Dashboard professionals query failed, using fallback data:', error.message);
+        // Fallback to empty array if tables don't exist yet
+        professionals = [];
+      }
+      
+      return professionals;
+    });
+    
+    res.json({
+      success: true,
+      data: result
+    });
+  } catch (error) {
+    console.error('Error fetching dashboard professionals:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Error fetching dashboard professionals'
     });
   }
 });

@@ -1,28 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Star, Search } from 'lucide-react';
+import { Star, Search, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-
-const sampleReviews = [
-	{
-		id: 'r1',
-		professional: 'Dr. Carlos Soler',
-		specialty: 'Cardiología',
-		rating: 5,
-		comment: 'Excelente atención, muy profesional y dedicado. Resolvió todas mis dudas.',
-		date: '2025-05-20',
-	},
-	{
-		id: 'r2',
-		professional: 'Dra. Ana García',
-		specialty: 'Dermatología',
-		rating: 4,
-		comment: 'Buena experiencia en general. El tratamiento fue efectivo.',
-		date: '2025-04-15',
-	},
-];
+import { usePatientApi } from '@/hooks/usePatientApi';
+import { useToast } from '@/components/ui/use-toast';
 
 const ReviewCard = ({ review }) => {
 	return (
@@ -31,7 +14,7 @@ const ReviewCard = ({ review }) => {
 				<div className="flex justify-between items-start mb-4">
 					<div>
 						<h3 className="font-semibold text-foreground dark:text-white mb-1">
-							{review.professional}
+							{review.professional_name}
 						</h3>
 						<p className="text-sm text-muted-foreground dark:text-gray-400">
 							{review.specialty}
@@ -49,7 +32,7 @@ const ReviewCard = ({ review }) => {
 					{review.comment}
 				</p>
 				<p className="text-sm text-muted-foreground dark:text-gray-400">
-					Fecha: {review.date}
+					Fecha: {new Date(review.date).toLocaleDateString()}
 				</p>
 			</CardContent>
 		</Card>
@@ -57,6 +40,46 @@ const ReviewCard = ({ review }) => {
 };
 
 const PatientReviewsPage = () => {
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const { getReviews } = usePatientApi();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const result = await getReviews();
+        setReviews(result.data || []);
+      } catch (err) {
+        console.error('Error fetching reviews:', err);
+        setError(err.message || 'Error al cargar las reseñas');
+        toast({
+          title: 'Error',
+          description: 'No se pudieron cargar las reseñas. Intenta nuevamente.',
+          variant: 'destructive',
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReviews();
+  }, [getReviews, toast]);
+
+  const filteredReviews = reviews.filter(review => {
+    if (!searchTerm) return true;
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      review.professional_name.toLowerCase().includes(searchLower) ||
+      review.specialty.toLowerCase().includes(searchLower) ||
+      review.comment.toLowerCase().includes(searchLower)
+    );
+  });
+
 	return (
 		<>
 			<header className="mb-8">
@@ -83,17 +106,39 @@ const PatientReviewsPage = () => {
 							<Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
 							<Input
 								placeholder="Buscar reseña..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
 								className="pl-10 w-full sm:w-[300px] bg-background dark:bg-slate-700 border-border dark:border-gray-600"
 							/>
 						</div>
 					</div>
 				</CardHeader>
 				<CardContent>
-					<div className="grid gap-6">
-						{sampleReviews.map((review) => (
+          {loading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <span className="ml-2 text-muted-foreground">Cargando reseñas...</span>
+            </div>
+          ) : error ? (
+            <div className="text-center py-8">
+              <p className="text-destructive mb-4">{error}</p>
+              <Button onClick={() => window.location.reload()} variant="outline">
+                Reintentar
+              </Button>
+            </div>
+          ) : filteredReviews.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">
+                {searchTerm ? 'No se encontraron reseñas que coincidan con la búsqueda.' : 'Aún no has escrito ninguna reseña.'}
+              </p>
+            </div>
+          ) : (
+  					<div className="grid gap-6">
+						{filteredReviews.map((review) => (
 							<ReviewCard key={review.id} review={review} />
 						))}
 					</div>
+          )}
 				</CardContent>
 			</Card>
 
